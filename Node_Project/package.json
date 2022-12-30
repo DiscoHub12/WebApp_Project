@@ -1,0 +1,14 @@
+{
+  "name": "node_project",
+  "version": "1.0.0",
+  "description": "Project in Node Js with Express Js for Routing. It will be used for the Backend.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DiscoHub12 (Alessio Giacchè)",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
