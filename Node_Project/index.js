@@ -7,22 +7,6 @@ app.get('/home', function(req, res){
     res.send('Pagina Home');
 });
 
-//ESEMPIO 2 LINK
-app.get('/contatti', function(req, res){
-    res.send('Pagina Contatti');
-});
-
-//ESEMPIO 3 LINK
-app.get('/informazioni', function(req,res){
-    res.send('Pagina Informazioni')
-})
-
-
-//ESEMPIO 4 LINK
-app.get('/login', function(req, res){
-    res.send('Pagina Iscrizioni')
-})
-
 
 //ESEMPIO PRATICO DI INVIO DATI
 /**
