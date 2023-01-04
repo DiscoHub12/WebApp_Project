@@ -36,5 +36,21 @@ app.get('/api/feed', function(req,res){
     res.json(myFeed);
 })
 
+app.get('/api/contact', function(req, res){
+
+    var prova = 'ciao';
+
+    res.json(prova);
+
+})
+
+app.get('/api/prova', function(req, res){
+
+    var nome = 'bimbo';
+
+    res.json(nome);
+
+})
+
 console.log("Server start at port : 3000 ...")
 app.listen(3000);
