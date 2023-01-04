@@ -27,6 +27,45 @@ app.get('/api/login', function(req, res){
  });
 
 
+ //Prove mandando un nome dell'animale e la descrizione ad un altro indirizzo. 
+ app.get('/api/nomeAnimale', function(req, res){
+    var nomeAnimale = 'Bimbo'
+    res.json(nomeAnimale);
+ });
+
+ app.get('/api/descriptionAnimal', function(req, res){
+    var descrizione = 'Cane molto bello, prova descrizione' 
+    res.json(descrizione);
+});
+
+//Prova di una lista di card con nome, quindi prendendo dati 
+//da un file json in modo specifico: 
+app.get('/api/arrayAnimal', function(req, res){
+    var myCardArray = [
+        {
+            id: "1", 
+            nomeAnimale: "Pluto",
+            colore: "Marrone",
+            descrizione: "Descrizione di Pluto: cane marrone"
+        },
+        {
+            id: "2", 
+            nomeAnimale: "Pippo",
+            colore: "Nero",
+            descrizione: "Descrizione di Pippo: cane nero"
+        },
+        {
+            id: "3", 
+            nomeAnimale: "Scafo",
+            colore: "Bianco",
+            descrizione: "Descrizione di Scafo: cane bianco"
+        }
+    ];
+
+    res.json(myCardArray);
+})
+
+
 
  /**
   * RICEZIONE DATI DAL FRONTEND
