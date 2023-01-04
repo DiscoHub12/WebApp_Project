@@ -1,11 +1,15 @@
 <h1>Login page</h1>
 <br>
 <p>This is the Login page</p>
-<p>
-    <mat-form-field appearance="fill">
-      <mat-label>Fill form field</mat-label>
-      <input matInput placeholder="Placeholder">
-      <mat-icon matSuffix>sentiment_very_satfied</mat-icon>
-      <mat-hint>Hint</mat-hint>
-    </mat-form-field>
-  </p>
+
+<h3>Inserisci un nome</h3>
+<mat-form-field appearance="fill">
+  <mat-label>Input</mat-label>
+  <input matInput>
+</mat-form-field>
+<br>
+<p>Invia parola al Backend</p>
+<button mat-raised-button color="warn" (click)="funzioneInvia()">Warn</button>
+
+
+

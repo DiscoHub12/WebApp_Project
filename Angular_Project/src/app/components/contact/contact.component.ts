@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environments';
 
 @Component({
@@ -13,7 +13,7 @@ export class ContactComponent {
 
   constructor(httpClient: HttpClient){
     //Devo fare una get verso il servizio di backend
-    httpClient.get(environment.baseUrl + '/prova').subscribe((dataFromBackend) =>{
+    httpClient.get(environment.baseUrl + '/contact').subscribe((dataFromBackend) =>{
       this.nome = dataFromBackend;
       console.log("dati: ", dataFromBackend)
     })

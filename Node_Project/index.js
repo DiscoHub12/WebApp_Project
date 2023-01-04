@@ -1,11 +1,47 @@
 const express = require('express'); 
 const app = express(); 
 
-//ESEMPIO 1 LINK
-app.get('/home', function(req, res){
-    var counter = 10; 
-    res.send('Pagina Home');
+
+/**
+ * INVIO DATI AL FRONTEND
+ * Rotte per inviare dati. 
+ */
+app.get('/api/home', function(req, res){
+    var nome = 'Pagina Home'
+    res.json(nome);
 });
+
+app.get('/api/contact', function(req, res){
+    var nome = 'Pagina Contatti'
+    res.json(nome);
+})
+
+app.get('/api/info', function(req, res){
+    var nome = 'Pagina Informazioni'
+    res.json(nome);
+})
+
+app.get('/api/login', function(req, res){
+    var nome = 'Pagina Login'
+    res.json(nome);
+ });
+
+
+
+ /**
+  * RICEZIONE DATI DAL FRONTEND
+  * Rotte per ricevere dati
+  */
+
+ app.post('/api/login', function(req, res, next){
+    var data = req.body;
+    console.log(data);
+ })
+
+//Server start at 3000.
+console.log("Server start at port : 3000 ...")
+app.listen(3000);
+
 
 
 //ESEMPIO PRATICO DI INVIO DATI
@@ -35,22 +71,3 @@ app.get('/api/feed', function(req,res){
     //Devo inviare questa cosa al Front-end che mi ha fatto la chiamata (inviare del json)
     res.json(myFeed);
 })
-
-app.get('/api/contact', function(req, res){
-
-    var prova = 'ciao';
-
-    res.json(prova);
-
-})
-
-app.get('/api/prova', function(req, res){
-
-    var nome = 'bimbo';
-
-    res.json(nome);
-
-})
-
-console.log("Server start at port : 3000 ...")
-app.listen(3000);

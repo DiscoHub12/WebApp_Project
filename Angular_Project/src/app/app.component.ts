@@ -11,7 +11,4 @@ import { environment } from 'src/environments/environments';
 export class AppComponent {
   title = 'Angular_Project';
 
-
-
-
 }
