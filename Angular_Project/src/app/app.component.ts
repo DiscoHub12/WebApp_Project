@@ -12,11 +12,6 @@ export class AppComponent {
   title = 'Angular_Project';
 
 
-  constructor(httpClient: HttpClient){
-    //Devo fare una get verso il servizio di backend
-    httpClient.get(environment.baseUrl + '/feed').subscribe((dataFromBackend) =>{
-      console.log("dati: ", dataFromBackend)
-    })
-  }
+
 
 }
