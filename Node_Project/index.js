@@ -1,5 +1,14 @@
+const bodyParser = require('body-parser');
 const express = require('express'); 
 const app = express(); 
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
+arrayAnimali = []; 
 
 
 /**
@@ -27,7 +36,7 @@ app.get('/api/login', function(req, res){
  });
 
 
- //Prove mandando un nome dell'animale e la descrizione ad un altro indirizzo. 
+ //Prove mandando un nome
  app.get('/api/nomeAnimale', function(req, res){
     var nomeAnimale = 'Bimbo'
     res.json(nomeAnimale);
@@ -38,9 +47,20 @@ app.get('/api/login', function(req, res){
     res.json(descrizione);
 });
 
-//Prova di una lista di card con nome, quindi prendendo dati 
-//da un file json in modo specifico: 
+
+/**
+ * ESEMPIO PRATICO DI INVIO DATI (ARRAY)
+ * Questa chiamata ci ritorna i post di instragram
+ * che vogliamo vedere. Quindi ci dovrà ritornare un qualcosa
+ * di array. 
+ * Prova di una lista di card con nome, quindi prendendo dati
+ * da un file json in modo specifico: 
+ */
 app.get('/api/arrayAnimal', function(req, res){
+    //connessione al db
+    //avrò i miei amici da visualizzare nei feed
+    //alloco come risultato un array, che simula un risultato
+    //di una select.
     var myCardArray = [
         {
             id: "1", 
@@ -73,40 +93,11 @@ app.get('/api/arrayAnimal', function(req, res){
   */
 
  app.post('/api/login', function(req, res, next){
-    var data = req.body;
-    console.log(data);
+    res.json(req.body);
+    console.log(req.body);
  })
 
 //Server start at 3000.
 console.log("Server start at port : 3000 ...")
 app.listen(3000);
 
-
-
-//ESEMPIO PRATICO DI INVIO DATI
-/**
- * Questa chiamata ci ritorna i post di instragram
- * che vogliamo vedere. Quindi ci dovrà ritornare un qualcosa
- * di array. 
- */
-app.get('/api/feed', function(req,res){
-    //connessione al db
-    //avrò i miei amici da visualizzare nei feed
-    //alloco come risultato un array, che simula un risultato
-    //di una select.
-    var myFeed = [
-         {
-            id: '1', 
-            name: 'Pippo', 
-            like: '123'
-         },
-         {
-            id: '2', 
-            name: 'Pluto', 
-            like: '2'
-         },
-    ];
-
-    //Devo inviare questa cosa al Front-end che mi ha fatto la chiamata (inviare del json)
-    res.json(myFeed);
-})
