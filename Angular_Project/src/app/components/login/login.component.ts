@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environments';
+import { JsonPipe } from '@angular/common';
 
 
 
@@ -11,17 +12,25 @@ import { environment } from 'src/environments/environments';
 })
 export class LoginComponent {
 
-  nome = "Ciao";
+  nome : any;
+  parola = "ciao";
 
-  constructor(private httpClient: HttpClient) {
-    //Devo fare una get verso il servizio di backend
-    httpClient.get(environment.baseUrl + '/login').subscribe((dataFromBackend) => {
+  constructor(private httpClient: HttpClient){}
+
+
+  ngOnInit(): void {
+    this.getPrincipalData();
+  }
+
+  getPrincipalData(){
+    this.httpClient.get(environment.baseUrl + '/login').subscribe((dataFromBackend) =>{
+      this.nome = dataFromBackend;
       console.log("dati: ", dataFromBackend)
     })
   }
 
-  funzioneInvia() {
-    this.httpClient.post(environment.baseUrl + '/login', this.nome).subscribe();
+  funzioneInvia(){
+    this.httpClient.post(environment.baseUrl + '/login', {params : this.parola}).subscribe();
   }
 }
 

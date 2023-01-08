@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environments';
 
@@ -8,13 +8,19 @@ import { environment } from 'src/environments/environments';
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.scss']
 })
-export class InfoComponent {
+export class InfoComponent implements OnInit {
 
-  nome : any;
+  nome : any; 
 
-  constructor(httpClient: HttpClient){
-    //Devo fare una get verso il servizio di backend
-    httpClient.get(environment.baseUrl + '/info').subscribe((dataFromBackend) =>{
+  constructor(private httpClient: HttpClient){}
+
+
+  ngOnInit(): void {
+    this.getPrincipalData();
+  }
+
+  getPrincipalData(){
+    this.httpClient.get(environment.baseUrl + '/info').subscribe((dataFromBackend) =>{
       this.nome = dataFromBackend;
       console.log("dati: ", dataFromBackend)
     })
