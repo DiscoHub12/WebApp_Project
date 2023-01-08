@@ -1,47 +1,45 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environments';
+import { Animal } from './animal';
 
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
-  styleUrls: ['./contact.component.scss']
+  styleUrls: ['./contact.component.scss'],
 })
-export class ContactComponent {
+export class ContactComponent implements OnInit {
 
-   nome : any;
-   descriptionAnimal : any;
-   fileJson : any; 
-   arrayAnimali : {id:String, nome:String, colore:String, descrizione:String} [] = []; 
 
-  constructor(private httpClient: HttpClient){
-    //Devo fare una get verso il servizio di backend
-    this.httpClient.get(environment.baseUrl + '/contact').subscribe((dataFromBackend) =>{
-      console.log("dati: ", dataFromBackend)
-      this.getArrayCard(); 
-      //this.getNameAnimal();
-      //this.getDescriptionAnimal();
-    })
+  nome: any;
+
+  testDatas : any;
+
+  animals : Animal[] = [];
+
+  constructor(private httpClient: HttpClient) {}
+
+  ngOnInit(): void {
+    this.getPrincipalData();
   }
 
-  getNameAnimal(){
-    this.httpClient.get(environment.baseUrl + '/nomeAnimale').subscribe((dataFromBackend) =>{
-      this.nome = dataFromBackend;
-      console.log("nome animale : ", dataFromBackend);
-    })
-  }
-  getDescriptionAnimal(){
-    this.httpClient.get(environment.baseUrl + '/descriptionAnimal').subscribe((dataFromBackend) =>{
-      this.descriptionAnimal = dataFromBackend; 
-      console.log("descrizione animale : ", dataFromBackend);
-    })
+  getPrincipalData() {
+    this.httpClient
+      .get(environment.baseUrl + '/contact')
+      .subscribe((dataFromBackend) => {
+        console.log('dati: ', dataFromBackend);
+        this.getArrayCard();
+      });
   }
 
-  getArrayCard(){
-    this.httpClient.get(environment.baseUrl + '/arrayAnimal').subscribe((dataFromBackend) => {
-      console.log("Animali : ", dataFromBackend);
-      this.fileJson = dataFromBackend; 
-      this.arrayAnimali = this.fileJson; 
-    })
+  getArrayCard() {this.httpClient.get(environment.baseUrl + '/arrayAnimal').subscribe((dataFromBackend) => {
+        console.log('Animali : ', dataFromBackend);
+        this.testDatas = dataFromBackend; 
+        this.animals = this.testDatas; 
+      });
+  }
+
+  getTodos() {
+    this.httpClient.get(environment.baseUrl + '/arrayAnimal');
   }
 }
