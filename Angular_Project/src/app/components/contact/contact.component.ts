@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environments';
-import { Animal } from './animal';
+import { Animal } from '../Models/animal';
 
 @Component({
   selector: 'app-contact',
@@ -24,9 +24,7 @@ export class ContactComponent implements OnInit {
   }
 
   getPrincipalData() {
-    this.httpClient
-      .get(environment.baseUrl + '/contact')
-      .subscribe((dataFromBackend) => {
+    this.httpClient.get(environment.baseUrl + '/contact').subscribe((dataFromBackend) => {
         console.log('dati: ', dataFromBackend);
         this.getArrayCard();
       });

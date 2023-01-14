@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environments';
+import { Animal } from '../Models/animal';
 
 
 @Component({
@@ -11,6 +12,10 @@ import { environment } from 'src/environments/environments';
 export class HomeComponent implements OnInit {
 
   nome : any; 
+
+  animals : Animal[] = [];
+
+  prova : any;
 
   constructor(private httpClient: HttpClient){}
 
@@ -24,6 +29,13 @@ export class HomeComponent implements OnInit {
       this.nome = dataFromBackend;
       console.log("dati: ", dataFromBackend)
     })
+  }
+
+  inviaAnimali(){
+    this.httpClient.get(environment.baseUrl + '/arrayAnimalis').subscribe((dataFromBackend) => {
+      this.prova = dataFromBackend; 
+      this.animals = this.prova; 
+    });
   }
 
 }

@@ -8,8 +8,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-arrayAnimali = []; 
-
 
 /**
  * INVIO DATI AL FRONTEND
@@ -36,7 +34,7 @@ app.get('/api/login', function(req, res){
  });
 
 
- //Prove mandando un nome
+//TEST : send data to Frontend (Angular) :
  app.get('/api/nomeAnimale', function(req, res){
     var nomeAnimale = 'Bimbo'
     res.json(nomeAnimale);
@@ -86,18 +84,47 @@ app.get('/api/arrayAnimal', function(req, res){
 })
 
 
-
- /**
-  * RICEZIONE DATI DAL FRONTEND
-  * Rotte per ricevere dati
-  */
-
+//GET DATA FROM FRONTEND (ANGULAR)
  app.post('/api/login', function(req, res, next){
     res.json(req.body);
     console.log(req.body);
- })
+ });
 
-//Server start at 3000.
+
+
+//DATABASE REST API : 
+const db = require('./database');
+
+/**
+ * db.query("select * from user", (error, result) => {
+    if(error) throw error; 
+    console.log(result);
+});
+
+ */
+
+app.get('/api/insertSofia', function(req, res){
+    let sql = "select nome, cognome from user where nome like 'Sofia';";
+    db.query(sql, (err, result) => {
+        if (err) throw err; 
+        res.json(res);
+        console.log("Account trovato : " + res);
+    })
+
+});
+
+app.get('/api/arrayAnimalis', function(req, res){
+    let sqlQuery = "select * from animali";
+    db.query(sqlQuery, (error, result) => {
+        if(error) console.log(error);
+        res.json(result);
+        console.log(result);
+    })
+ });
+
+
+
+//SERVER START:
 console.log("Server start at port : 3000 ...")
 app.listen(3000);
 
