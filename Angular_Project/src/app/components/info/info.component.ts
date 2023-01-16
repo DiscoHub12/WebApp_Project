@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environments';
+
 
 
 @Component({
@@ -10,20 +10,34 @@ import { environment } from 'src/environments/environments';
 })
 export class InfoComponent implements OnInit {
 
-  nome : any; 
-
-  constructor(private httpClient: HttpClient){}
+  constructor(private httpClient: HttpClient) { }
 
 
-  ngOnInit(): void {
-    this.getPrincipalData();
-  }
-
-  getPrincipalData(){
-    this.httpClient.get(environment.baseUrl + '/info').subscribe((dataFromBackend) =>{
-      this.nome = dataFromBackend;
-      console.log("dati: ", dataFromBackend)
-    })
-  }
+  ngOnInit(): void { }
 
 }
+
+/**
+ESEMPI PRECEDENTI: 
+
+IMPORT NECESSARI : 
+import { environment } from 'src/environments/environments';
+
+VARIABILI PER LE PROVE : 
+nome : any;
+
+METODI : 
+//Metodo onInit caricato quando il componente viene avviato. 
+ngOnInit(): void {
+  this.getPrincipalData();
+}
+//Metodo che prende i dati dal Backend tramite la get ad una particolare rotta.
+  getPrincipalData(){
+  this.httpClient.get(environment.baseUrl + '/info').subscribe((dataFromBackend) =>{
+    this.nome = dataFromBackend;
+    console.log("dati: ", dataFromBackend)
+  })
+}
+ */
+
+
