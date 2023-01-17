@@ -50,8 +50,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatIconModule,
     FormsModule, 
     BrowserAnimationsModule, 
-    MatSelectModule
-    
+    MatSelectModule, 
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -82,15 +82,6 @@ app.get('/api/insertSofia', function (req, res) {
 });
 
 
-app.get('/api/arrayAnimalis', function (req, res) {
-    let sqlQuery = "select * from animali";
-    db.query(sqlQuery, (error, result) => {
-        if (error) console.log(error);
-        res.json(result);
-        console.log(result);
-    })
-});
-
 
 //Server start at 3000.
 console.log("Server start at port : 3000 ...")
