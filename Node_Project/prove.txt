@@ -1,0 +1,10 @@
+1) Prova prendendo un array di Animali nel Db:
+app.get('/api/arrayAnimalis', function (req, res) {
+    let sqlQuery = "select * from animali";
+    db.query(sqlQuery, (error, result) => {
+        if (error) console.log(error);
+        res.json(result);
+        console.log(result);
+    })
+});
+

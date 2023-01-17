@@ -1,6 +1,31 @@
-<h1>Login page</h1>
-<br>
-<p>This is the Login page</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="text-center">
+          <h1>Login</h1>
+          <h6>Please enter username and password</h6>
+        </div>
+          <form>
+            <div class="mb-3">
+              <label for="exampleInputEmail" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp">
+              <div id="emailHelp" class="form-text"> We'll never share email with anyone else.</div>
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="exampleInputPassword">
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+        <a style="color: #fff; margin-top: 10px;"  routerLink="/signup">New user? Click to signup</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 <!--
   ESEMPIO FORM LOGIN : non funziona i layout.
