@@ -1,29 +1,25 @@
-$color_1: #fff;
-
 .card {
-	border: none;
-	width: 500px;
-	padding: 40px;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	background: hsla(205, 46%, 30%, 1);
-	background: linear-gradient(90deg, hsla(205, 46%, 30%, 1) 0%, hsla(205, 46%, 30%, 1) 100%);
-	h1 {
-		color: $color_1;
-	}
+    border: none;
+    width: 500px;
+    padding: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: hsla(205, 46%, 30%, 1);
+    background: linear-gradient(90deg, hsla(
+        205, 46%, 30%, 1
+    ) 0%, hsla(260, 29%, 36%,1) 100%
+    );
 }
+
+.card h1,
 h6 {
-	color: $color_1;
+    color: #fff;
 }
+
 label {
-	color: $color_1;
-}
-:host {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    color : #fff;
 }
 
 /**
