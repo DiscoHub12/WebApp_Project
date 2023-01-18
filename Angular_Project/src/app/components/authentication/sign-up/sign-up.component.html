@@ -4,27 +4,28 @@
             <div class="card">
                 <div class="text-center">
                     <h1>Sign Up</h1>
-                    <h6>Register Yourself!!</h6>
+                    <h6>Register Yourself</h6>
                 </div>
                 <form>
-                    <form>
+                    <form [formGroup]="signupForm">
                         <div class="mb-3">
-                            <label for="inputName">Full name</label>
-                            <input type="text" class="form-control" id="inputName"> 
+                            <label for="inputName">Name</label>
+                            <input matInput name="name" formControlName="fullname" type="text" class="form-control" id="inputName" maxlength="80" required> 
                         </div>
                         <div class="mb-3">
-                            <label for="inputLastName">Full last name</label>
-                            <input type="text" class="form-control" id="inputLastName"> 
+                            <label for="inputLastName">Last name</label>
+                            <input matInput name="lastname" formControlName="lastname" type="text" class="form-control" id="inputLastName" maxlength="80" required> 
                         </div>
                         <div class="mb-3">
                             <label for="inputEmail">Email adress</label>
-                            <input type="text" class="form-control" id="inputEmail"> 
+                            <input matInput name="email" formControlName="email" type="text" class="form-control" id="inputEmail" maxlength="100" required> 
+                            <div id="emailHelp" class="form-text"> We'll never share email with anyone else.</div>
                         </div>
                         <div class="mb-3">
                             <label for="inputPassword">Password</label>
-                            <input type="password" class="form-control" id="inputPassword"> 
+                            <input matInput name="password" formControlName="password" type="password" class="form-control" id="inputPassword" maxlenght="150" required> 
                         </div>
-                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                        <button type="submit" class="btn btn-primary mb-2" (click)="signUp()" [disabled]="disabled">Sign Up</button>
                     </form>
                     <a style="color: #fff; margin-top: 10px;" routerLink="/login">Already registered? Click to login</a>
                 </form>
