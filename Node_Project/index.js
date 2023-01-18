@@ -7,6 +7,11 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
+//Require BeCrypt : 
+const bcrypt = require ('bcrypt');
+const secret = "!Rj(98bC%9sVn&^c";
+const saltRounds = 10; 
+
 //Require DataBase connection
 const db = require("./database");
 
@@ -62,12 +67,6 @@ app.get('/api/arrayAnimal', function (req, res) {
 });
 
 
-//Part that contains all Post call:
-app.post('/api/login', function (req, res, next) {
-    res.json(req.body);
-    console.log(req.body);
-});
-
 
 
 //Part that contains all DataBase connectio Call
@@ -82,7 +81,34 @@ app.get('/api/insertSofia', function (req, res) {
 });
 
 
-
 //Server start at 3000.
 console.log("Server start at port : 3000 ...")
 app.listen(3000);
+
+
+/**
+ * //Part that contains all Post call:
+
+app.post('/api/loginUser', function(req, response, next){
+    let  email = req.body.emailUser;
+    let  password = req.body.passwordUser;
+    console.log('Received this data : Email --> ' + email + " Password --> " + password);
+    let sql = `select salt, password from user where email like '${email}'`; 
+    db.query(sql, (err, res) => {
+        if(err) console.log(err); 
+        let result = Object.values(JSON.parse(JSON.stringify(res)));
+        let saltUser = result[0].salt; 
+        let passwordUser = result[0].password; 
+        console.log("Salt user : " + saltUser + "Password user : " + passwordUser);
+        bcrypt.genSalt(saltRounds, function(err, salt){
+            saltGenerated = salt; 
+            bcrypt.hash(password, saltGenerated, function(err, hash){
+                hashedPassword = hash; 
+                if(bcrypt.compare(passwordUser, hashedPassword)) {
+                    console.log("Successful Login!!");
+                }
+            });
+        });
+    }); 
+}); 
+ */
