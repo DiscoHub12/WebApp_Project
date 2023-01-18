@@ -88,20 +88,23 @@ app.post('/api/signupUser', async (req, res) => {
 
 
 app.post('/api/loginUser', function (req, res) {
-    
-    /** 
+    const email = req.body.emailUser; 
+    const password = req.body.passwordUser + secret; 
+    console.log("Email : " + email + " Password : " + password);
+    let sql = `SELECT password from user where email like '${email}'`; 
     db.query(sql, (err, res) => {
-        result = Object.values(JSON.parse(JSON.stringify(res)));
-        passwordInDb = result[0].password; 
-        saltInDb = result[0].salt; 
-        const tmp = password + secret; 
-        console.log("Tmp : " + tmp);
-        const hashedPassword = bcrypt.hash(tmp, saltInDb);
-        console.log("Hashed password : " + hashedPassword);
-    }); 
-    */
+        if(err) throw err; 
+        const result = Object.values(JSON.parse(JSON.stringify(res)));
+        const passwInDb = result[0].password; 
+        bcrypt.compare(password, passwInDb, (err, result) => {
+            if(result){
+                console.log("SUCCESSO."); 
+            }else{
+                console.log("INSUCCESSO.");
+            }
+        });
+    })
 });
-
 
 
 //Part that contains all DataBase connectio Call
