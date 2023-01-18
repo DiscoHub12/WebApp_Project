@@ -87,6 +87,23 @@ app.post('/api/signupUser', async (req, res) => {
     });
 
 
+app.post('/api/loginUser', function (req, res) {
+    
+    /** 
+    db.query(sql, (err, res) => {
+        result = Object.values(JSON.parse(JSON.stringify(res)));
+        passwordInDb = result[0].password; 
+        saltInDb = result[0].salt; 
+        const tmp = password + secret; 
+        console.log("Tmp : " + tmp);
+        const hashedPassword = bcrypt.hash(tmp, saltInDb);
+        console.log("Hashed password : " + hashedPassword);
+    }); 
+    */
+});
+
+
+
 //Part that contains all DataBase connectio Call
 app.get('/api/insertSofia', function (req, res) {
     let sql = "select nome, cognome from user where nome like 'Sofia';";
@@ -102,31 +119,3 @@ app.get('/api/insertSofia', function (req, res) {
 //Server start at 3000.
 console.log("Server start at port : 3000 ...")
 app.listen(3000);
-
-
-/**
- * //Part that contains all Post call:
-
-app.post('/api/loginUser', function(req, response, next){
-    let  email = req.body.emailUser;
-    let  password = req.body.passwordUser;
-    console.log('Received this data : Email --> ' + email + " Password --> " + password);
-    let sql = `select salt, password from user where email like '${email}'`; 
-    db.query(sql, (err, res) => {
-        if(err) console.log(err); 
-        let result = Object.values(JSON.parse(JSON.stringify(res)));
-        let saltUser = result[0].salt; 
-        let passwordUser = result[0].password; 
-        console.log("Salt user : " + saltUser + "Password user : " + passwordUser);
-        bcrypt.genSalt(saltRounds, function(err, salt){
-            saltGenerated = salt; 
-            bcrypt.hash(password, saltGenerated, function(err, hash){
-                hashedPassword = hash; 
-                if(bcrypt.compare(passwordUser, hashedPassword)) {
-                    console.log("Successful Login!!");
-                }
-            });
-        });
-    }); 
-}); 
- */
