@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 //Require BeCrypt : 
 const bcrypt = require ('bcrypt');
 const secret = "!Rj(98bC%9sVn&^c";
-const saltRounds = 10; 
+
 
 //Require DataBase connection
 const db = require("./database");
@@ -36,6 +36,7 @@ app.get('/api/login', function (req, res) {
     var nome = 'Pagina Login'
     res.json(nome);
 });
+
 
 app.get('/api/arrayAnimal', function (req, res) {
     //connessione al db
@@ -67,6 +68,23 @@ app.get('/api/arrayAnimal', function (req, res) {
 });
 
 
+
+//Signup post
+app.post('/api/signupUser', async (req, res) => {
+     const nome = req.body.fullnameUser;
+     const cognome = req.body.lastnameUser;
+     const email = req.body.emailUser;
+     const password = req.body.passwordUser;
+     const saltUser = await bcrypt.genSalt();
+     const tmp = password + secret;
+     const hashedPassword = await bcrypt.hash(tmp, saltUser);
+     console.log(nome, cognome, email, password, saltUser, hashedPassword);
+     let sql = `INSERT into user (nome, cognome, email, salt, password, restrizioni) values ('${nome}', '${cognome}', '${email}', '${saltUser}', '${hashedPassword}', 0);`
+     db.query(sql, (err, res) =>{
+        if(err) throw err;
+        console.log("Account inserito");
+     })
+    });
 
 
 //Part that contains all DataBase connectio Call
