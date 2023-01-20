@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from 'src/app/Models/user'
 import { environment } from 'src/environments/environments';
+import { Router, UrlTree } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,22 +16,38 @@ export class LoginComponent implements OnInit {
 
   userLogged : User | undefined;
 
-  constructor(private httpClient: HttpClient, private formBuilder : FormBuilder) { }
+  data : any; 
+
+  constructor(private httpClient: HttpClient, private formBuilder : FormBuilder, private router : Router) { }
 
 
   ngOnInit(): void { 
     this.loginForm = this.formBuilder.group({
-      email: ['',Validators.required], 
+      email: ['',Validators.email], 
       password: ['', Validators.required]
     });
   }
 
-
   onSubmit(){
     const email = this.loginForm.value.email; 
     const password = this.loginForm.value.password; 
-    this.httpClient.post(environment.baseUrl + '/loginUser', {emailUser : email, passwordUser : password}).subscribe(); 
+    this.httpClient.post(environment.baseUrl + '/loginUser', {emailUser : email, passwordUser : password}).subscribe(
+      res => {
+        this.data = res; 
+        if(this.data.status == 201){
+          alert('Login successfully.'); 
+          this.userLogged = new User(this.data.nome, this.data.cognome, this.data.email);
+          this.router.navigate(['userDashboard']);
+        }else {
+          alert("Password not correct.");
+        }
+      }, err => {
+        alert('Password not correct.');
+      }
+    );
   }
+
+
 
  /**
   *  loginMethod(){
