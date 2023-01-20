@@ -21,54 +21,10 @@
               <span class="text-danger" *ngIf="loginForm.controls['password'].dirty && loginForm.hasError('required', 'password')">*Password is required</span>
 
             </div>
-            <button type="submit" class="btn btn-primary" (click)="onSubmit()">Login</button>
+            <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="loginForm.invalid">Login</button>
           </form>
         <a style="color: #fff; margin-top: 10px;"  routerLink="/signup">New user? Click to signup</a>
       </div>
     </div>
   </div>
 </div>
-
-
-
-
-<!--
-  ESEMPIO FORM LOGIN : non funziona i layout.
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card">
-          <div class="text-center">
-            <h1>Login</h1>
-            <h6>Please enter email and password</h6>
-          </div>
-          <form>
-            <form>
-              <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-              </div>
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" class="form-control1" id="exampleInputPassword1">
-              </div>
-              <button type="submit" class="btn tbn-primary">Login</button>
-            </form>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
--->
-
-<!--
-<h3>Inserisci un nome</h3>
-<mat-form-field appearance="fill">
-  <mat-label>Input</mat-label>
-  <input matInput>
-</mat-form-field>
-<br>
-<p>Invia parola al Backend</p>
-<button mat-raised-button color="warn" (click)="funzioneInvia()">Warn</button>
--->
