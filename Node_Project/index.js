@@ -14,6 +14,7 @@ const secret = "!Rj(98bC%9sVn&^c";
 
 //Require DataBase connection
 const db = require("./database");
+const e = require('express');
 
 
 //Part that contains all Get Call 
@@ -69,7 +70,41 @@ app.get('/api/arrayAnimal', function (req, res) {
 
 
 
+
 //Signup post
+
+app.post('/api/signupUser', async (req, response) => {
+    const nome = req.body.fullnameUser;
+     const cognome = req.body.lastnameUser;
+     const email = req.body.emailUser;
+     const password = req.body.passwordUser;
+     const saltUser = await bcrypt.genSalt();
+    const tmp = password + secret;
+    const hashedPassword = await bcrypt.hash(tmp, saltUser);
+    console.log(nome, cognome, email, password, saltUser, hashedPassword);
+
+    if(nome==undefined || nome=="" || cognome==undefined || cognome=="" || email==undefined || email=="" || password==undefined || password=="") {
+        response.status(401).json({
+            message: "Errore",
+            status:response.statusCode
+        });
+    }else {
+        let sql = `INSERT into user (nome, cognome, email, salt, password, restrizioni) values ('${nome}', '${cognome}', '${email}', '${saltUser}', '${hashedPassword}', 0);`
+        db.query(sql, (err, res) =>{
+            if(err) throw err;
+            response.status(201).json({
+                message : "Account creato correttamente",
+                status: response.statusCode
+            })
+            console.log("Account inserito");
+         })
+    }
+})
+
+
+
+
+/** 
 app.post('/api/signupUser', async (req, res) => {
      const nome = req.body.fullnameUser;
      const cognome = req.body.lastnameUser;
@@ -85,6 +120,8 @@ app.post('/api/signupUser', async (req, res) => {
         console.log("Account inserito");
      })
     });
+
+    */
 
 
 app.post('/api/loginUser', function (req, res) {
