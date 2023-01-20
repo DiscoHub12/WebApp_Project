@@ -7,7 +7,7 @@
                     <h6>Register Yourself</h6>
                 </div>
                 <form>
-                    <form [formGroup]="signupForm">
+                    <form [formGroup]="signupForm" (ngSubmit)="signUp()">
                         <div class="mb-3">
                             <label for="inputName">Name</label>
                             <input matInput name="name" formControlName="fullname" type="text" class="form-control" id="inputName" maxlength="80" required> 
@@ -23,11 +23,12 @@
                         </div>
                         <div class="mb-3">
                             <label for="inputPassword">Password</label>
-                            <input matInput name="password" formControlName="password" type="password" class="form-control" id="inputPassword" maxlenght="150" required> 
+                            <input matInput name="password" formControlName="password" type="password" class="form-control" id="inputPassword" maxlenght="150" minlength="6" required> 
+                            <div id="emailHelp" class="form-text"> La password deve avere minimo 6 caratteri</div>
                         </div>
-                        <button type="submit" class="btn btn-primary mb-2" (click)="signUp()" [disabled]="disabled">Sign Up</button>
+                        <button type="submit" class="btn btn-primary mb-2" [disabled]="signupForm.invalid">Sign Up</button>
                     </form>
-                    <a style="color: #fff; margin-top: 10px;" routerLink="/login">Already registered? Click to login</a>
+                    <a style="color: #fff; margin-top: 5px;" routerLink="/login">Already registered? Click to login</a>
                 </form>
             </div>
         </div>
