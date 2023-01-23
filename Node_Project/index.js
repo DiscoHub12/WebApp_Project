@@ -14,7 +14,6 @@ const secret = "!Rj(98bC%9sVn&^c";
 
 //Require DataBase connection
 const db = require("./database");
-const e = require('express');
 
 
 //Part that contains all Get Call 
@@ -135,10 +134,10 @@ app.post('/api/loginUser', function (request, responseApi) {
                     });
                     console.log("SUCCESSO.");
                 }
-            })
+            });
         }
-    })
-})
+    });
+});
 
 
 
