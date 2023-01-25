@@ -15,7 +15,8 @@ const db = require('./config/database.js');
 require('./routes/card.routes.js')(app);
 require('./routes/booking.routes.js')(app);
 
-db.sequelize.sync().then(() => {
+
+db.sync().then(() => {
     console.log("Synced db."); 
 }).catch((err) => {
     console.log("Failed to sync db : " + err.message);
