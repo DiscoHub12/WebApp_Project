@@ -13,6 +13,7 @@ const db = require('./config/database.js');
 
 //require all request : 
 require('./routes/card.routes.js')(app);
+require('./routes/booking.routes.js')(app);
 
 db.sequelize.sync().then(() => {
     console.log("Synced db."); 

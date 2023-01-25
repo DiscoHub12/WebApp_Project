@@ -23,6 +23,9 @@ db.sequelize = sequelize;
 //Require the models class
 
 db.card = require('../models/card.js')(sequelize, Sequelize); 
+db.booking = require ('../models/booking.js')(sequelize, Sequelize);
+db.product = require ('../models/product.js')(sequelize, Sequelize);
+db.user = require ('../models/user.js')(sequelize, Sequelize);
 
 //Export the db
 module.exports = db; 
