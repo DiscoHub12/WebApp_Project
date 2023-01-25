@@ -1,8 +1,37 @@
+//require express connection for post and get HTTP
+const express = require('express'); 
+const app = express();
+
+//parse requests of content-type application/json
+app.use(express.json());
+
+//parse request of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true })); 
+
+//require db connection and instaure it: 
+const db = require('./config/database.js');
+
+//require all request : 
+require('./routes/card.routes.js')(app);
+
+db.sequelize.sync().then(() => {
+    console.log("Synced db."); 
+}).catch((err) => {
+    console.log("Failed to sync db : " + err.message);
+}); 
+
+
+app.listen(3000); 
+console.log("Server start at 3000...");
+
+
+/**
+INDEX VECCHIO CON CHIAMATE: 
 //Require Express Connection
 const express = require('express');
 const app = express();
 
-//Require Json parser
+//Require sJson parser
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
