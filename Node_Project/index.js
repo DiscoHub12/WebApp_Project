@@ -14,6 +14,7 @@ const db = require('./config/database.js');
 //require all request : 
 require('./routes/card.routes.js')(app);
 require('./routes/booking.routes.js')(app);
+require('./routes/employee.routes.js')(app);
 
 
 db.sync().then(() => {
