@@ -1,9 +1,9 @@
 //Require the db configuration
-const dbConfig = require('./database.config.js'); 
+const dbConfiguration = require('./database.config.js'); 
 
 //create Sequelize connection for db
 const Sequelize = require('sequelize'); 
-const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
+const sequelize = new Sequelize(dbConfiguration.database, dbConfiguration.user, dbConfiguration.password, {
     host: dbConfig.host, 
     dialect: dbConfig.dialect, 
     operatorsAliases: false, 
@@ -14,18 +14,4 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passw
     }
 }); 
 
-const db = {}
-
-//sequelize into the db 
-db.Sequelize = Sequelize; 
-db.sequelize = sequelize; 
-
-//Require the models class
-
-db.card = require('../models/card.js')(sequelize, Sequelize); 
-db.booking = require ('../models/booking.js')(sequelize, Sequelize);
-db.product = require ('../models/product.js')(sequelize, Sequelize);
-db.user = require ('../models/user.js')(sequelize, Sequelize);
-
-//Export the db
-module.exports = db; 
+module.exports = sequelize;
