@@ -1,5 +1,5 @@
 const db = require("../config/database.js");
-const Booking = db.booking;
+const Booking = require("../models/booking");
 
 
 //Create and Save a new Booking : 
@@ -94,10 +94,7 @@ exports.update = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-    const idUtente = req.query.idUtente;
-    var condition = idUtente ? { idUtente: { [Op.like]: `%${idUtente}%` } } : null;
-
-  Booking.findAll({ where: condition })
+  Booking.findAll({where : {}})
     .then(data => {
       res.send(data);
     })

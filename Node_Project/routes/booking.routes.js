@@ -14,9 +14,9 @@ module.exports = app => {
 
     router.get("/findAll", booking.findAll);
 
-    router.get("./findAllCompleted", booking.findAllCompleted)
+    router.get("/findAllCompleted", booking.findAllCompleted)
 
-    router.post("/update", booking.update);
+    router.post("/update/:id", booking.update);
 
 
     //Route for this module : 
