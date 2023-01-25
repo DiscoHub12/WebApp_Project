@@ -1,27 +1,33 @@
-const sequelize = require("sequelize");
-const { DataTypes } = require("sequelize");
+const {Sequelize, DataTypes, Model} = require('sequelize');
+const sequelize = require('../config/database')
 
-module.exports = (sequelize, Sequelize) => {
-    const Booking = sequelize.define( "booking" , {
-        id : {
-            type : DataTypes.INTEGER(4),
-            autoIncrement : true,
-            primaryKey : true,
-            allowNull: false
-        },
-        idUtente : {
-            type: DataTypes.INTEGER(4),
-            allowNull: false,
-        },
-        dataPrenotazione : {
-            type : DataTypes.DATE,
-            allowNull : false,
-        },
-        completata : {
-            type : DataTypes.INTEGER(1),
-            allowNull : false
-        }
-    });
+class Booking extends Model {}
 
-    return Booking;
-}
+Booking.init({
+    // Model attributes are defined here
+    id : {
+        type : DataTypes.INTEGER(4),
+        autoIncrement : true,
+        primaryKey : true,
+        allowNull: false
+    },
+    idUtente : {
+        type: DataTypes.INTEGER(4),
+        allowNull: false,
+    },
+    dataPrenotazione : {
+        type : DataTypes.DATE,
+        allowNull : false,
+    },
+    completata : {
+        type : DataTypes.INTEGER(1),
+        allowNull : false
+    }
+}, {
+    sequelize,
+    modelName : 'Booking'
+});
+
+module.exports = Booking;
+
+
