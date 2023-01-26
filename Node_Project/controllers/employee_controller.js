@@ -1,11 +1,12 @@
 const db = require("../config/database.js");
 const bcrypt = require('bcrypt');
 const Employee = require("../models/employee");
+const { getTableName } = require("../models/employee");
 
 //Secret for Employee:
 const secret = "!Rj(98bC%9sVn&^c";
 
-//CREATE EMPLOYEE 
+//CREATE EMPLOYEE ACCOUNT
 exports.create = async (req, res) => {
     const codice = req.body.codice;
     const password = req.body.password + secret;
@@ -37,7 +38,7 @@ exports.create = async (req, res) => {
     });
 }
 
-//METHOD THAT DELETE
+//DELETE THE EMPLOYEE ACCOUNT
 exports.delete = (req, res) => {
     const id = req.params.id;
 
@@ -68,7 +69,32 @@ exports.delete = (req, res) => {
 
 
 //METHOD THAT UPDATE EMPLOYEE
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
+    const id = req.params.id;
+    const newPassword = req.body.newPassword + secret;
+
+    if (!id || !newPassword){
+        res.status(400).send({
+            message: "Fill all fields!"
+        });
+        return;
+    }
+
+    const employee = await Employee.findByPk(id);
+    const saltEmployee = employee.salt; 
+    const hashPassword = await bcrypt.hash(newPassword, saltEmployee);
+    employee.set({
+        password: `${hashPassword}`
+    });
+    employee.save();
+    console.log("Password employee changed : " + hashPassword);
+    res.status(201).send({
+        message: "Password correctly modified."
+    });
+}
+
+//FIND EMPLOYEE INTO THE DB AND SEND DATA
+exports.find = (req, res) => {
     const id = req.params.id;
 
     if (!id) {
@@ -78,29 +104,36 @@ exports.update = (req, res) => {
         return;
     }
 
-    const OldPassowrd = req.body.oldPassword;
-    const newPassword = req.body.newPassword + secret;
-    const employee = Employee.findByPk(id);
-    res.status(500).send({
-        message: "Method not finish."
-    })
-
-
-
-}
-
-exports.find = (req, res) => {
-    //Todo implementare
-    res.status(500).send({
-        message: "Error retrieving Tutorial with id=" + id
+    Employee.findByPk(id).then(data => {
+        if (data) {
+            res.send(data);
+        } else {
+            res.status(404).send({
+                message: `Cannot find Tutorial with id=${id}.`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message: "Error retrieving Tutorial with id=" + id
+        });
     });
-
-
 }
 
+
+//FIND ALL EMPLOYEES INTO THE DB AND FIND DATA
 exports.findAll = (req, res) => {
-    //Todo implementare
-    res.status(500).send({
-        message: "Error retrieving Tutorial with id=" + id
+    Employee.findAll().then(data => {
+        if (data) {
+            res.send(data);
+        } else {
+            res.status(404).send({
+                message: `Cannot find Cards. Probably error with connection.`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving tutorials."
+        });
     });
 }

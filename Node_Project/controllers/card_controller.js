@@ -1,3 +1,4 @@
+const { Sequelize, where } = require("sequelize");
 const db = require("../config/database.js");
 const Card = require("../models/card");
 
@@ -130,15 +131,31 @@ exports.addPoints = async (req, res) => {
         });
     } else {
         res.status(500).send({
-            message: "Some error occurred while retrieving tutorials."
+            message: "Some error occurred while retrieving card."
         });
     }
 }
 
 //ADD POINTS INTO ALL CARD 
-exports.addPointsAll = (req, res) => {
-    //Todo implementare
+exports.addPointsAll = async (req, res) => {
+    const punti = req.body.punti;
 
+    if(!punti){
+        res.status(400).send({
+            message: "Number of points can't be null!"
+        });
+        return;
+    }
+
+    await Card.update({
+        punti: Sequelize.literal(`punti + ${punti}`)
+    },{
+        where: {}
+    });
+
+    res.status(201).send({
+        message: "Points add in all Cards.",
+    })
 }
 
 //REMOVE POINTS INTO CARD BY ID 
@@ -173,9 +190,22 @@ exports.removePoints = async (req, res) => {
 
 //REMOVE POINTS INTO ALL CARDS
 exports.removePointsAll = async (req, res) => {
-    //Todo implementare. 
-    res.status(500).send({
-        message: "Method not implement."
+    const punti = req.body.punti;
+
+    if(!punti){
+        res.status(400).send({
+            message: "Number of points can't be null!"
+        });
+        return;
+    }
+
+    await Card.update({
+        punti: Sequelize.literal(`punti - ${punti}`)
+    },{
+        where: {}
     });
 
+    res.status(201).send({
+        message: "Points removed in all Cards.",
+    })
 }
