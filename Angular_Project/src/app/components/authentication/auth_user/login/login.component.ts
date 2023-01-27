@@ -29,6 +29,10 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(){
+    
+  }
+  /**
+  onSubmit(){
     const email = this.loginForm.value.email; 
     const password = this.loginForm.value.password; 
     this.httpClient.post(environment.baseUrl + '/loginUser', {emailUser : email, passwordUser : password}).subscribe(
@@ -46,6 +50,7 @@ export class LoginComponent implements OnInit {
       }
     );
   }
+  */
 
 
 
