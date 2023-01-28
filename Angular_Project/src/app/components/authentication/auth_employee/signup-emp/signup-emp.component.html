@@ -1,29 +1,45 @@
 <p>signup-emp works!</p>
-<div class ="container">
+<div class="container" *ngIf="!isSubscribe">
     <div class="row">
         <div class="col-md-6">
             <div class="card">
                 <div class="text-center">
-                    <h1>Sign Up</h1>
-                    <h6>Register new Employee</h6>
+                    <h1>Create Employee Account</h1>
+                    <h6>Enter information for the employee's new Account</h6>
                 </div>
-                <form>
-                    <form> <!--METTERE : [formGroup]="signupForm" (ngSubmit)="signUp()"-->
-                        <div class="mb-3">
-                            <label for="inputName">Code to access</label>
-                            <input matInput name="name" formControlName="fullname" type="text" class="form-control" id="inputName" maxlength="80" required> 
-                        </div>
-                        <div class="mb-3">
-                            <label for="inputPassword">Password</label>
-                            <input matInput name="password" formControlName="password" type="password" class="form-control" id="inputPassword" maxlenght="150" minlength="6" required> 
-                            <div id="emailHelp" class="form-text"> the password must have at least 6 characters</div>
-                        </div>
-                        <button type="submit" class="btn btn-primary mb-2" [disabled]="signupForm.invalid">Create account</button>
-                    </form>
+
+                <form [formGroup]="signupForm">
+                    <div class="mb-3">
+                        <label for="exampleInputName" class="form-label">Name</label>
+                        <input formControlName="fullname" type="text" class="form-control" id="exampleInputName"
+                            aria-describedby="codeHelp">
+                        <span class="text-danger"
+                            *ngIf="signupForm.controls['fullname'].dirty && signupForm.hasError('required', 'fullname')">*Employee
+                            name is required</span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputEmail" class="form-label">Code</label>
+                        <input formControlName="code" type="code" class="form-control" id="exampleInputCode"
+                            aria-describedby="codeHelp">
+                        <span class="text-danger"
+                            *ngIf="signupForm.controls['code'].dirty && signupForm.hasError('required', 'code')">*Employee
+                            Code is required</span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputPassword" class="form-label">Password</label>
+                        <input formControlName="password" type="password" formControlName="password"
+                            class="form-control" id="exampleInputPassword">
+                        <span class="text-danger"
+                            *ngIf="signupForm.controls['password'].dirty && signupForm.hasError('required', 'password')">*Employee
+                            Password is required</span>
+
+                    </div>
+                    <button type="submit" class="btn btn-primary" (click)="onSubmit()"
+                        [disabled]="signupForm.invalid">Create Account</button>
                 </form>
             </div>
+            <button mat-raised-button (click)="openDialog('0ms', '0ms')">Test dialog</button>
+            <button mat-raised-button (click)="openDialog('4000ms', '2000ms')">Test dialog 2</button>
         </div>
     </div>
 </div>
-
-
