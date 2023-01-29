@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { environment } from 'src/environments/environments';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-sign-up',
@@ -15,8 +16,10 @@ export class SignUpComponent {
 
   data : any;
 
+  isSubscribe = false;
 
-constructor(private formBuilder : FormBuilder, private httpClient : HttpClient, private router : Router) {
+
+constructor(private formBuilder : FormBuilder, private httpClient : HttpClient, private router : Router, public dialog: MatDialog) {
 }
 
 ngOnInit() : void {
@@ -29,16 +32,26 @@ ngOnInit() : void {
   )
 }
 
+openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+  this.dialog.open(DialogAnimationsExampleDialog, {
+    width: '300px',
+    height: '150px',
+    enterAnimationDuration,
+    exitAnimationDuration,
+  });
+}
+
+
 signUp() {
   const fullname = this.signupForm.value.fullname;
   const lastname = this.signupForm.value.lastname;
   const email = this.signupForm.value.email;
   const password = this.signupForm.value.password;
-  this.httpClient.post(environment.baseUrl + "/signupUser", {fullnameUser : fullname, lastnameUser : lastname, emailUser : email, passwordUser : password}).subscribe(
+  this.httpClient.post(environment.baseUrl + "/user/signup", {nome : fullname, cognome : lastname, email : email, password : password}).subscribe(
     res =>{
       this.data=res;
-      if(this.data.status==201) {
-        alert("Registrazione avvenuta con successo");
+      if(res != null) {
+        this.openDialog('0ms', '0ms');
         this.toLogin();
       }else {
         alert("Registrazione non avvenuta con successo");
@@ -51,4 +64,13 @@ toLogin() {
   this.signupForm.reset();
   this.router.navigate(['login']);
 }
+}
+
+@Component ({
+  selector : ' app-signup-dialog',
+  templateUrl : 'dialog_user.html'
+
+})
+export class DialogAnimationsExampleDialog {
+  constructor (public dialogref : MatDialogRef<DialogAnimationsExampleDialog>) {}
 }
