@@ -11,6 +11,10 @@ Employee.init({
         primaryKey: true,
         allowNull: false
     }, 
+    nome : {
+        type: DataTypes.CHAR(200), 
+        allowNull: false, 
+    },
     codice : {
         type: DataTypes.INTEGER(5), 
         allowNull: false,
@@ -22,6 +26,10 @@ Employee.init({
     password: {
         type: DataTypes.CHAR(200), 
         allowNull: false, 
+    }, 
+    restrizioni: {
+        type: DataTypes.INTEGER, 
+        allowNull: false
     }
 
 }, {
