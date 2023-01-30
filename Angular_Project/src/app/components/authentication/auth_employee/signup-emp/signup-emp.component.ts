@@ -70,9 +70,9 @@ export class SignupEmpComponent implements OnInit {
 
 @Component({
   selector: 'app-signup-emp-dialog',
-  templateUrl: 'dialog.html',
+  templateUrl: 'dialog_emp.html',
   styleUrls: ['./signup-emp.component.scss'] //Mettere un file singolo per il css
-})
+})  
 export class DialogAnimationsExampleDialog {
   constructor(public dialogRef: MatDialogRef<DialogAnimationsExampleDialog>) { }
 }

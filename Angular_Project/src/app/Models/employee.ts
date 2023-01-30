@@ -2,11 +2,17 @@ export class Employee{
     id: Number;
     nome: String;
     codice : String;
+    restrizioni : Number
 
-    constructor(id: Number, nome: String, codice: String){
+    constructor(id: Number, nome: String, codice: String, restrizioni : Number){
+        if(restrizioni != 0 || restrizioni != 1){
+            throw console.error("Restrizioni non possibili");
+            
+        }
         this.id = id; 
         this.nome = nome; 
         this.codice = codice; 
+        this.restrizioni = restrizioni;
     }
 
     getId(){
