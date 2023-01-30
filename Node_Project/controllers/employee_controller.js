@@ -1,18 +1,19 @@
 const db = require("../config/database.js");
 const bcrypt = require('bcrypt');
 const Employee = require("../models/employee");
-const { getTableName } = require("../models/employee");
 
 //Secret for Employee:
 const secret = "!Rj(98bC%9sVn&^c";
 
 //CREATE EMPLOYEE ACCOUNT
 exports.create = async (req, res) => {
-    const codice = req.body.codice;
-    const password = req.body.password + secret;
+    const nome = req.body.nameEmployee;
+    const codice = req.body.code;
+    const password = req.body.passwordEmployee + secret;
+    const restrizioni = req.body.restrizioni;
 
     //Valid the request : 
-    if (!codice || !password) {
+    if (!nome || !codice || !password || !restrizioni) {
         res.status(400).send({
             message: "Content can't be empty!"
         });
@@ -21,16 +22,20 @@ exports.create = async (req, res) => {
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log("Employee : " + codice + "Salt : " + salt + "Password : " + hashedPassword);
+    console.log("Employee : "  + nome + " Codice : " + codice + " Salt : " + salt + " Password : " + hashedPassword);
 
     const employee = {
+        nome: nome,
         codice: codice,
         salt: salt,
-        password: hashedPassword
+        password: hashedPassword, 
+        restrizioni: restrizioni
     };
 
     Employee.create(employee).then(data => {
-        res.send(data);
+        res.status(201).send({
+            message: `Employee created with ${restrizioni} restrictions`
+        });
     }).catch(err => {
         res.status(500).send({
             message: err.message || "Some error occurred while creating the new Tutorial."
@@ -137,3 +142,12 @@ exports.findAll = (req, res) => {
         });
     });
 }
+
+/**
+ * Per inviare una risposta con del JSON all'interno:
+ *  //const json = {nome : data.nome, codice : data.codice};
+        res.status(201).send({
+            //json,
+            message: "Employee created"
+        }); 
+ */
