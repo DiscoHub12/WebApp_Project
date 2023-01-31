@@ -11,7 +11,7 @@ let refreshTokens = [];
  * @param {*} the user to returns the JWT.
  */
 function getAccessTokenUser(user){
-
+    return jwt.sign({id : user.id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn : process.env.ACCESS_TOKEN_EXPIRESIN});
 }
 
 /**
@@ -19,7 +19,7 @@ function getAccessTokenUser(user){
  * @param {*} the user to returns the refresh JWT Token.  
  */
 function getRegfreshTokenUser(user){
-
+    return jwt.sign({id :user.id}, process.env.REFRESH_TOKEN_SECRET, {expiresIn : '1d'});
 }
 
 /**
@@ -43,7 +43,11 @@ function getRegfreshTokenEmployee(employee){
  * @param {String} token. 
  */
 function getUserByToken(token){
-
+    let user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if(!user){
+        return res.status(403).send("Token is not valid!");
+    }
+    return user;
 }
 
 /**
@@ -59,7 +63,9 @@ function getEmployeeByToken(token){
  * @param {String} token 
  */
 function getUserByRefreshToken(token){
-
+    let user = jwt.verify(token,process.env.REFRESH_TOKEN_SECRET);
+    if(!user) return res.status(403).send("Token is not valid!");
+    return user;
 }
 
 /**
@@ -71,10 +77,18 @@ function getEmployeeByRefreshToken(token){
 }
 
 /**
- * Middleware to verify the authorization.
+ * Middleware to verify the authorization for User.
  */
-function authenticateToken(req, res, next){
-
+function authenticateTokenUser(req, res, next){
+    let authHeader = req.headers['authorization'];
+    if(authHeader){
+        let token = authHeader.split(' ')[1];
+        jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user) => {
+            if(err) return res.status(403).send("Token is not valid!");
+            req.user = user;
+            next();
+        })
+    } else return res.status(401).send("You are not authenticated!");   
 }
 
-module.exports = {refreshTokens, getAccessTokenUser, getAccessTokenEmployee, getRegfreshTokenUser, getRegfreshTokenEmployee, getUserByToken, getEmployeeByToken, getUserByRefreshToken, getEmployeeByRefreshToken, authenticateToken};
+module.exports = {refreshTokens, getAccessTokenUser, getAccessTokenEmployee, getRegfreshTokenUser, getRegfreshTokenEmployee, getUserByToken, getEmployeeByToken, getUserByRefreshToken, getEmployeeByRefreshToken, authenticateTokenUser};
