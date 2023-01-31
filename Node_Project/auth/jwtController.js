@@ -27,7 +27,7 @@ function getRegfreshTokenUser(user){
  * @param {*}  the employee to returns the JWT.
  */
 function getAccessTokenEmployee(employee){
-
+    return jwt.sign({ id: employee.id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: process.env.ACCESS_TOKEN_EXPIRESIN});
 }
 
 /**
@@ -35,7 +35,7 @@ function getAccessTokenEmployee(employee){
  * @param {*} the employee to returns the refresh JWT token.
  */
 function getRegfreshTokenEmployee(employee){
-
+    return jwt.sign({ id: employee.id}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1d'});
 }
 
 /**
@@ -55,7 +55,9 @@ function getUserByToken(token){
  * @param {String} token.
  */
 function getEmployeeByToken(token){
-
+    let employee = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if(!employee) return res.status(403).send("Token is not valid."); 
+    return employee;
 }
 
 /**
@@ -72,8 +74,10 @@ function getUserByRefreshToken(token){
  * Function that returns Employee by RefreshToken if is possible.
  * @param {String} token 
  */
-function getEmployeeByRefreshToken(token){
-
+function getEmployeeByRefreshToken(refreshToken){
+    let employee = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    if(!employee) return res.status(403).send("Token is not valid");
+    return employee;
 }
 
 /**
@@ -89,6 +93,21 @@ function authenticateTokenUser(req, res, next){
             next();
         })
     } else return res.status(401).send("You are not authenticated!");   
+}
+
+/**
+ * Middleware for verify the authorization for Employee.
+ */
+function authenticateTokenEmployee(req, res, next){
+    const autHeader = req.headers['authorization']; 
+    const token = autHeader && autHeader.split(' ')[1]; 
+    if(token == null) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, employee) => {
+        if(err) return res.sendStatus(403);
+        req.employee = employee;
+        next();
+    });
 }
 
 module.exports = {refreshTokens, getAccessTokenUser, getAccessTokenEmployee, getRegfreshTokenUser, getRegfreshTokenEmployee, getUserByToken, getEmployeeByToken, getUserByRefreshToken, getEmployeeByRefreshToken, authenticateTokenUser};
