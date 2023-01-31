@@ -1,6 +1,8 @@
 const db = require("../config/database.js");
 const bcrypt = require('bcrypt');
 const Employee = require("../models/employee");
+const passManager = require("../utils/passController");
+const auth = require("../auth/jwtController");
 
 //Secret for Employee:
 const secret = "!Rj(98bC%9sVn&^c";
@@ -11,6 +13,7 @@ exports.create = async (req, res) => {
     const codice = req.body.code;
     const password = req.body.passwordEmployee + secret;
     const restrizioni = req.body.restrizioni;
+    console.log("Employee : "  + nome + " Codice : " + codice +" Password : " + password);
 
     //Valid the request : 
     if (!nome || !codice || !password || !restrizioni) {
@@ -141,6 +144,55 @@ exports.findAll = (req, res) => {
                 err.message || "Some error occurred while retrieving tutorials."
         });
     });
+}
+
+//EMPLOYEE LOGIN
+exports.login = async (req, res) => {
+    let codice = req.body.codice; 
+    let password = req.body.password; 
+    
+    //Valid the request : 
+    if (!codice || !password) {
+        res.status(400).send({
+            message: "Content can't be empty!"
+        });
+        return;
+    }
+
+    let employee = await Employee.findOne( {
+        where: {
+            [db.Sequelize.Op.or] : [
+                { codice : codice}
+            ]
+        }
+    }); 
+
+    if(employee && passManager.comparePass(password, employee.password)){
+        let accessToken = auth.getAccessTokenEmployee(employee); 
+        let refreshToken = auth.getRegfreshTokenEmployee(employee); 
+        auth.refreshTokens.push(refreshToken); 
+        const json = {nome : employee.nome, codice : employee.codice, restrizioni: employee.restrizioni, accessToken : accessToken, refreshToken: refreshToken};
+        res.status(201).send({
+            json,
+            message: "Employee created"
+        }); 
+    } else {
+        res.status(401).send({
+            message : "Password not correct"
+        });
+    }
+}
+
+//EMPLOYEE LOGOUT
+exports.logout = async (req, res) => {
+    //Todo implementare
+    /**
+     * const token = req.header("Authorization");
+    res.status(201).send({
+        token,
+        message: "Employee created"
+    }); 
+     */
 }
 
 /**

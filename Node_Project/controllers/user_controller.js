@@ -38,7 +38,6 @@ exports.create = async (req, res) => {
     });
 }
 
-
 //DELETE THE USER ACCOUNT
 exports.delete = (req, res) =>{
     const id = req.params.id;
@@ -165,3 +164,14 @@ exports.findAll = (req, res) => {
         });
       });
 };
+
+//EMPLOYEE LOGIN
+exports.login = async (req, res) => {
+ //Todo implementare
+}
+
+//EMPLOYEE LOGOUT
+exports.logout = async (req, res) => {
+  //Todo implementare
+
+}
