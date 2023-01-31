@@ -38,7 +38,7 @@ export class LoginEmpComponent implements OnInit {
         this.data = res;
         if (this.data.status == 201) {
           alert('Login successfully.');
-          this.employeeLogged = new Employee(this.data.id, this.data.nome, this.data.codice);
+          this.employeeLogged = new Employee(this.data.id, this.data.nome, this.data.codice, this.data.restrizioni);
           this.router.navigate(['userDashboard']);
         } else {
           alert("Password not correct.");
