@@ -4,16 +4,18 @@ const Employee = require("../models/employee");
 const passManager = require("../utils/passController");
 const auth = require("../auth/jwtController");
 
-//Secret for Employee:
+//Secret for Authentication:
 const secret = "!Rj(98bC%9sVn&^c";
 
-//CREATE EMPLOYEE ACCOUNT
+// ---- AUTHENTICATION METHODS -----
+
+
 exports.create = async (req, res) => {
     const nome = req.body.nameEmployee;
     const codice = req.body.code;
     const password = req.body.passwordEmployee + secret;
     const restrizioni = req.body.restrizioni;
-    console.log("Employee : "  + nome + " Codice : " + codice +" Password : " + password);
+    console.log("Employee : " + nome + " Codice : " + codice + " Password : " + password);
 
     //Valid the request : 
     if (!nome || !codice || !password || !restrizioni) {
@@ -25,13 +27,13 @@ exports.create = async (req, res) => {
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log("Employee : "  + nome + " Codice : " + codice + " Salt : " + salt + " Password : " + hashedPassword);
+    console.log("Employee : " + nome + " Codice : " + codice + " Salt : " + salt + " Password : " + hashedPassword);
 
     const employee = {
         nome: nome,
         codice: codice,
         salt: salt,
-        password: hashedPassword, 
+        password: hashedPassword,
         restrizioni: restrizioni
     };
 
@@ -46,7 +48,97 @@ exports.create = async (req, res) => {
     });
 }
 
-//DELETE THE EMPLOYEE ACCOUNT
+
+exports.login = async (req, res) => {
+    let codice = req.body.codice;
+    let password = req.body.password + secret;
+
+    //Valid the request : 
+    if (!codice || !password) {
+        res.status(400).send({
+            message: "Content can't be empty!"
+        });
+        return;
+    }
+
+    Employee.findOne({
+        where: {
+            codice,
+        },
+    })
+        .then((employee) => {
+            if (!employee) {
+                return res.status(401).send({
+                    message: "Employee with this id not find.",
+                });
+            }
+
+            if (!passManager.comparePass(password, employee.password)) {
+                return res.status(401).send({
+                    message: "Password not correct",
+                });
+            }
+
+            const accessToken = auth.getAccessTokenEmployee(employee);
+            const refreshToken = auth.getRegfreshTokenEmployee(employee);
+            auth.refreshTokens.push(refreshToken);
+            const jsonResponse = { nome: employee.nome, codice: employee.codice, restrizioni: employee.restrizioni, accessToken: accessToken, refreshToken: refreshToken }
+            res.status(201).send({
+                jsonResponse,
+                message: "Login Successfull",
+            });
+        });
+    console.log("Login Success.");
+}
+
+
+exports.logout = async (req, res) => {
+    let refreshToken = req.body.refreshToken;
+
+    //Validate the refresh token
+    if (!refreshToken) {
+        res.status(400).send({
+            message: "Token not present.",
+        });
+    }
+
+    auth.refreshTokens = auth.refreshTokens.filter((token) => token !== refreshToken);
+    console.log(auth.refreshTokens);
+
+    res.status(200).send({
+        message: "You logged out successfully",
+    });
+}
+
+
+exports.refreshToken = async (req, res) => {
+    let refreshToken = req.body.refreshToken;
+
+    if (!refreshToken || !auth.refreshTokens.includes(refreshToken)) {
+        return res.status(401).send({
+            message: "You are not authenticated",
+        });
+    }
+
+    //
+    let employee = auth.getEmployeeByRefreshToken(refreshToken);
+
+    auth.refreshTokens = auth.refreshTokens.filter((token) => token != refreshToken);
+
+    let newAccessToken = auth.getAccessTokenEmployee(employee);
+    let newRefreshToken = auth.getRegfreshTokenEmployee(employee);
+    auth.refreshTokens.push(newRefreshToken);
+
+    return res.status(200).send({
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+    });
+}
+
+
+// --- OTHER METHODS ------
+
+
 exports.delete = (req, res) => {
     const id = req.params.id;
 
@@ -76,12 +168,11 @@ exports.delete = (req, res) => {
 }
 
 
-//METHOD THAT UPDATE EMPLOYEE
 exports.update = async (req, res) => {
     const id = req.params.id;
     const newPassword = req.body.newPassword + secret;
 
-    if (!id || !newPassword){
+    if (!id || !newPassword) {
         res.status(400).send({
             message: "Fill all fields!"
         });
@@ -89,7 +180,7 @@ exports.update = async (req, res) => {
     }
 
     const employee = await Employee.findByPk(id);
-    const saltEmployee = employee.salt; 
+    const saltEmployee = employee.salt;
     const hashPassword = await bcrypt.hash(newPassword, saltEmployee);
     employee.set({
         password: `${hashPassword}`
@@ -101,7 +192,7 @@ exports.update = async (req, res) => {
     });
 }
 
-//FIND EMPLOYEE INTO THE DB AND SEND DATA
+
 exports.find = (req, res) => {
     const id = req.params.id;
 
@@ -128,7 +219,6 @@ exports.find = (req, res) => {
 }
 
 
-//FIND ALL EMPLOYEES INTO THE DB AND FIND DATA
 exports.findAll = (req, res) => {
     Employee.findAll().then(data => {
         if (data) {
@@ -146,60 +236,53 @@ exports.findAll = (req, res) => {
     });
 }
 
-//EMPLOYEE LOGIN
-exports.login = async (req, res) => {
-    let codice = req.body.codice; 
-    let password = req.body.password; 
-    
-    //Valid the request : 
-    if (!codice || !password) {
-        res.status(400).send({
-            message: "Content can't be empty!"
-        });
-        return;
-    }
 
-    let employee = await Employee.findOne( {
+//------ESEMPI DI CODICE COMMENTATI-------
+
+/**
+ * ALTRO ESEMPIO DI LOGIN 1)
+ * CODICE
+  let employee = await Employee.findOne( {
         where: {
             [db.Sequelize.Op.or] : [
                 { codice : codice}
             ]
         }
-    }); 
+    });
 
     if(employee && passManager.comparePass(password, employee.password)){
-        let accessToken = auth.getAccessTokenEmployee(employee); 
-        let refreshToken = auth.getRegfreshTokenEmployee(employee); 
-        auth.refreshTokens.push(refreshToken); 
+        let accessToken = auth.getAccessTokenEmployee(employee);
+        let refreshToken = auth.getRegfreshTokenEmployee(employee);
+        auth.refreshTokens.push(refreshToken);
         const json = {nome : employee.nome, codice : employee.codice, restrizioni: employee.restrizioni, accessToken : accessToken, refreshToken: refreshToken};
         res.status(201).send({
             json,
             message: "Employee created"
-        }); 
+        });
     } else {
         res.status(401).send({
             message : "Password not correct"
         });
     }
-}
+*/
 
-//EMPLOYEE LOGOUT
-exports.logout = async (req, res) => {
-    //Todo implementare
-    /**
-     * const token = req.header("Authorization");
-    res.status(201).send({
-        token,
-        message: "Employee created"
-    }); 
-     */
-}
 
 /**
- * Per inviare una risposta con del JSON all'interno:
- *  //const json = {nome : data.nome, codice : data.codice};
+ * PER INVIARE UNA RISPOSTA CON JSON ALL'INTERNO
+ * CODICE :
+    const json = {nome : data.nome, codice : data.codice};
         res.status(201).send({
             //json,
             message: "Employee created"
-        }); 
+        });
+ */
+
+/**
+ * PER PRENDERE UN TOKEN DALL'HEADER
+ * CODICE :
+    const token = req.header("Authorization");
+    res.status(201).send({
+        token,
+        message: "Employee created"
+    });
  */
