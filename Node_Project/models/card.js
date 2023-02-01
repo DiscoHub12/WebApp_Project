@@ -1,11 +1,11 @@
-const {Sequelize, DataTypes, Model} = require('sequelize');
-const sequelize = require('../config/database'); 
+const { Sequelize, DataTypes, Model } = require('sequelize');
+const sequelize = require('../config/database');
 
-class Card extends Model {}
+class Card extends Model { }
 
 Card.init({
-     //Model attributes are defined here: 
-     id: {
+    //Model attributes are defined here: 
+    id: {
         type: DataTypes.INTEGER(3),
         autoIncrement: true,
         primaryKey: true,
@@ -21,11 +21,12 @@ Card.init({
     },
     punti: {
         type: DataTypes.INTEGER(4),
-        allowNull: false, 
+        allowNull: false,
         defaultValue: 0
-    }},{
-    sequelize, 
+    }
+}, {
+    sequelize,
     modelName: 'Card'
-}); 
+});
 
 module.exports = Card; 

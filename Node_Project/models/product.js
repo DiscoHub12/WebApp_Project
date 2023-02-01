@@ -1,7 +1,7 @@
-const {Sequelize, DataTypes, Model} = require('sequelize');
+const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 
-class Product extends Model {}
+class Product extends Model { }
 
 Product.init({
     id: {
@@ -10,25 +10,25 @@ Product.init({
         primaryKey: true,
         allowNull: false
     },
-    nome : {
-        type : DataTypes.CHAR(20),
-        allowNull : false
-    }, 
-    marchio : {
-        type : DataTypes.CHAR(20),
-        allowNull : false
+    nome: {
+        type: DataTypes.CHAR(20),
+        allowNull: false
     },
-    prezzo : {
-        type : DataTypes.FLOAT,
-        allowNull : false
+    marchio: {
+        type: DataTypes.CHAR(20),
+        allowNull: false
     },
-    immagine : {
-        type : DataTypes.BLOB,
-        allowNull : true
+    prezzo: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    },
+    immagine: {
+        type: DataTypes.BLOB,
+        allowNull: true
     }
 }, {
     sequelize,
-    modelName : 'Product'
+    modelName: 'Product'
 });
 
 module.exports = Product; 
