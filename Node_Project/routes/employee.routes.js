@@ -1,15 +1,25 @@
 module.exports = app => {
     
-    //Require Employee controller for methods
+    //Require Employee controller for call methods for Routes
     const employee = require('../controllers/employee_controller.js'); 
     
+    //Require JWT Controller for call JWT Method in Header Route
     const auth = require("../auth/jwtController");
 
     //Require express connection
     var router = require('express').Router(); 
 
-    //Route for Signup Employee
-    router.post("/signup", employee.create);
+    // ---- AUTHENTICAITON ROUTES -----
+
+    router.post("/registration", employee.create);
+
+    router.get("/login", employee.login);
+
+    router.post("/logout", employee.logout);
+
+    router.post("/refreshToken", employee.refreshToken)
+
+    // ---- OTHER ROUTES -----
 
     //Route for delete Employee Account by id
     router.post("/delete/:id", employee.delete); 
@@ -22,14 +32,6 @@ module.exports = app => {
 
     //Route for find all Employee
     router.get("/findAll", employee.findAll);
-
-    //Route for Employee Login 
-    router.get("/login", employee.login);
-
-    //Route for Employee Logout
-    router.post("/logout", auth.authenticateTokenEmployee, (req, res, next) => {
-        employee.logout(req, res, next);
-    }) 
     
 
     //Route for this module : 

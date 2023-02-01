@@ -1,22 +1,31 @@
 module.exports = app => {
 
-    //Require user controller for methods
+    //Require User controller for call methods for Routes
     const user = require('../controllers/user_controller');
+
+    //Require JWT Controller for call JWT Method in Header Route
+    const auth = require("../auth/jwtController");
 
     //Require express connection 
     var router = require('express').Router();
 
-    //Router for Signup Login
-    router.post("/signup", user.create);
+    // ---- AUTHENTICATION ROUTES -----
 
-    //Route for User login
+    router.post("/registration", user.create);
+
     router.post("/login", user.login);
+
+    router.post("/logout", user.logout); 
+
+    router.post("refreshToken", user.refreshToken); 
+
+    // ---- OTHER ROUTES ----
 
     //Route for delete User by Id
     router.post("/delete/:id", user.delete);
 
-    //Route for delete all User
-    router.post("/deleteAll", user.deleteAll);
+    //Route for update User account
+    router.post("/update/:id", user.update);
 
     //Route for find User by Id
     router.get("/find/:id", user.find);
@@ -24,8 +33,6 @@ module.exports = app => {
     //Route for find all User
     router.get("/findAll", user.findAll);
 
-    //Route for update User account
-    router.post("/update/:id", user.update);
 
     //Route for this module : 
     app.use('/api/user', router);
