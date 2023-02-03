@@ -1,10 +1,14 @@
 module.exports = app => {
+
+    
     const booking = require('../controllers/booking_controller.js'); 
 
     var router = require('express').Router(); 
 
     //Init the routes : 
     router.post("/create", booking.create);
+
+    router.post("/update/:id", booking.update);
 
     router.post("/delete/:id", booking.delete);
 
@@ -14,9 +18,9 @@ module.exports = app => {
 
     router.get("/findAll", booking.findAll);
 
-    router.get("/findAllCompleted", booking.findAllCompleted)
+    router.get("/findFree", booking.findFreeBooking);
 
-    router.post("/update/:id", booking.update);
+    router.get("/findAllCompleted", booking.findAllCompleted);
 
 
     //Route for this module : 
