@@ -1,20 +1,62 @@
-.example-spacer {
-  flex: 1 1 auto;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
 }
 
-.example-container {
-  width: 400px;
-  height: 200px;
-  margin: 12px;
-  border: 1px solid #555;
+header a {
+  color: #000;
+  text-decoration: none;
 }
 
-mat-drawer-content {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.jumbotron {
+  background-color: #fff;
+  padding: 5rem;
+  text-align: center;
 }
+
+.jumbotron h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.jumbotron p {
+  font-size: 1.5rem;
+  font-weight: lighter;
+}
+
+.btn-primary {
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.btn-primary:hover {
+  background-color: #fff;
+  color: #333;
+  border-color: #333;
+}
+
+header, footer {
+  background-color: #333;
+  color: #fff;
+  padding: 1rem;
+  text-align: center; /* allinea il testo al centro */
+  width: 100%;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+}
+
+
+
+
+
+
+
 /**
 ESEMPIO DI CSS:
 .example-card {
