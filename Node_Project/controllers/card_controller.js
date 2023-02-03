@@ -15,20 +15,32 @@ exports.create = (req, res) => {
         return;
     }
 
-    //Create a new Card : 
-    const card = {
-        idUtente: req.body.idUtente,
-        codice: req.body.codice
-    }
+    Card.findOne({
+        where: {
+            idUtente: idUtente,
+        }
+    }).then(result => {
+        if (result) {
+            res.status(400).send({
+                message: "Card already exists!"
+            })
+        } else {
+            const card = {
+                idUtente: idUtente,
+                codice: codice
+            }
 
-    Card.create(card).then(data => {
-        res.send(data);
-    }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while creating the new Tutorial."
-        });
-    });
-};
+            Card.create(card).then(data => {
+                res.send(data);
+            }).catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while creating the Card."
+                })
+            });
+        }
+    }
+    )
+}
 
 //DELETE CARD METHOD 
 exports.delete = (req, res) => {
@@ -140,7 +152,7 @@ exports.addPoints = async (req, res) => {
 exports.addPointsAll = async (req, res) => {
     const punti = req.body.punti;
 
-    if(!punti){
+    if (!punti) {
         res.status(400).send({
             message: "Number of points can't be null!"
         });
@@ -149,7 +161,7 @@ exports.addPointsAll = async (req, res) => {
 
     await Card.update({
         punti: Sequelize.literal(`punti + ${punti}`)
-    },{
+    }, {
         where: {}
     });
 
@@ -192,7 +204,7 @@ exports.removePoints = async (req, res) => {
 exports.removePointsAll = async (req, res) => {
     const punti = req.body.punti;
 
-    if(!punti){
+    if (!punti) {
         res.status(400).send({
             message: "Number of points can't be null!"
         });
@@ -201,7 +213,7 @@ exports.removePointsAll = async (req, res) => {
 
     await Card.update({
         punti: Sequelize.literal(`punti - ${punti}`)
-    },{
+    }, {
         where: {}
     });
 

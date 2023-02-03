@@ -51,45 +51,51 @@ exports.create = async (req, res) => {
 
 exports.login = async (req, res) => {
     let codice = req.body.codice;
-    let password = req.body.password + secret;
+    let password = req.body.password;
 
     //Valid the request : 
-    if (!codice || !password) {
+    if (!codice || codice == "" || !password || password == "") {
         res.status(400).send({
             message: "Content can't be empty!"
         });
         return;
     }
+    password = password + secret;
+
 
     Employee.findOne({
         where: {
             codice,
         },
-    })
-        .then((employee) => {
-            if (!employee) {
-                return res.status(401).send({
-                    message: "Employee with this id not find.",
-                });
-            }
-
-            if (!passManager.comparePass(password, employee.password)) {
-                return res.status(401).send({
-                    message: "Password not correct",
-                });
-            }
-
-            const accessToken = auth.getAccessTokenEmployee(employee);
-            const refreshToken = auth.getRegfreshTokenEmployee(employee);
-            auth.refreshTokens.push(refreshToken);
-            const jsonResponse = { nome: employee.nome, codice: employee.codice, restrizioni: employee.restrizioni, accessToken: accessToken, refreshToken: refreshToken }
-            res.status(201).send({
-                jsonResponse,
-                message: "Login Successfull",
+    }).then((employee) => {
+        if (!employee) {
+            return res.status(401).send({
+                message: "Employee with this id not find.",
             });
-        });
-    console.log("Login Success.");
-}
+        }
+
+        return passManager.comparePass(password, employee.password)
+            .then((isMatch) => {
+                if (!isMatch) {
+                    return res.status(401).send({
+                        message: "Password not correct",
+                    });
+                } else {
+                    const accessToken = auth.getAccessTokenEmployee(employee);
+                    const refreshToken = auth.getRegfreshTokenEmployee(employee);
+                    auth.refreshTokens.push(refreshToken);
+                    const jsonResponse = { nome: employee.nome, codice: employee.codice, restrizioni: employee.restrizioni, accessToken: accessToken, refreshToken: refreshToken }
+                    res.status(201).send({
+                        jsonResponse,
+                        message: "Login Successfull",
+                    });
+                }
+            });
+    });
+    console.log("Login Successfull");
+    console.log(auth.refreshTokens)
+
+};
 
 
 exports.logout = async (req, res) => {
@@ -102,12 +108,20 @@ exports.logout = async (req, res) => {
         });
     }
 
-    auth.refreshTokens = auth.refreshTokens.filter((token) => token !== refreshToken);
+    let index = auth.refreshTokens.indexOf(refreshToken);
+
+    if (index == -1) {
+        return res.status(401).send({
+            message: "You are not authenticated",
+        });
+    }
+
+    auth.refreshTokens.splice(index, 1);
     console.log(auth.refreshTokens);
 
     res.status(200).send({
-        message: "You logged out successfully",
-    });
+        message: "Logout Successfull",
+    })
 }
 
 
@@ -128,6 +142,7 @@ exports.refreshToken = async (req, res) => {
     let newAccessToken = auth.getAccessTokenEmployee(employee);
     let newRefreshToken = auth.getRegfreshTokenEmployee(employee);
     auth.refreshTokens.push(newRefreshToken);
+    console.log(auth.refreshTokens)
 
     return res.status(200).send({
         accessToken: newAccessToken,
