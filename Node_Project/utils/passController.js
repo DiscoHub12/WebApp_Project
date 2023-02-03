@@ -29,8 +29,8 @@ function generateSalt(){
  * @param {String} generated the password hashed.
  * @returns {Boolean} true if the encrypted password is comparable to real password, else false;
  */
-function comparePass(password,generated){
-    return bcrypt.compare(password,generated);
+function comparePass(plainPassword, hashPassword){
+    return bcrypt.compare(plainPassword, hashPassword);
 }
 
 module.exports = {comparePass};
