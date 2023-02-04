@@ -1,1 +1,19 @@
-<p>sidenav works!</p>
+<mat-nav-list>
+    <mat-divider></mat-divider>
+    <h2 matSubheader class="mt-2">DASHBOARD </h2>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/home">
+      <mat-icon>home</mat-icon> Home
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/user/card">
+      <mat-icon>link</mat-icon> Card
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/booking">
+      <mat-icon>booking</mat-icon> Booking
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/products">
+      <mat-icon>link</mat-icon> Products
+    </a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/treatments">
+      <mat-icon>link</mat-icon> Treatments
+    </a>
+  </mat-nav-list>
