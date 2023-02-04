@@ -12,10 +12,14 @@ export class DashboardComponent implements OnInit {
 
   currentUser : any; 
   sideBarOpen = true;
+  user = new User(1, "Sofia", "Scattolini");
+  userType = this.user;
+  selectedOption: String | undefined;
 
-  constructor () {}
 
-  userType = "user"
+  constructor() { }
+
+  
   
 
 
