@@ -2,7 +2,9 @@ export class Employee{
     id: Number;
     nome: String;
     codice : String;
-    restrizioni : Number
+    restrizioni : Number;
+    isUser = false;
+    isEmployee = true;
 
     constructor(id: Number, nome: String, codice: String, restrizioni : Number){
         if(restrizioni != 0 || restrizioni != 1){
