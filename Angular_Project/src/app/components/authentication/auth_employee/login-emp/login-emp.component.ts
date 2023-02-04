@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environments';
 import { Employee } from 'src/app/Models/employee';
-import { AuthService } from '../../auth.service';
+//import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-login-emp',
@@ -22,7 +22,7 @@ export class LoginEmpComponent implements OnInit {
 
   employeeLogged: Employee | undefined;
 
-  constructor(private httpClient: HttpClient, private formBuilder: FormBuilder, private router: Router, private authService : AuthService) { }
+  constructor(private httpClient: HttpClient, private formBuilder: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
@@ -41,8 +41,8 @@ export class LoginEmpComponent implements OnInit {
         if (this.data.status == 201) {
           alert('Login successfully.');
           this.employeeLogged = new Employee(this.data.id, this.data.nome, this.data.codice, this.data.restrizioni);
-          this.authService.setUserData(this.employeeLogged);
-          this.router.navigate(['userDashboard']);
+         // this.authService.setUserData(this.employeeLogged);
+          this.router.navigate(['dashboard/employee']);
         } else {
           alert("Password not correct.");
         }
