@@ -1,6 +1,8 @@
 const db = require("../config/database.js");
-const User = require("../models/user");
 const bcrypt = require('bcrypt');
+const User = require("../models/user");
+const passManager = require("../utils/passController.js");
+const auth = require("../auth/jwtController");
 
 //Secret for Authentication
 const secret = "!Rj(98bC%9sVn&^c";
@@ -43,17 +45,99 @@ exports.create = async (req, res) => {
 
 
 exports.login = async (req, res) => {
-  //Todo implementare
+  let email = req.body.email;
+  let password = req.body.password;
+
+  if (!password || password == "" || !email || email == "") {
+    res.status(400).send({
+      message: "Content can't be empty!"
+    });
+    return;
+  }
+
+  User.findOne({
+    where: {
+      email: email
+    },
+  }).then((user) => {
+    if (!employee) {
+      return res.status(401).send({
+        message: "Invalid email or password.",
+      });
+    }
+
+    return passManager.comparePass(password, employee.password)
+      .then((isMatch) => {
+        if (!isMatch) {
+          return res.status(401).send({
+            message: "Password is incorrect.",
+          });
+        } else {
+          const accessToken = auth.getAccessTokenUser(user);
+          const refreshToken = auth.getRefreshTokenUser(user);
+          auth.refreshTokens.push(refreshToken);
+          const jsonResponse = { nome: user.nome, cognome: user.cognome, accessToken: accessToken, refreshToken: refreshToken };
+          res.status(201).send({
+            jsonResponse,
+            message: "Login Successfull.",
+          });
+        }
+      });
+  });
+
+  console.log("Login Successfull.");
+  console.log(auth.refreshTokens);
 }
 
 
 exports.logout = async (req, res) => {
-  //Todo implementare
+  let refreshToken = req.body.refreshToken;
 
+  if (!refreshToken) {
+    res.status(400).send({
+      message: "Content can't be empty!"
+    });
+    return;
+  }
+
+  let index = auth.refreshTokens.indexOf(refreshToken);
+
+  if (index == -1) {
+    res.status(401).send({
+      message: "You are not authenticated.",
+    });
+  }
+
+  auth.refreshTokens.splice(index, 1);
+  console.log(auth.refreshTokens);
+
+  res.status(200).send({
+    message: "Logout Successfull.",
+  });
 }
 
 exports.refreshToken = async (req, res) => {
-  //Todo implementare
+  let refreshToken = req.body.refreshToken; 
+
+  if(!refreshToken || auth.refreshTokens.includes(refreshToken)){
+    return res.status(401).send({
+      message: "You are not authenticated.",
+    });
+  }
+
+  let user = auth.getUserByRefreshToken(refreshToken);
+
+  auth.refreshTokens = auth.refreshTokens.filter(token => token!== refreshToken);
+
+  let newAccessToken = auth.getAccessTokenUser(user);
+  let newRefreshToken = auth.getRefreshTokenUser(user);
+  auth.refreshTokens.push(newRefreshToken);
+  console.log(auth.refreshTokens);
+
+  return res.status(200).send({
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+  }); 
 }
 
 
