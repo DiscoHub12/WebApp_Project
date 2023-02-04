@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from 'src/app/Models/user'
 import { environment } from 'src/environments/environments';
 import { Router, UrlTree } from '@angular/router';
+//import { AuthService } from '../../auth.service';
+//import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -28,21 +30,18 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit(){
-    
-  }
-  /**
-  onSubmit(){
-    const email = this.loginForm.value.email; 
-    const password = this.loginForm.value.password; 
-    this.httpClient.post(environment.baseUrl + '/loginUser', {emailUser : email, passwordUser : password}).subscribe(
+  onSubmit() {
+    const email = this.loginForm.value.email;
+    const password = this.loginForm.value.password;
+    this.httpClient.post(environment.baseUrl + '/loginUser', { email: email, passwordUser: password }).subscribe(
       res => {
-        this.data = res; 
-        if(this.data.status == 201){
-          alert('Login successfully.'); 
-          this.userLogged = new User(this.data.nome, this.data.cognome, this.data.email);
-          this.router.navigate(['userDashboard']);
-        }else {
+        this.data = res;
+        if (this.data.status == 201) {
+          alert('Login successfully.');
+         // this.userLogged = new User(this.data.id, this.data.fullname, this.data.lastname);
+          //this.authService.setUserData(this.userLogged);
+          this.router.navigate(['dashboard/user']);
+        } else {
           alert("Password not correct.");
         }
       }, err => {
@@ -50,7 +49,9 @@ export class LoginComponent implements OnInit {
       }
     );
   }
-  */
+
+}
+
 
 
 
@@ -71,40 +72,3 @@ export class LoginComponent implements OnInit {
     })
   }
   */
-
-  /**
-  ESEMPI PRECEDENTI: 
-
-  IMPORT NECESSARI :
-  import { environment } from 'src/environments/environments';
-  import { JsonPipe } from '@angular/common';
-
-  VARIABILI PER LE PROVE : 
-  nome : any;
-  parola = "ciao";
-
-  METODI : 
-  //Metodo onInit caricato quando il componente viene avviato. 
-  ngOnInit(): void {
-    this.getPrincipalData();
-  }
-
-
-  //Metodo che prende i dati dal Backend tramite la get ad una particolare rotta.
-    getPrincipalData(){
-    this.httpClient.get(environment.baseUrl + '/login').subscribe((dataFromBackend) =>{
-      this.nome = dataFromBackend;
-      console.log("dati: ", dataFromBackend)
-    })
-  }
-
-  //Metodo che invia dei dati al Backend tramite la chiamata a funzione post()
-  funzioneInvia(){
-    this.httpClient.post(environment.baseUrl + '/login', {params : this.parola}).subscribe();
-  }
-   */
-
-
-}
-
-

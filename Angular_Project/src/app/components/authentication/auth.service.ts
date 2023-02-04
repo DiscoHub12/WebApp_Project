@@ -1,4 +1,4 @@
-import { Employee } from "src/app/Models/employee";
+/**import { Employee } from "src/app/Models/employee";
 import { User } from "src/app/Models/user";
 
 export class AuthService {
@@ -18,3 +18,5 @@ export class AuthService {
       return !!localStorage.getItem('token');
     }
 }
+
+*/

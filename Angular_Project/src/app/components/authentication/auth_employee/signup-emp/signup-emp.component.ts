@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environments';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-signup-emp',
@@ -19,7 +18,7 @@ export class SignupEmpComponent implements OnInit {
   isSubscribe = false;
 
 
-  constructor(private formBuilder: FormBuilder, private httpClient: HttpClient, private router: Router, public dialog: MatDialog) {
+  constructor(private formBuilder: FormBuilder, private httpClient: HttpClient, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -31,26 +30,17 @@ export class SignupEmpComponent implements OnInit {
     )
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(DialogAnimationsExampleDialog, {
-      width: '300px',
-      height: '150px',
-      enterAnimationDuration,
-      exitAnimationDuration,
-    });
-  }
 
   onSubmit() {
     const fullname = this.signupForm.value.fullname;
     const code = this.signupForm.value.code;
     const password = this.signupForm.value.password;
-    this.httpClient.post(environment.baseUrl + "/employee/create", { nameEmployee: fullname, code: code, passwordEmployee: password }).subscribe(
+    this.httpClient.post(environment.baseUrl + "/employee/registration", { nameEmployee: fullname, code: code, passwordEmployee: password }).subscribe(
       res => {
         this.data = res;
         if (this.data.status == 201) {
           alert("Registrazione avvenuta con successo");
           console.log(this.data);
-          this.openDialog('0ms', '0ms');
           this.toLogin();
         } else {
           alert("Registrazione non avvenuta con successo");
@@ -68,11 +58,3 @@ export class SignupEmpComponent implements OnInit {
   }
 }
 
-@Component({
-  selector: 'app-signup-emp-dialog',
-  templateUrl: 'dialog_emp.html',
-  styleUrls: ['./signup-emp.component.scss'] //Mettere un file singolo per il css
-})  
-export class DialogAnimationsExampleDialog {
-  constructor(public dialogRef: MatDialogRef<DialogAnimationsExampleDialog>) { }
-}
