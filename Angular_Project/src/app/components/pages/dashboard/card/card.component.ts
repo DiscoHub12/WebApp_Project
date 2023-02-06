@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Card } from 'src/app/Models/card';
 import { Employee } from 'src/app/Models/employee';
 import { UserService } from 'src/app/service/user.service';
 import { environment } from 'src/environments/environments';
@@ -11,14 +12,14 @@ import { environment } from 'src/environments/environments';
 })
 export class CardComponent implements OnInit {
 
-  userType = new Employee(12, 'John', "Codice", 1);
+  userType : any; 
 
-
-  clientCards: any;
-
+  clientiCards: Card[] | undefined;
   data: any;
 
-  printCard = false; 
+  showCard = false;
+
+
 
   constructor(
     private httpClient: HttpClient,
@@ -27,16 +28,22 @@ export class CardComponent implements OnInit {
 
 
   ngOnInit(): void {
-    //this.userType = this.userService.getUser();
+    this.userType = this.userService.getUser();
+    if(this.userType instanceof Employee) {
+      this.getCardsUser();
   }
+}
 
-
+  //Get all Cards about User
   getCardsUser() {
+    this.showCard == true;
     this.httpClient.get<any>(`${environment.baseUrl}/card/findAll`).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 201) {
-          this.clientCards = JSON.parse(JSON.stringify(this.data.data));
+          this.clientiCards = this.data.data;
+          console.log(this.clientiCards);
+
         } else {
           alert("error");
         }
@@ -45,14 +52,13 @@ export class CardComponent implements OnInit {
       });
   }
 
-  checkCards(){
-    if(this.printCard == false){
 
-    }else {
-      this.getCardsUser();
+  setShowCard() {
+    if (this.showCard == true) {
+      this.showCard = false;
+    } else {
+      this.showCard = true;
     }
   }
-
-
 }
 

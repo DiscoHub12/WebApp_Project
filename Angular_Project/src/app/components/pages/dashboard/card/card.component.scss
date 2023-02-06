@@ -1,13 +1,16 @@
-.example-card {
-    max-width: 400px;
-  }
-  
-  .example-header-image {
-    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-    background-size: cover;
-  }
+.example-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
 
-.listaProdotti{
-    display:  grid; 
-    place-items: center;
+.secondDiv{
+  margin-top: 3%;
+  display: grid;
+  place-items: center;
+}
+
+
+.cards{
+  width: 30%;  // adatta questa larghezza ai tuoi requisiti
+  margin-right: 2%;  // Aggiungi un margine a destra per separare le carte
 }
