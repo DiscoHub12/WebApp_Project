@@ -1,18 +1,19 @@
 export class Card{
+    id : Number;
+    idUtente : Number; 
+    codice : String; 
+    punti : Number; 
 
-    points : Number;
 
-
-    constructor(points : Number){
-        this.points = points;
+    constructor(id: Number, idUtente : Number, codice : String, punti : Number){
+        this.id = id;
+        this.idUtente = idUtente;
+        this.codice = codice;
+        this.punti = punti;
     }
 
-    getPoints() {
-        return this.points;
-    }
-
-    setPoints(points : Number) {
-        this.points = points;
+    getPunti() {
+        return this.punti;
     }
 
 }
