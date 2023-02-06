@@ -83,7 +83,7 @@ exports.login = async (req, res) => {
           const accessToken = auth.getAccessTokenUser(user);
           const refreshToken = auth.getRefreshTokenUser(user);
           auth.refreshTokens.push(refreshToken);
-          const jsonResponse = { nome: user.nome, cognome: user.cognome, accessToken: accessToken, refreshToken: refreshToken };
+          const jsonResponse = { id : user.id, nome: user.nome, cognome: user.cognome, accessToken: accessToken, refreshToken: refreshToken };
           res.status(201).send({
             status: 201,
             jsonResponse,
