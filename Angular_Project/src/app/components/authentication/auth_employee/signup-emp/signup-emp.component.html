@@ -1,5 +1,4 @@
-<p>signup-emp works!</p>
-<div class="container" *ngIf="!isSubscribe">
+<div class="container">
     <div class="row">
         <div class="col-md-6">
             <div class="card">
@@ -32,7 +31,10 @@
                         <span class="text-danger"
                             *ngIf="signupForm.controls['password'].dirty && signupForm.hasError('required', 'password')">*Employee
                             Password is required</span>
-
+                            <mat-radio-group aria-label="Select an option" formControlName="restriction">
+                                <mat-radio-button value="1" [checked]="signupForm.value.restriction === true">Full</mat-radio-button>
+                                <mat-radio-button value="2" [checked]="signupForm.value.restriction === false">Restriction</mat-radio-button>
+                              </mat-radio-group>
                     </div>
                     <button type="submit" class="btn btn-primary" (click)="onSubmit()"
                         [disabled]="signupForm.invalid">Create Account</button>
