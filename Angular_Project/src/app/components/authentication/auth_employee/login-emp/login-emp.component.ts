@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environments';
 import { Employee } from 'src/app/Models/employee';
+import { UserService } from 'src/app/service/user.service';
 //import { AuthService } from '../../auth.service';
 
 @Component({
@@ -14,16 +15,22 @@ import { Employee } from 'src/app/Models/employee';
 })
 export class LoginEmpComponent implements OnInit {
 
-  //Attributes-variables for thid component: 
+  //variable for FormGroup 
   public loginForm !: FormGroup;
 
-  //Data for associate the response
-  data: any;
+  //Variable for associate the response Http when Login is successful.
+  response : any;
 
-  employeeLogged: Employee | undefined;
+  /**
+   * Constructor for this Component.
+   * @param httpClient  the HttpClient module for this component.
+   * @param formBuilder the formBuilder for all Form and check data in HTML. 
+   * @param router the Router module for this component for navigation. 
+   * @param userService service for send Data (User) to other Components.
+   */
+  constructor(private httpClient: HttpClient, private formBuilder: FormBuilder, private router: Router, private userService: UserService) { }
 
-  constructor(private httpClient: HttpClient, private formBuilder: FormBuilder, private router: Router) { }
-
+  //NgOnInit implementation.
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
       code: ['', Validators.required],
@@ -31,18 +38,22 @@ export class LoginEmpComponent implements OnInit {
     });
   }
 
-  //Method for this Component:
+  //Login method.
   onSubmit() {
     const code = this.loginForm.value.code;
     const password = this.loginForm.value.password;
-    this.httpClient.post(environment.baseUrl + '/loginEmployee', { code: code, passwordUser: password }).subscribe(
-      res => {
-        this.data = res;
-        if (this.data.status == 201) {
+    this.httpClient.post(`${environment.baseUrl}/employee/login`, { 
+      codice: code, 
+      password: password 
+    }).subscribe(
+      response => {
+        this.response = response; 
+        if (this.response.status == 201) {
           alert('Login successfully.');
-          this.employeeLogged = new Employee(this.data.id, this.data.nome, this.data.codice, this.data.restrizioni);
-         // this.authService.setUserData(this.employeeLogged);
-          this.router.navigate(['dashboard/employee']);
+          const employeeLogged = new Employee(this.response.json.id, this.response.json.nome, this.response.json.codice, this.response.json.restrizioni);
+          this.userService.setUser(employeeLogged);
+          //IN QUESTA PARTE, DEVONO ESSERE PRESI I TOKEN E SALVARLI IN LOCAL STORAGE.
+          //this.router.navigate(['dashboard/employee']);
         } else {
           alert("Password not correct.");
         }
