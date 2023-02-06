@@ -66,13 +66,13 @@ exports.login = async (req, res) => {
       email: email
     },
   }).then((user) => {
-    if (!employee) {
+    if (!user) {
       return res.status(401).send({
         message: "User with this email not found.",
       });
     }
 
-    return passManager.comparePass(password, employee.password)
+    return passManager.comparePass(password, user.password)
       .then((isMatch) => {
         if (!isMatch) {
           console.log("Password not valid");
@@ -81,7 +81,7 @@ exports.login = async (req, res) => {
           });
         } else {
           const accessToken = auth.getAccessTokenUser(user);
-          const refreshToken = auth.getRefreshTokenUser(user);
+          const refreshToken = auth.getRegfreshTokenUser(user);
           auth.refreshTokens.push(refreshToken);
           const jsonResponse = { id : user.id, nome: user.nome, cognome: user.cognome};
           res.status(201).send({
