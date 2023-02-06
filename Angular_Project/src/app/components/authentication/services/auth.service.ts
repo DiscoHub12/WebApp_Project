@@ -20,7 +20,14 @@ export class AuthService {
   };
   
   constructor(private http: HttpClient, private router : Router) { }
+
+  //Method for save the token in localStorage when user is logged.
+  saveToken(accessToken: string, refreshToken: string){
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+  }
   
+  //Method for request new tokens for User when the tokens are expired.
   refreshTokenUser(userData: User): Observable<any> {
     return this.http.post<any>(environment.baseUrl + "/user/refreshToken", userData, this.httpOptions)
       .pipe(tap(response => {
@@ -29,6 +36,7 @@ export class AuthService {
       }));
   }
   
+  //Method for request new tokens for Employee when the tokens are expired.
   refreshTokenEmployee(userData: Employee): Observable<any> {
     return this.http.post<any>(environment.baseUrl + "/employee/refreshToken", userData, this.httpOptions)
       .pipe(tap(response => {
@@ -36,7 +44,6 @@ export class AuthService {
         localStorage.setItem('refreshToken', response.refreshToken);
       }));
   }
-
 
   //Verifica se il token JWT è presente nella cache locale del browser. Se il token non esiste 
   //viene reindirizzato alla home, altrimenti torna true indicando che l'utente è autenticato.
