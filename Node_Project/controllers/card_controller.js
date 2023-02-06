@@ -106,7 +106,12 @@ exports.find = (req, res) => {
 exports.findAll = (req, res) => {
     Card.findAll().then(data => {
         if (data) {
-            res.send(data);
+            res.status(201).send({
+                status: 201, 
+                data,
+                message: "All Cards were retrieved successfully!"
+                
+            })
         } else {
             res.status(404).send({
                 message: `Cannot find Cards. Probably error with connection.`
