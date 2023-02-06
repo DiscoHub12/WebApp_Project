@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environments';
 import { Employee } from 'src/app/Models/employee';
 import { UserService } from 'src/app/service/user.service';
-//import { AuthService } from '../../auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-emp',
@@ -19,7 +19,7 @@ export class LoginEmpComponent implements OnInit {
   public loginForm !: FormGroup;
 
   //Variable for associate the response Http when Login is successful.
-  response : any;
+  response: any;
 
   /**
    * Constructor for this Component.
@@ -28,7 +28,13 @@ export class LoginEmpComponent implements OnInit {
    * @param router the Router module for this component for navigation. 
    * @param userService service for send Data (User) to other Components.
    */
-  constructor(private httpClient: HttpClient, private formBuilder: FormBuilder, private router: Router, private userService: UserService) { }
+  constructor(
+    private httpClient: HttpClient,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private userService: UserService,
+    private authService: AuthService
+  ) { }
 
   //NgOnInit implementation.
   ngOnInit(): void {
@@ -42,18 +48,20 @@ export class LoginEmpComponent implements OnInit {
   onSubmit() {
     const code = this.loginForm.value.code;
     const password = this.loginForm.value.password;
-    this.httpClient.post(`${environment.baseUrl}/employee/login`, { 
-      codice: code, 
-      password: password 
+    this.httpClient.post(`${environment.baseUrl}/employee/login`, {
+      codice: code,
+      password: password
     }).subscribe(
       response => {
-        this.response = response; 
+        this.response = response;
         if (this.response.status == 201) {
-          alert('Login successfully.');
-          const employeeLogged = new Employee(this.response.json.id, this.response.json.nome, this.response.json.codice, this.response.json.restrizioni);
+          const employeeLogged = new Employee(this.response.jsonResponse.id, this.response.jsonResponse.nome, this.response.jsonResponse.codice, this.response.jsonResponse.restrizioni);
+          console.log("Employee Logged: " + JSON.stringify(employeeLogged));
+          console.log("Access token: " + this.response.access_token + "Refresh token: " + this.response.refresh_token);
           this.userService.setUser(employeeLogged);
-          //IN QUESTA PARTE, DEVONO ESSERE PRESI I TOKEN E SALVARLI IN LOCAL STORAGE.
-          //this.router.navigate(['dashboard/employee']);
+          this.authService.saveToken(this.response.accessToken, this.response.refreshToken);
+          alert("Login successful");
+          this.router.navigate(['dashboard/employee']);
         } else {
           alert("Password not correct.");
         }
