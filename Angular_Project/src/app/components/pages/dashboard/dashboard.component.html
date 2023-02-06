@@ -3,7 +3,7 @@
     <app-sidenav></app-sidenav>
   </mat-drawer>
   <mat-drawer-content>
-    <app-header (toggleSidebarForMe)="sideBarToggler()" [userType]="userType"></app-header>
+    <app-header (toggleSidebarForMe)="sideBarToggler()"></app-header>
     <app-welcome></app-welcome>
     <main>
       <router-outlet></router-outlet>

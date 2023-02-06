@@ -1,15 +1,31 @@
-<mat-nav-list>
-    <h2 matSubheader class="mt-2">DASHBOARD </h2>
-    <a mat-list-item (click)="changeRoute('/dashboard/user/card')">
-      <mat-icon>link</mat-icon> Card
-    </a>
-    <a mat-list-item (click)="changeRoute('/dashboard/user/booking')">
-      <mat-icon>booking</mat-icon> Booking
-    </a>
-    <a mat-list-item (click)="changeRoute('/dashboard/user/products')">
-      <mat-icon>link</mat-icon> Products
-    </a>
-    <a mat-list-item (click)="changeRoute('/dashboard/user/treatments')">
-      <mat-icon>link</mat-icon> Treatments
-    </a>
-  </mat-nav-list>
+<mat-nav-list *ngIf="userType instanceof User">
+  <h2 matSubheader class="mt-2">DASHBOARD </h2>
+  <a mat-list-item (click)="changeRoute('/dashboard/user/card')">
+    <mat-icon>link</mat-icon> Card
+  </a>
+  <a mat-list-item (click)="changeRoute('/dashboard/user/booking')">
+    <mat-icon>booking</mat-icon> Booking
+  </a>
+  <a mat-list-item (click)="changeRoute('/dashboard/user/products')">
+    <mat-icon>link</mat-icon> Products
+  </a>
+  <a mat-list-item (click)="changeRoute('/dashboard/user/treatments')">
+    <mat-icon>link</mat-icon> Treatments
+  </a>
+</mat-nav-list>
+
+<mat-nav-list *ngIf="userType instanceof Employee">
+  <h2 matSubheader class="mt-2">DASHBOARD </h2>
+  <a mat-list-item (click)="changeRoute('/dashboard/employee/card')">
+    <mat-icon>link</mat-icon> Card
+  </a>
+  <a mat-list-item (click)="changeRoute('/dashboard/employee/booking')">
+    <mat-icon>booking</mat-icon> Booking
+  </a>
+  <a mat-list-item (click)="changeRoute('/dashboard/employee/products')">
+    <mat-icon>link</mat-icon> Products
+  </a>
+  <a mat-list-item (click)="changeRoute('/dashboard/employee/treatments')">
+    <mat-icon>link</mat-icon> Treatments
+  </a>
+</mat-nav-list>

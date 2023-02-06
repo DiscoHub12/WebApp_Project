@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from 'src/app/service/user.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -9,11 +10,13 @@ import { Router } from '@angular/router';
 export class SidenavComponent {
   @Output() selectedComponent : string | undefined ;
 
-  userType = "user";
+  userType : any;
 
-  constructor(private router : Router) {}
+  constructor(private router : Router, private authUser : UserService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.userType = this.authUser.getUser();
+  }
 
   changeRoute(route: string) {
     this.router.navigate([route]);
