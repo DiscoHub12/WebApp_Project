@@ -92,10 +92,12 @@ exports.login = async (req, res) => {
                     const accessToken = auth.getAccessTokenEmployee(employee);
                     const refreshToken = auth.getRegfreshTokenEmployee(employee);
                     auth.refreshTokens.push(refreshToken);
-                    const jsonResponse = { nome: employee.nome, codice: employee.codice, restrizioni: employee.restrizioni, accessToken: accessToken, refreshToken: refreshToken }
+                    const jsonResponse = {id: employee.id, nome: employee.nome, codice: employee.codice, restrizioni: employee.restrizioni}
                     res.status(201).send({
                         status : 201,
                         jsonResponse,
+                        accessToken: accessToken, 
+                        refreshToken: refreshToken,
                         message: "Login Successfull",
                     });
                 }
