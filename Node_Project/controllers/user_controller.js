@@ -11,16 +11,16 @@ const secret = "!Rj(98bC%9sVn&^c";
 
 
 exports.create = async (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password + secret;
 
-  //Valid the request : 
-  if (!email || !password) {
+  if(req.body.email == "" || req.body.email == undefined || req.body.password == "" || req.body.password == undefined){
     res.status(400).send({
       message: "Content can't be empty!"
     });
     return;
   }
+
+  const email = req.body.email;
+  const password = req.body.password + secret;
 
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -35,7 +35,10 @@ exports.create = async (req, res) => {
   };
 
   User.create(user).then(data => {
-    res.send(data);
+    res.status(201).send({
+      status: 201, 
+      message: "User created successfully!",
+    }); 
   }).catch(err => {
     res.status(500).send({
       message: err.message || "Some error occurred while creating the new User."
@@ -45,15 +48,18 @@ exports.create = async (req, res) => {
 
 
 exports.login = async (req, res) => {
-  let email = req.body.email;
-  let password = req.body.password;
 
-  if (!password || password == "" || !email || email == "") {
+  if(req.body.email == "" || req.body.email == undefined || req.body.password == "" || req.body.password == undefined){
     res.status(400).send({
       message: "Content can't be empty!"
     });
     return;
   }
+
+  let email = req.body.email;
+  let password = req.body.password;
+
+  password = password + secret; 
 
   User.findOne({
     where: {
@@ -62,22 +68,24 @@ exports.login = async (req, res) => {
   }).then((user) => {
     if (!employee) {
       return res.status(401).send({
-        message: "Invalid email or password.",
+        message: "User with this email not found.",
       });
     }
 
     return passManager.comparePass(password, employee.password)
       .then((isMatch) => {
         if (!isMatch) {
+          console.log("Password not valid");
           return res.status(401).send({
-            message: "Password is incorrect.",
+            message: "Password not correct.",
           });
         } else {
           const accessToken = auth.getAccessTokenUser(user);
           const refreshToken = auth.getRefreshTokenUser(user);
           auth.refreshTokens.push(refreshToken);
-          const jsonResponse = { nome: user.nome, cognome: user.cognome, accessToken: accessToken, refreshToken: refreshToken };
+          const jsonResponse = { id : user.id, nome: user.nome, cognome: user.cognome, accessToken: accessToken, refreshToken: refreshToken };
           res.status(201).send({
+            status: 201,
             jsonResponse,
             message: "Login Successfull.",
           });

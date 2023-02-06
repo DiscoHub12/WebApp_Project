@@ -11,22 +11,25 @@ const secret = "!Rj(98bC%9sVn&^c";
 
 
 exports.create = async (req, res) => {
-    const nome = req.body.nameEmployee;
-    const codice = req.body.code;
-    const password = req.body.passwordEmployee + secret;
-    const restrizioni = req.body.restrizioni;
-    console.log("Employee : " + nome + " Codice : " + codice + " Password : " + password);
-
     //Valid the request : 
-    if (!nome || !codice || !password || !restrizioni) {
+    if(req.body.nameEmployee == "" || req.body.nameEmployee == undefined || req.body.code == "" || req.body.code == undefined || req.body.passwordEmployee == "" || req.body.passwordEmployee == undefined){
         res.status(400).send({
             message: "Content can't be empty!"
         });
         return;
     }
 
+    const nome = req.body.nameEmployee;
+    const codice = req.body.code;
+    const password = req.body.passwordEmployee + secret;
+    const restrizioni = req.body.restrizioni;
+    console.log("Employee : " + nome + " Codice : " + codice + " Password : " + password);
+
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
+    console.log("Salt : " + salt + " Hashed Password : " + hashedPassword);
+
+    
     console.log("Employee : " + nome + " Codice : " + codice + " Salt : " + salt + " Password : " + hashedPassword);
 
     const employee = {
@@ -39,6 +42,7 @@ exports.create = async (req, res) => {
 
     Employee.create(employee).then(data => {
         res.status(201).send({
+            status : 201,
             message: `Employee created with ${restrizioni} restrictions`
         });
     }).catch(err => {
@@ -46,20 +50,23 @@ exports.create = async (req, res) => {
             message: err.message || "Some error occurred while creating the new Tutorial."
         });
     });
+    console.log("Registration Successful");
+
 }
 
 
 exports.login = async (req, res) => {
-    let codice = req.body.codice;
-    let password = req.body.password;
 
-    //Valid the request : 
-    if (!codice || codice == "" || !password || password == "") {
+    if(req.body.codice == "" || req.body.codice == undefined || req.body.password == "" || req.body.password == undefined){
         res.status(400).send({
             message: "Content can't be empty!"
         });
         return;
     }
+
+    let codice = req.body.codice;
+    let password = req.body.password;
+
     password = password + secret;
 
 
@@ -70,13 +77,14 @@ exports.login = async (req, res) => {
     }).then((employee) => {
         if (!employee) {
             return res.status(401).send({
-                message: "Employee with this id not find.",
+                message: "Employee with this code not find.",
             });
         }
 
         return passManager.comparePass(password, employee.password)
             .then((isMatch) => {
                 if (!isMatch) {
+                    console.log("Password not valid");
                     return res.status(401).send({
                         message: "Password not correct",
                     });
@@ -86,6 +94,7 @@ exports.login = async (req, res) => {
                     auth.refreshTokens.push(refreshToken);
                     const jsonResponse = { nome: employee.nome, codice: employee.codice, restrizioni: employee.restrizioni, accessToken: accessToken, refreshToken: refreshToken }
                     res.status(201).send({
+                        status : 201,
                         jsonResponse,
                         message: "Login Successfull",
                     });
