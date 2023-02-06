@@ -53,12 +53,11 @@ export class LoginComponent implements OnInit {
       response => {
         this.response = response;
         if (this.response.status == 201) {
-          alert('Login successfully.');
           const userLogged = new User(this.response.jsonResponse.id, this.response.jsonResponse.nome, this.response.jsonResponse.cognome);
           console.log("User logged: " + JSON.stringify(userLogged));
-          console.log("Access token: " + JSON.stringify(this.response.access_token) + "Refresh token: " + JSON.stringify(this.response.refresh_token));
+          console.log("Access token: " + this.response.accessToken + "Refresh token: " + this.response.refreshToken);
           this.userService.setUser(userLogged);
-          this.authService.saveToken(this.response.access_token, this.response.refresh_token);
+          this.authService.saveToken(this.response.accessToken, this.response.refreshToken);
           alert("Login successful");
           this.router.navigate(['dashboard/user']);
         } else {
