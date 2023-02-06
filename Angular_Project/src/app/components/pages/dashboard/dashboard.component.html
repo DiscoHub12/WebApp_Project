@@ -4,21 +4,12 @@
   </mat-drawer>
   <mat-drawer-content>
     <app-header (toggleSidebarForMe)="sideBarToggler()" [userType]="userType"></app-header>
-    <ng-container *ngIf="userType">
-      <ng-container *ngIf="userType.isUser">
-        <p class="welcome-text">
-          CIAO <strong class="highlighted-text">{{userType.nome.toUpperCase()}},</strong><br><br>
-          BENVENUTO NEL TUO PROFILO PERSONALE
-        </p>
-      </ng-container>
-      <ng-container *ngIf="userType.isEmployee">
-        <p>Pagina Dip</p>
-      </ng-container>
-
-    </ng-container>
+    <app-welcome></app-welcome>
+    <main>
+      <router-outlet></router-outlet>
+    </main>
   </mat-drawer-content>
 </mat-drawer-container>
-
 
 
   

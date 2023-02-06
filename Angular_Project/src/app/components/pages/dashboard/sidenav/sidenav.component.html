@@ -1,16 +1,15 @@
 <mat-nav-list>
-    <mat-divider></mat-divider>
     <h2 matSubheader class="mt-2">DASHBOARD </h2>
-    <a mat-list-item routerLinkActive="list-item-active" routerLink="/card">
+    <a mat-list-item (click)="changeRoute('/dashboard/user/card')">
       <mat-icon>link</mat-icon> Card
     </a>
-    <a mat-list-item routerLinkActive="list-item-active" routerLink="/booking">
+    <a mat-list-item (click)="changeRoute('/dashboard/user/booking')">
       <mat-icon>booking</mat-icon> Booking
     </a>
-    <a mat-list-item routerLinkActive="list-item-active" routerLink="/products">
+    <a mat-list-item (click)="changeRoute('/dashboard/user/products')">
       <mat-icon>link</mat-icon> Products
     </a>
-    <a mat-list-item routerLinkActive="list-item-active" routerLink="/treatments">
+    <a mat-list-item (click)="changeRoute('/dashboard/user/treatments')">
       <mat-icon>link</mat-icon> Treatments
     </a>
   </mat-nav-list>

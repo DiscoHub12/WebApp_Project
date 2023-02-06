@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidenav',
@@ -6,11 +7,16 @@ import { Component } from '@angular/core';
   styleUrls: ['./sidenav.component.scss']
 })
 export class SidenavComponent {
+  @Output() selectedComponent : string | undefined ;
 
   userType = "user";
 
-  constructor() {}
+  constructor(private router : Router) {}
 
   ngOnInit() {}
+
+  changeRoute(route: string) {
+    this.router.navigate([route]);
+  }
 
 }
