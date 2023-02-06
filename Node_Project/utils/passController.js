@@ -33,4 +33,4 @@ function comparePass(plainPassword, hashPassword){
     return bcrypt.compare(plainPassword, hashPassword);
 }
 
-module.exports = {comparePass};
+module.exports = {generatePassword, generateSalt, comparePass};
