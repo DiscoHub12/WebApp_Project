@@ -2,8 +2,6 @@ export class User {
     id : Number;
     nome : String;
     cognome : String;
-    isUser = true;
-    isEmployee = false;
 
     constructor(id : Number, nome : String, cognome : String) {
         this.id = id;
