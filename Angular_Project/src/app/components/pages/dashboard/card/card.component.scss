@@ -1,16 +1,80 @@
-.example-header-image {
-  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-  background-size: cover;
+.page {
+  color: white;
+  padding: 0 1rem;
+  background: #f1f5f9;
+  &__box {
+    min-height: 120px;
+    background: #1e293b;
+    margin: 0 -1rem;
+    font-size: 36px;
+  }
+  &__content {
+    min-height: calc(100vh - 178px);
+    border-radius: 10px;
+    margin-top: -2rem;
+    background: white;
+    color: black;
+    font-size: 2rem;
+    &-data {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
 }
 
-.secondDiv{
-  margin-top: 3%;
-  display: grid;
-  place-items: center;
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
 }
 
-
-.cards{
-  width: 30%;  // adatta questa larghezza ai tuoi requisiti
-  margin-right: 2%;  // Aggiungi un margine a destra per separare le carte
+.section-title {
+  text-align: center;
+  margin-bottom: 24px;
 }
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 29px;
+  margin-bottom: 24px;
+  margin-left: 25px;
+  margin-right: 10px;
+  color: #1e293b
+}
+
+.mat-mdc-form-field + .mat-mdc-form-field {
+  margin-left: 8px;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-class{
+  margin-right: 5px;
+  background-color: #1e293b;
+  color: #1e293b
+}
+
+.text-operation{
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.mat-expansion-panel {
+  background-color: lightgrey
+}
+
