@@ -1,1 +1,61 @@
-<p>treatments works!</p>
+<div class="container-fluid page">
+  <div class="d-flex page__box p-3 mt-2">Treatment</div>
+  <div class="page__content shadow p-3 position-relative">
+    <div class="page__content-data position-absolute text-center">
+      <div class="table-container" *ngIf="!showForm">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ID Utente</th>
+            <th>Nome</th>
+            <th>Descrizione</th>
+            <th>Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let treatment of treatments">
+            <td>{{ treatment.id }}</td>
+            <td>{{ treatment.userId }}</td>
+            <td>{{ treatment.name }}</td>
+            <td>{{ treatment.description }}</td>
+            <td [ngClass]="{ 'past-due': treatment.dueDate < currentDate }">{{ treatment.dueDate | date }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="add-treatment-button" (click)="showForm = true">Aggiungi trattamento</button>
+      </div>
+      <div *ngIf="showForm">
+          <form [formGroup]="addForm">
+            <div class="mb-3">
+                <label for="exampleInputId" class="form-label">idUtente</label>
+                <input formControlName="id" type="int" class="form-control" id="exampleInputId"
+                    aria-describedby="codeHelp">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputName" class="form-label">Name</label>
+                <input formControlName="name" type="string" class="form-control" id="exampleInputCode"
+                    aria-describedby="codeHelp">
+                <span class="text-danger"
+                    *ngIf="addForm.controls['name'].dirty && addForm.hasError('required', 'name')">*Treatment
+                    name is required</span>
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputDescription" class="form-label">Description</label>
+                <input formControlName="description" type="string" formControlName="description"
+                    class="form-control" id="exampleInputDescription">
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputDate" class="form-label">Date</label>
+              <input formControlName="date" type="date" formControlName="date"
+                  class="form-control" id="exampleInputDate">
+          </div>
+        </form>
+          <button class = "button" type="submit" (click)="addTreatment()">Invia</button>
+          <br>
+          <br>
+          <button class = "button" type="button" (click)="showForm = false">Annulla</button>
+      </div>
+    </div>
+  </div>
+</div>
