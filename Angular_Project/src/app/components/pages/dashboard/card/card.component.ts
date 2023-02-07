@@ -4,6 +4,7 @@ import { Card } from 'src/app/Models/card';
 import { Employee } from 'src/app/Models/employee';
 import { UserService } from 'src/app/service/user.service';
 import { environment } from 'src/environments/environments';
+import { User } from 'src/app/Models/user';
 
 @Component({
   selector: 'app-card',
@@ -12,27 +13,63 @@ import { environment } from 'src/environments/environments';
 })
 export class CardComponent implements OnInit {
 
-  userType : any; 
+  userType : User | Employee | undefined; 
 
   clientiCards: Card[] | undefined;
+  
   data: any;
 
   showCard = false;
 
+  isVisible = false;
+
+
+
+  clientiCarte = [
+    {
+      codice: 123, 
+      punti : 2
+    },
+    {
+      codice: 456, 
+      punti : 3
+    },
+    {
+      codice: 789, 
+      punti : 4
+    },
+    {
+      codice: 123, 
+      punti : 2
+    },
+    {
+      codice: 123, 
+      punti : 2
+    },
+    {
+      codice: 123, 
+      punti : 2
+    },
+  ];
 
 
   constructor(
     private httpClient: HttpClient,
     private userService: UserService
-  ) { }
-
+    
+  ) { 
+  }
 
   ngOnInit(): void {
-    this.userType = this.userService.getUser();
-    if(this.userType instanceof Employee) {
-      this.getCardsUser();
+    this.userType = new Employee(12, "ciao", "ciao", 1);
+    if(this.userType instanceof Employee ) {
+      this.isVisible = true; 
+      //this.getCardsUser();
+  }else {
+    this.isVisible = false; 
   }
 }
+
 
   //Get all Cards about User
   getCardsUser() {
@@ -60,5 +97,15 @@ export class CardComponent implements OnInit {
       this.showCard = true;
     }
   }
+
+
+  addClient(){}
+
+  searchClient() {}; 
+
+  addPoints(){};
+
+  createNewUser(){}
 }
+
 
