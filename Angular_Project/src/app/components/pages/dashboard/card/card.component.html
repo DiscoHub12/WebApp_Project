@@ -1,12 +1,15 @@
-<div class="container-fluid page">
-  <div class="d-flex page__box p-3 mt-2">SEZIONE TESSERA</div>
-  <div class="page__content shadow p-3 position-relative">
-    <div class="page__content-data position-absolute text-center">
-      <div class="container">
+<div class="page">
+  <div class="page-box">SEZIONE TESSERA</div>
+  <div class="page-content">
+    <div class="page-content-data">
+      <div class="page-content-data-inner">
+
+        <!--EMPLOYEE DIV-->
         <div class="div-employee" *ngIf="isVisible">
-          <h3>HELLO NOME</h3>
+          <h2>HELLO NOME</h2>
+          <h3>Ecco la lista delle Card dei tuoi clienti.</h3>
           <mat-accordion class="mat-according">
-            <mat-expansion-panel hideToggle class="mat-expansion-panel" *ngFor="let card of clientiCarte">
+            <mat-expansion-panel hideToggle class="mat-expansion-panel" *ngFor="let card of clientiCards">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   Tessera : {{card.codice}}
@@ -21,14 +24,50 @@
           <div class="text-operation">
           </div>
           <div class="button-container">
-            <button mat-raised-button class="btn-class" (click)="addClient() ">Aggiungi Tessera</button>
-            <button mat-raised-button class="btn-class" (click)="searchClient()">Cerca Tessera</button>
-            <button mat-raised-button class="btn-class" (click)="addPoints()">Aggiungi Punti</button>
+            <button mat-raised-button class="btn-class" (click)="showFormAddCard = !showFormAddCard">Aggiungi
+              Tessera</button>
+            <button mat-raised-button class="btn-class" (click)="showFormSearchCard = !showFormSearchCard">Cerca
+              Tessera</button>
+            <button mat-raised-button class="btn-class" (click)="showFormAddPoints = !showFormAddPoints">Aggiungi
+              Punti</button>
           </div>
+          <!--FORM FORM EMPLOYEE-->
+          <form *ngIf="showFormAddCard" class="formAddCard" (ngSubmit)="submitFormAddCard()">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>Aggiungi Tessera</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                  <mat-form-field>
+                    <input matInput placeholder="Nome" formControlName="firstName">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <input matInput placeholder="Cognome" formControlName="lastName">
+                  </mat-form-field>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button (click)="addCard()">Aggiungi Tessera</button>
+              </mat-card-actions>
+            </mat-card>
+          </form>
         </div>
 
+        <!--USER DIV-->
         <div class="div-user" *ngIf="!isVisible">
-          <h3>HELLO USER</h3>
+          <h3>HELLO NOME</h3>
+          <h3>TESSERA</h3>
+          <mat-card class="example-card">
+            <mat-card-header>
+              <mat-card-title-group>
+                <mat-card-title>Shiba Inu</mat-card-title>
+                <mat-card-subtitle>Small</mat-card-subtitle>
+                <img mat-card-sm-image src="https://material.angular.io/assets/img/examples/shiba2.jpg">
+              </mat-card-title-group>
+            </mat-card-header>
+            <mat-card-content>
+              Content
+            </mat-card-content>
+          </mat-card>
         </div>
       </div>
     </div>

@@ -13,66 +13,56 @@ import { User } from 'src/app/Models/user';
 })
 export class CardComponent implements OnInit {
 
-  userType : User | Employee | undefined; 
+  //Variables to assign the User logged.
+  userType: User | Employee | undefined;
 
+  //Variables to assign the all Cards of User.
   clientiCards: Card[] | undefined;
-  
+
+  //Variables to assign the response from the request about all Cards User.
   data: any;
+
+  //Variables to assign the response from the request about the Card User.
+  card: Card | undefined;
 
   showCard = false;
 
   isVisible = false;
 
+  //Variables for the form of add Card.
+  showFormAddCard = false; 
 
+  //Variables for the form to search card. 
+  showFormSearchCard = false;
 
-  clientiCarte = [
-    {
-      codice: 123, 
-      punti : 2
-    },
-    {
-      codice: 456, 
-      punti : 3
-    },
-    {
-      codice: 789, 
-      punti : 4
-    },
-    {
-      codice: 123, 
-      punti : 2
-    },
-    {
-      codice: 123, 
-      punti : 2
-    },
-    {
-      codice: 123, 
-      punti : 2
-    },
-  ];
-
+  //Variables for the Form to add points into card. 
+  showFormAddPoints = false;
 
   constructor(
     private httpClient: HttpClient,
     private userService: UserService
-    
-  ) { 
+
+  ) {
   }
 
   ngOnInit(): void {
-    this.userType = new Employee(12, "ciao", "ciao", 1);
-    if(this.userType instanceof Employee ) {
-      this.isVisible = true; 
-      //this.getCardsUser();
-  }else {
-    this.isVisible = false; 
+    this.userType = new Employee(12, "Employ", "Employ", 2);
+    if (this.userType instanceof Employee) {
+      this.isVisible = true;
+      this.getAllCards();
+    } else{
+      this.isVisible = false;
+      this.getCardUser();
+    }
   }
-}
 
 
-  //Get all Cards about User
-  getCardsUser() {
+  //------EMPLOYEE METHODS------
+
+  /**
+   * Method to get all the cards of the User.
+   */
+  getAllCards() {
     this.showCard == true;
     this.httpClient.get<any>(`${environment.baseUrl}/card/findAll`).subscribe(
       response => {
@@ -89,23 +79,28 @@ export class CardComponent implements OnInit {
       });
   }
 
+  submitFormAddCard(){}
 
-  setShowCard() {
-    if (this.showCard == true) {
-      this.showCard = false;
-    } else {
-      this.showCard = true;
-    }
+  addCard(){}
+
+
+  //-------USER METHODS-----------
+
+  getCardUser() {
+    this.httpClient.get<any>(`${environment.baseUrl}/card/findAll`).subscribe(
+      response => {
+        this.data = response;
+        if (this.data.status == 201) {
+          this.card = this.data.data; 
+          console.log(this.clientiCards);
+        } else {
+          alert("error");
+        }
+      }, err => {
+        alert("Something went wrong");
+      }
+    );
   }
-
-
-  addClient(){}
-
-  searchClient() {}; 
-
-  addPoints(){};
-
-  createNewUser(){}
 }
 
 
