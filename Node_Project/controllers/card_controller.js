@@ -1,45 +1,61 @@
-const { Sequelize, where } = require("sequelize");
+const { json } = require("body-parser");
+const { Sequelize, where } = require("sequelize")
 const db = require("../config/database.js");
 const Card = require("../models/card");
+const User = require("../models/user");
+
 
 //CREATE CARD METHOD
 exports.create = (req, res) => {
-    const idUtente = req.body.idUtente;
+    const nome = req.body.nome;
+    const cognome = req.body.cognome;
     const codice = req.body.codice;
 
-    //Valid the request : 
-    if (!idUtente || !codice) {
+    if (!nome || !cognome) {
         res.status(400).send({
+            status: 404,
             message: "Content can't be empty!"
         });
         return;
     }
 
-    Card.findOne({
-        where: {
-            idUtente: idUtente,
-        }
-    }).then(result => {
-        if (result) {
-            res.status(400).send({
-                message: "Card already exists!"
+    User.findOne({
+        where: { nome: nome, cognome: cognome }
+    }).then(user => {
+        if (user) {
+            Card.findOne({
+                where: { idUtente: user.id },
+            }).then(result => {
+                if (result) {
+                    res.status(400).send({
+                        status: 400,
+                        message: "Card already exists!"
+                    })
+                } else {
+                    const card = {
+                        idUtente: user.id,
+                        codice: codice,
+                    }
+                    Card.create(card).then(data => {
+                        res.status(201).send({
+                            status: 201,
+                            message: "Card created successfully!",
+                        });
+                    }).catch(err => {
+                        res.status(500).send({
+                            status : 500,
+                            message: err.message || "Some error occurred while creating the Card."
+                        })
+                    })
+                }
             })
         } else {
-            const card = {
-                idUtente: idUtente,
-                codice: codice
-            }
-
-            Card.create(card).then(data => {
-                res.send(data);
-            }).catch(err => {
-                res.status(500).send({
-                    message: err.message || "Some error occurred while creating the Card."
-                })
+            res.status(405).send({
+                status: 405,
+                message: "User not found!"
             });
         }
-    }
-    )
+    });
 }
 
 //DELETE CARD METHOD 
@@ -102,15 +118,47 @@ exports.find = (req, res) => {
 
 }
 
+exports.findCardUser = async (req, res) => {
+    const idUtente = req.params.id;
+
+    Card.findOne({ where: { id: idUtente } }).then(
+        data => {
+            if (data) {
+                res.status(201).send({
+                    status: 201,
+                    data,
+                    message: "Card was retrieved successfully!",
+                })
+            } else {
+                res.status(404).send({
+                    status: 404, 
+                    message: `You don't have Card.`
+                });
+            }
+        }).catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving tutorials."
+            });
+        });
+
+
+}
+
 //FIND ALL CARDS
 exports.findAll = (req, res) => {
-    Card.findAll().then(data => {
+    Card.findAll({
+        include: [{
+            model: User,
+            as: 'owner',
+            attributes: ['id', 'nome', 'cognome'],
+        }]
+    }).then(data => {
         if (data) {
             res.status(201).send({
-                status: 201, 
+                status: 201,
                 data,
-                message: "All Cards were retrieved successfully!"
-                
+                message: "All Cards were retrieved successfully!",
             })
         } else {
             res.status(404).send({
@@ -127,23 +175,24 @@ exports.findAll = (req, res) => {
 
 //ADD POINTS INTO CARD BY ID 
 exports.addPoints = async (req, res) => {
-    const id = req.params.id;
+    const codice = req.body.codice;
     const punti = req.body.punti;
 
-    if (!id) {
+    if(!codice || !punti){
         res.status(400).send({
-            message: "Id can't be empty!"
+            message: "Content can't be empty!"
         });
         return;
     }
 
-    const card = await Card.findOne({ where: { id: id } });
+    const card = await Card.findOne({ where: { codice: codice } });
 
     if (card) {
         card.punti += punti
         await card.save();
 
         res.status(201).send({
+            status: 201, 
             message: "Points added."
         });
     } else {
@@ -171,6 +220,7 @@ exports.addPointsAll = async (req, res) => {
     });
 
     res.status(201).send({
+        status: 201,
         message: "Points add in all Cards.",
     })
 }
