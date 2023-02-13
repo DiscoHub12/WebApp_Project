@@ -7,7 +7,7 @@ module.exports = app => {
 
     router.post("/delete/:id", card.delete); 
 
-    router.post("/addPoints/:id", card.addPoints); 
+    router.post("/addPoints", card.addPoints); 
 
     router.post("/addPointsAll", card.addPointsAll); 
 
@@ -17,6 +17,8 @@ module.exports = app => {
 
     router.get("/find/:id", card.find); 
 
+    router.get("/findCardUser/:id", card.findCardUser);
+    
     router.get("/findAll", card.findAll);
 
     //Route for this module : 
