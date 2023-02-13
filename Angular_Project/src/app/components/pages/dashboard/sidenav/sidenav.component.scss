@@ -4,13 +4,6 @@
       margin-right: 1rem;
     }
   }
-  .logo {
-    text-align: center;
-    padding: 2.6rem 1rem;
-    img {
-      width: 200px;
-    }
-  }
 
   .mt-2 {
     color: #fff;
@@ -18,12 +11,12 @@
   }
 
   .mat-list-item {
-    color: #94a3b8 !important;
+    color: #94a3b8 ;
     font-size: 0.8rem;
     height: 44px !important;
     margin-bottom: 4px;
     &:hover {
-      color: #f2f5f7 !important;
+      color: #f2f5f7 ;
     }
     ::ng-deep {
       .mat-list-item-content {
@@ -43,6 +36,7 @@
     letter-spacing: 1px;
   }
 
-  .active-link {
-    background-color: lightgray;
+
+  .icon {
+    color : #fff;
   }
