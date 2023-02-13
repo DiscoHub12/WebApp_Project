@@ -1,107 +1,169 @@
 <div class="page">
-  <div class="page-box">SEZIONE TESSERA</div>
-  <div class="page-content">
-    <div class="page-content-data">
-      <div class="page-content-data-inner">
+    <div class="page-box">SEZIONE TESSERA</div>
+    <div class="page-content">
+        <div class="page-content-data">
+            <div class="page-content-data-inner">
 
-        <!--EMPLOYEE DIV-->
-        <div class="div-employee" *ngIf="isVisible">
-          <h2>HELLO NOME</h2>
-          <h3>Ecco la lista delle Card dei tuoi clienti.</h3>
-          <mat-accordion class="mat-according">
-            <mat-expansion-panel hideToggle class="mat-expansion-panel" *ngFor="let card of clientiCards">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Tessera : {{card.codice}}
-                </mat-panel-title>
-                <mat-panel-description>
-                  Points: {{card.punti}}
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              <p>Alessio Giacche</p>
-            </mat-expansion-panel>
-          </mat-accordion>
-          <div class="text-operation">
-          </div>
-          <div class="button-container">
-            <button mat-raised-button class="btn-class" (click)="showFormAddCard = !showFormAddCard">Aggiungi
-              Tessera</button>
-            <button mat-raised-button class="btn-class" (click)="showFormSearchCard = !showFormSearchCard">Cerca
-              Tessera</button>
-            <button mat-raised-button class="btn-class" (click)="showFormAddPoints = !showFormAddPoints">Aggiungi
-              Punti</button>
-          </div>
-          <!--FORM FORM EMPLOYEE-->
-          <form *ngIf="showFormAddCard" class="formAddCard" (ngSubmit)="submitFormAddCard()">
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>Aggiungi Tessera</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                  <mat-form-field>
-                    <input matInput placeholder="Nome" formControlName="firstName">
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input matInput placeholder="Cognome" formControlName="lastName">
-                  </mat-form-field>
-              </mat-card-content>
-              <mat-card-actions>
-                <button mat-button (click)="addCard()">Aggiungi Tessera</button>
-              </mat-card-actions>
-            </mat-card>
-          </form>
-        </div>
+                <!-----EMPLOYEE DIV------>
+                <div class="div-employee" *ngIf="isEmployee">
+                    <h2>HELLO -NOME</h2>
+                    <h3>ECCO LA LISTA DELLE TESSERE DEI TUOI CLIENTI</h3>
 
-        <!--USER DIV-->
-        <div class="div-user" *ngIf="!isVisible">
-          <h3>HELLO NOME</h3>
-          <h3>TESSERA</h3>
-          <mat-card class="example-card">
-            <mat-card-header>
-              <mat-card-title-group>
-                <mat-card-title>Shiba Inu</mat-card-title>
-                <mat-card-subtitle>Small</mat-card-subtitle>
-                <img mat-card-sm-image src="https://material.angular.io/assets/img/examples/shiba2.jpg">
-              </mat-card-title-group>
-            </mat-card-header>
-            <mat-card-content>
-              Content
-            </mat-card-content>
-          </mat-card>
+                    <!----MAT ACCORDITION---->
+
+                    <!---MAT ACCORDITION FOR ALL CARDS-->
+
+                    <mat-accordion class="mat-according" *ngIf="!searchedCard">
+                        <mat-expansion-panel hideToggle class="mat-expansion-panel" *ngFor="let card of allCards">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Tessera : {{card.codice}}
+                                </mat-panel-title>
+                                <mat-panel-description>
+                                    Points: {{card.punti}}
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <p>{{card.owner.nome}} {{card.owner.cognome}}</p>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+
+
+
+                    <!----MAT ACCORDITION FOR ONE CARD SEARCHED-->
+                    <mat-accordion class="mat-according" *ngIf="searchedCard && cardCercata">
+                        <mat-expansion-panel hideToggle class="mat-expansion-panel">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Tessera : {{cardCercata.codice}}
+                                </mat-panel-title>
+                                <mat-panel-description>
+                                    Points : {{cardCercata.punti}}
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <p>{{cardCercata.owner.nome}} {{cardCercata.owner.cognome}}</p>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+
+                    <!------OPERATION DIV BUTTON------->
+                    <div class="button-container">
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormAddCard = !showFormAddCard">Aggiungi
+                            Tessera</button>
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormSearchCard = !showFormSearchCard">Cerca
+                            Tessera</button>
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormAddPoints = !showFormAddPoints">Aggiungi
+                            Punti</button>
+                        <button mat-raised-button class="btn-class" (click)="ricaricaPagina()">Ricarica Pagina</button>
+                    </div>
+
+
+                    <!------FORMS FOR EMPLOYEE----->
+
+                    <!-------FORM FOR CREATE CARD---->
+                    <form class="formAddCard" *ngIf="showFormAddCard" [formGroup]="form">
+                        <mat-card>
+                            <mat-card-header>
+                                <mat-card-title>Aggiungi Tessera</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <h3>NOME UTENTE</h3>
+                                <mat-form-field>
+                                    <input matInput placeholder="Nome Utente" formControlName="nome">
+                                </mat-form-field>
+                                <h3>COGNOME UTENTE</h3>
+                                <mat-form-field>
+                                    <input matInput placeholder="Cognome Utente" formControlName="cognome">
+                                </mat-form-field>
+                                <h3>CREA CODICE</h3>
+                                <mat-form-field>
+                                    <input matInput placeholder="Codice Utente" formControlName="nuovoCodice">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <button mat-button (click)="createCard()">Aggiungi Tessera</button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </form>
+
+
+                    <!-------FORM FOR SEARCH CARD------>
+                    <form class="formSearchCard" *ngIf="showFormSearchCard" [formGroup]="form">
+                        <mat-card>
+                            <mat-card-header>
+                                <mat-card-title>CERCA TESSERA</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <h3>NOME UTENTE</h3>
+                                <mat-form-field>
+                                    <input matInput placeholder="Codice Utente" formControlName="nome">
+                                </mat-form-field>
+                                <h3>COGNOME UTENTE</h3>
+                                <mat-form-field>
+                                    <input matInput placeholder="Codice Utente" formControlName="cognome">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <button mat-button (click)="searchCard()">Cerca Tessera</button>
+                                <button mat-button (click)="closeSearchedCard()">Chiudi</button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </form>
+
+                    <!-------FORM FOR ADD POINT INTO CARD------>
+                    <form class="formAddPoints" *ngIf="showFormAddPoints" [formGroup]="form">
+                        <mat-card>
+                            <mat-card-header>
+                                <mat-card-title style="text-align: center;">AGGIUNGI PUNTI</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    <input matInput placeholder="Codice" formControlName="codice">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    <input matInput placeholder="Punti" formControlName="punti">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <button mat-button (click)="addPointsCard()">Aggiungi Punti</button>
+                                <button mat-button (click)="addPointsAll()">Aggiungi punti a Tutti</button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </form>
+
+                </div>
+
+
+                <!------USER DIV--------->
+                <div class="div-user" *ngIf="!isEmployee">
+
+                    <!-----DIV IF THE USER HAVE CARD-->
+
+                    <div *ngIf="haveCard && cardUser != undefined">
+                        <h3>CIAO NOME</h3>
+                        <h3>ECCO LE INFORMAZIONI DELLA TUA TESSERA</h3>
+                        <mat-card class="card-user">
+                            <mat-card-header>
+                                <mat-card-title>{{cardUser.owner.nome}} {{cardUser.owner.cognome}}</mat-card-title>
+                                <mat-card-subtitle>{{cardUser.codice}}</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <p>Punti tessera : {{cardUser.punti}}</p>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+
+                    <!----DIV IF USER DON'T HAVE CARD-->
+                    <div *ngIf="!haveCard">
+                        <p style="margin-top: 50px;">NON POSSIEDI LA TESSERA</p>
+                        <h3>SE VUOI RICHIEDERE LA TESSERA, RECATI NEL NEGOZIO FISICO.</h3>
+                    </div>
+                </div>
+
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
-
-
-
-<!--
-  <div class="container" *ngIf="!isUser">
-  <h2 class="section-title">SEZIONE TESSERE</h2>
-  <mat-accordion class="mat-according">
-    <mat-expansion-panel hideToggle class="mat-expansion-panel" *ngFor="let card of clientiCarte">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Tessera : {{card.codice}}
-        </mat-panel-title>
-        <mat-panel-description>
-          Points: {{card.punti}}
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <p>Alessio Giacche</p>
-    </mat-expansion-panel>
-  </mat-accordion>
-  <div class="text-operation">
-  </div>
-  <div class="button-container">
-    <button mat-raised-button class="btn-class" (click)="addClient() ">Aggiungi Tessera</button>
-    <button mat-raised-button class="btn-class" (click)="searchClient()">Cerca Tessera</button>
-    <button mat-raised-button class="btn-class" (click)="addPoints()">Aggiungi Punti</button>
-  </div>
-</div>
-
-<div class="containerTwo" *ngIf="!isEmployee && isUser">
-  <h3>CIAO USER</h3>
-</div>
--->
