@@ -1,5 +1,6 @@
 const db = require("../config/database.js");
 const Treatment = require("../models/treatment.js");
+const User = require("../models/user");
 
 
 //Create and Save a new Treatment
@@ -24,7 +25,13 @@ exports.create = (req, res) => {
     //Save Treatment in the database
     Treatment.create(treatment)
         .then(data => {
-            res.send(data);
+            if(data){
+                res.status(201).send({
+                    status : 201,
+                    data : data,
+                    message: "Treatment created successfully."
+                })
+            }
         })
         .catch(err => {
             res.status(500).send({
@@ -36,9 +43,23 @@ exports.create = (req, res) => {
 
 
 exports.findAll = (req, res) => {
-    Treatment.findAll({ where: {} })
+    Treatment.findAll({
+        include: [
+            {
+                model : User,
+                as : 'owner',
+                attributes: ['id', 'nome', 'cognome']
+            }
+        ] 
+    })
         .then(data => {
-            res.send(data);
+            if(data){
+                res.status(201).send({
+                    status : 201,
+                    data : data,
+                    message: "Treatment list retrieved successfully."
+                })
+            }
         })
         .catch(err => {
             res.status(500).send({
@@ -48,21 +69,44 @@ exports.findAll = (req, res) => {
         });
 };
 
+exports.findOne = (req, res) => {
+    const idUser = req.params.id;
+
+    Treatment.findAll({ where: { idUtente: idUser } })
+    .then(data => {
+        if (data) {
+            res.status(201).send({
+                status: 201,
+                data: data,
+                message: "Treatment list retrieved successfully."
+            })
+        }
+    })
+    .catch(err => {
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving Treatments."
+        });
+    });
+    
+}
+
 
 exports.find = (req, res) => {
-    const id = req.params.id;
+    const nome = req.params.nome;
 
-    Treatment.findByPk(id).then(data => {
-        if (data) {
-            res.send(data);
-        } else {
-            res.status(404).send({
-                message: `Cannot find Treatment with id=${id}.`
-            });
-        }
+    Treatment.findAll({ where: { nome: nome } })
+    .then(data => {
+            if(data){
+                res.status(201).send({
+                    status : 201,
+                    data : data,
+                    message: "Treatment list retrieved successfully."
+                })
+            }
     }).catch(err => {
         res.status(500).send({
-            message: "Error retrieving Booking with id=" + id
+            message: "Error retrieving Treatment with idUser=" + i
         });
 
     });

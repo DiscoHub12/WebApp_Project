@@ -7,9 +7,11 @@ module.exports = app => {
     //Init the routes :
     router.post("/create", treatment.create);
 
-    router.get("/find/:id", treatment.find);
+    router.get("/find/:nome", treatment.find);
 
     router.get("/findAll", treatment.findAll);
+
+    router.get("/findOne/:id", treatment.findOne);
 
 
     //Route for this module : 
