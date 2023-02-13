@@ -18,7 +18,7 @@ export class CardComponent implements OnInit {
   form !: FormGroup;
 
   //This is the variable for associated the User access account. (User or Employee).
-  userType !: User | Employee;
+  userType : User | Employee | undefined;
 
   //This is the variable, that indicates if the User is User or Employee, for determinate the div page. 
   isEmployee: boolean | undefined;
@@ -67,13 +67,13 @@ export class CardComponent implements OnInit {
   //NgOnInit implementation.
   ngOnInit(): void {
     this.initForm();
-    this.userType = new User(1, "Alessio", "Ciao");
+    this.userType = this.userService.getUser();
     if (this.userType instanceof Employee) {
       this.isEmployee = true;
       this.getAllCardUsers();
     } else if (this.userType instanceof User) {
       this.isEmployee = false;
-      //this.getCardUser();
+      this.getCardUser();
     }
   }
 
@@ -199,19 +199,22 @@ export class CardComponent implements OnInit {
 
   //Method that get the Card for specific User logged.
   getCardUser() {
-    this.httpClient.get<any>(`${environment.baseUrl}/card/findCardUser/${this.userType.id}`).subscribe(
-      response => {
-        this.data = response;
-        if (this.data.status == 201) {
-          this.cardUser = this.data.data;
-          this.haveCard = true;
-          this.resetData();
-        }
-      }, err => {
-        this.data = err;
-        if (this.data.status == 404) {
-          this.haveCard = false;
-        }
-      });
+    if(this.userType){
+      this.httpClient.get<any>(`${environment.baseUrl}/card/findCardUser/${this.userType.id}`).subscribe(
+        response => {
+          this.data = response;
+          if (this.data.status == 201) {
+            this.cardUser = this.data.data;
+            this.haveCard = true;
+            this.resetData();
+          }
+        }, err => {
+          this.data = err;
+          if (this.data.status == 404) {
+            this.haveCard = false;
+          }
+        });
+    }
+    
   }
 }

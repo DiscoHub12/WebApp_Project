@@ -142,18 +142,20 @@
 
                     <!-----DIV IF THE USER HAVE CARD-->
 
-                    <div *ngIf="haveCard && cardUser != undefined">
-                        <h3>CIAO NOME</h3>
-                        <h3>ECCO LE INFORMAZIONI DELLA TUA TESSERA</h3>
+                    <div *ngIf="haveCard && cardUser && userType">
+                        <h3 style="font-size: 23px;">CIAO {{userType.nome}}</h3>
+                        <h3 style="text-align: center; margin-top: 20px;">Ti ricordiamo che, più trattamenti farai, più punti ottieni, per riscuotere premi.</h3>
+                        <h3 style="font-size: 20px; margin-top: 20px;">INFORMAZIONI TESSERA</h3>
                         <mat-card class="card-user">
                             <mat-card-header>
-                                <mat-card-title>{{cardUser.owner.nome}} {{cardUser.owner.cognome}}</mat-card-title>
-                                <mat-card-subtitle>{{cardUser.codice}}</mat-card-subtitle>
+                                <mat-card-title>Codice Tessera : {{cardUser.codice}}</mat-card-title>
+                                <mat-card-subtitle>Punti sulla tua tessera</mat-card-subtitle>
                             </mat-card-header>
                             <mat-card-content>
-                                <p>Punti tessera : {{cardUser.punti}}</p>
+                                <p style="margin-top: 5px; color: green;">{{cardUser.punti}}</p>
                             </mat-card-content>
                         </mat-card>
+                    
                     </div>
 
                     <!----DIV IF USER DON'T HAVE CARD-->
