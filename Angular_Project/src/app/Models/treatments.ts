@@ -4,6 +4,10 @@ export class Treatments {
     nome: String;
     descrizione: String;
     data: Date;
+    owner : {
+        nome: String, 
+        cognome:String,
+    }
 
 
     constructor(
@@ -11,13 +15,15 @@ export class Treatments {
         idUtente: Number,
         nome: String,
         descrizione: String,
-        data: Date
+        data: Date,
+        owner : any
     ) {
         this.id = id;
         this.idUtente = idUtente;
         this.nome = nome;
         this.descrizione = descrizione;
         this.data = data;
+        this.owner = owner; 
     }
 
     getId(): Number {

@@ -1,61 +1,126 @@
-<div class="container-fluid page">
-  <div class="d-flex page__box p-3 mt-2">Treatment</div>
-  <div class="page__content shadow p-3 position-relative">
-    <div class="page__content-data position-absolute text-center">
-      <div class="table-container" *ngIf="!showForm">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>ID Utente</th>
-            <th>Nome</th>
-            <th>Descrizione</th>
-            <th>Data</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let treatment of treatments">
-            <td>{{ treatment.id }}</td>
-            <td>{{ treatment.userId }}</td>
-            <td>{{ treatment.name }}</td>
-            <td>{{ treatment.description }}</td>
-            <td [ngClass]="{ 'past-due': treatment.dueDate < currentDate }">{{ treatment.dueDate | date }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <button class="add-treatment-button" (click)="showForm = true">Aggiungi trattamento</button>
-      </div>
-      <div *ngIf="showForm">
-          <form [formGroup]="addForm">
-            <div class="mb-3">
-                <label for="exampleInputId" class="form-label">idUtente</label>
-                <input formControlName="id" type="int" class="form-control" id="exampleInputId"
-                    aria-describedby="codeHelp">
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputName" class="form-label">Name</label>
-                <input formControlName="name" type="string" class="form-control" id="exampleInputCode"
-                    aria-describedby="codeHelp">
-                <span class="text-danger"
-                    *ngIf="addForm.controls['name'].dirty && addForm.hasError('required', 'name')">*Treatment
-                    name is required</span>
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputDescription" class="form-label">Description</label>
-                <input formControlName="description" type="string" formControlName="description"
-                    class="form-control" id="exampleInputDescription">
-            </div>
-            <div class="mb-3">
-              <label for="exampleInputDate" class="form-label">Date</label>
-              <input formControlName="date" type="date" formControlName="date"
-                  class="form-control" id="exampleInputDate">
+<div class="page">
+  <div class="page-box">SEZIONE TESSERA</div>
+  <div class="page-content">
+      <div class="page-content-data">
+          <div class="page-content-data-inner">
+
+              <!-----EMPLOYEE DIV------>
+              <div class="div-employee" *ngIf="isVisible">
+                  <h3>ECCO LA LISTA DEI TRATTAMENTI DEI TUOI CLIENTI</h3>
+
+                  <div *ngIf="!searchedTreatment">
+                  <mat-accordion class="mat-according" *ngFor="let treatment of treatments">
+                      <mat-expansion-panel hideToggle class="mat-expansion-panel">
+                          <mat-expansion-panel-header>
+                              <mat-panel-title>
+                                  Nome : {{treatment.nome}}
+                              </mat-panel-title>
+                              <mat-panel-description>
+                                  Data: {{treatment.data}}
+                              </mat-panel-description>
+                          </mat-expansion-panel-header>
+                          <p>Descrizione : {{treatment.descrizione}}</p>
+                          <p> Cliente : {{treatment.owner.nome}} {{treatment.owner.cognome}}</p>
+                      </mat-expansion-panel>
+                  </mat-accordion>
+                </div>
+
+
+
+                  <!----MAT ACCORDITION FOR ONE TREATMENT SEARCHED-->
+                  <div *ngIf="searchedTreatment">
+                  <mat-accordion class="mat-according" *ngFor="let treatment of treatmentCercato">
+                      <mat-expansion-panel hideToggle class="mat-expansion-panel">
+                          <mat-expansion-panel-header>
+                              <mat-panel-title>
+                                  Nome : {{treatment.nome}}
+                              </mat-panel-title>
+                              <mat-panel-description>
+                                  Data : {{treatment.data}}
+                              </mat-panel-description>
+                          </mat-expansion-panel-header>
+                          <p>Descrizione : {{treatment.descrizione}}</p>
+                          <p> Cliente : {{treatment.owner.nome}} {{treatment.owner.cognome}}</p>
+                      </mat-expansion-panel>
+                  </mat-accordion>
+                </div>
+
+                  <!------OPERATION DIV BUTTON------->
+                  <div class="button-container">
+                      <button mat-raised-button class="btn-class"
+                          (click)="showFormAddTreatment = !showFormAddTreatment">Aggiungi
+                          Trattamento</button>
+                      <button mat-raised-button class="btn-class"
+                          (click)="showFormSearchTreatment = !showFormSearchTreatment">Cerca
+                          Trattamento</button>
+                      <button mat-raised-button class="btn-class" (click)="ricaricaPagina()">Ricarica Pagina</button>
+                  </div>
+
+
+                  <!------FORMS FOR EMPLOYEE----->
+
+                  <!-------FORM FOR CREATE TREATMENT---->
+                  <form class="formAddTreatment" *ngIf="showFormAddTreatment" [formGroup]="form">
+                      <mat-card>
+                          <mat-card-header>
+                              <mat-card-title>Aggiungi Trattamento</mat-card-title>
+                          </mat-card-header>
+                          <mat-card-content>
+                              <h3>NOME UTENTE</h3>
+                              <mat-form-field>
+                                  <input matInput placeholder="Nome Utente" formControlName="nome">
+                              </mat-form-field>
+                              <h3>COGNOME UTENTE</h3>
+                              <mat-form-field>
+                                  <input matInput placeholder="Cognome Utente" formControlName="cognome">
+                              </mat-form-field>
+                              <h3>CREA CODICE</h3>
+                              <mat-form-field>
+                                  <input matInput placeholder="Codice Utente" formControlName="nuovoCodice">
+                              </mat-form-field>
+                          </mat-card-content>
+                          <mat-card-actions>
+                              <button mat-button (click)="addTreatment()">Aggiungi Trattamento</button>
+                          </mat-card-actions>
+                      </mat-card>
+                  </form>
+
+
+                  <!-------FORM FOR SEARCH CARD------>
+                  <form class="formSearchTreatment" *ngIf="showFormSearchTreatment" [formGroup]="form">
+                      <mat-card>
+                          <mat-card-header>
+                              <mat-card-title>CERCA TRATTAMENTO</mat-card-title>
+                          </mat-card-header>
+                          <mat-card-content>
+                              <h3>NOME UTENTE</h3>
+                              <mat-form-field>
+                                  <input matInput placeholder="Codice Utente" formControlName="nome">
+                              </mat-form-field>
+                              <h3>COGNOME UTENTE</h3>
+                              <mat-form-field>
+                                  <input matInput placeholder="Codice Utente" formControlName="cognome">
+                              </mat-form-field>
+                          </mat-card-content>
+                          <mat-card-actions>
+                              <button mat-button (click)="findTreatment()">Cerca Trattamento</button>
+                              <button mat-button (click)="closeSearchedTreatments()">Chiudi</button>
+                          </mat-card-actions>
+                      </mat-card>
+                  </form>
+
+              </div>
+
+
+              <!------USER DIV--------->
+              <div class="div-user" *ngIf="!isVisible">
+
+                  <div *ngIf="treatmentsUser != undefined">
+                      <h3>ECCO LE INFORMAZIONI DEI TUOI TRATTAMENTI</h3>
+                      
+                  </div>
+              </div>
           </div>
-        </form>
-          <button class = "button" type="submit" (click)="addTreatment()">Invia</button>
-          <br>
-          <br>
-          <button class = "button" type="button" (click)="showForm = false">Annulla</button>
       </div>
-    </div>
   </div>
 </div>
