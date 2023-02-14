@@ -16,7 +16,7 @@ Treatment.init({
         type: DataTypes.INTEGER(4),
         allowNull: false,
     },
-    nome: {
+    nomeTrattamento: {
         type: DataTypes.CHAR(80),
         allowNull: false,
     },

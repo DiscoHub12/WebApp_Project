@@ -3,62 +3,98 @@ const Treatment = require("../models/treatment.js");
 const User = require("../models/user");
 
 
-//Create and Save a new Treatment
+//CREATE TREATMENT METHOD
 exports.create = (req, res) => {
-    //Validate request
-    if (!req.body.idUtente) {
+    const idUtente = req.body.idUtente;
+    const nomeTrattamento = req.body.nomeTrattamento;
+    const descrizione = req.body.descrizione;
+    const data = req.body.data;
+
+
+    if (!idUtente) {
         res.status(400).send({
-            message: "Content can not be empty!"
+            status: 400,
+            message: "Content can't be empty!"
         });
         return;
     }
 
-    //Create a Treatment
-    const treatment = {
-        idUtente: req.body.idUtente,
-        nome: req.body.nome,
-        descrizione: req.body.descrizione,
-        data: req.body.data
-    };
-
-
-    //Save Treatment in the database
-    Treatment.create(treatment)
-        .then(data => {
-            if(data){
-                res.status(201).send({
-                    status : 201,
-                    data : data,
-                    message: "Treatment created successfully."
-                })
+    User.findOne({
+        where: { id : idUtente }
+    }).then(user => {
+        if (user) {
+            const treatment = {
+                idUtente: idUtente,
+                nomeTrattamento: nomeTrattamento,
+                descrizione: descrizione,
+                data: data
             }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the new Treatment."
+            Treatment.create(treatment).then(data => {
+                res.status(201).send({
+                    status: 201,
+                    message: "Treatment created successfully."
+                });
+            }).catch(err => {
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the new Treatment."
+                })
+            })
+        }
+        else {
+            res.status(405).send({
+                status: 405,
+                message: `Cannot find User.`
             });
-        });
-};
+        }
+    });
+}
 
 
+//FIND ALL TREATMENTS
 exports.findAll = (req, res) => {
     Treatment.findAll({
-        include: [
-            {
-                model : User,
-                as : 'owner',
-                attributes: ['id', 'nome', 'cognome']
-            }
-        ] 
-    })
+        include: [{
+            model: User,
+            as: 'owner',
+            attributes: ['id', 'nome', 'cognome']
+        }]
+    }).then(data => {
+        if (data) {
+            res.status(201).send({
+                status: 201,
+                data: data,
+                message: "Treatment list retrieved successfully."
+            })
+        } else {
+            res.status(404).send({
+                message: `Cannot find Treatments. Probably error with connection.`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving Treatments."
+        });
+    });
+};
+
+exports.findOne = (req, res) => {
+    const idUser = req.params.id;
+
+    Treatment.findAll({ where: { idUtente: idUser } })
         .then(data => {
-            if(data){
+            if (data) {
                 res.status(201).send({
-                    status : 201,
-                    data : data,
+                    status: 201,
+                    data: data,
                     message: "Treatment list retrieved successfully."
                 })
+            } else {
+                res.status(404).send({
+                    status: 404,
+                    message: `Cannot find Treatment with id=${id}.`
+                });
             }
         })
         .catch(err => {
@@ -67,50 +103,41 @@ exports.findAll = (req, res) => {
                     err.message || "Some error occurred while retrieving Treatments."
             });
         });
-};
 
-exports.findOne = (req, res) => {
-    const idUser = req.params.id;
-
-    Treatment.findAll({ where: { idUtente: idUser } })
-    .then(data => {
-        if (data) {
-            res.status(201).send({
-                status: 201,
-                data: data,
-                message: "Treatment list retrieved successfully."
-            })
-        }
-    })
-    .catch(err => {
-        res.status(500).send({
-            message:
-                err.message || "Some error occurred while retrieving Treatments."
-        });
-    });
-    
 }
 
-
+//FIND ONE TREATMENT BY ID
 exports.find = (req, res) => {
-    const nome = req.params.nome;
+    const id = req.params.id;
 
-    Treatment.findAll({ where: { nome: nome } })
-    .then(data => {
-            if(data){
+
+    if (!id) {
+        res.status(400).send({
+            message: "Content can't be empty!"
+        });
+        return;
+    }
+
+    Treatment.findByPk(id)
+        .then(data => {
+            if (data) {
                 res.status(201).send({
-                    status : 201,
-                    data : data,
+                    status: 201,
+                    data: data,
                     message: "Treatment list retrieved successfully."
                 })
+            } else {
+                res.status(404).send({
+                    message: `Cannot find Treatment with id=${id}.`
+                });
             }
-    }).catch(err => {
-        res.status(500).send({
-            message: "Error retrieving Treatment with idUser=" + i
-        });
+        }).catch(err => {
+            res.status(500).send({
+                message: "Error retrieving Treatment with idUser=" + id
+            });
 
-    });
-};
+        });
+}
 
 
 
