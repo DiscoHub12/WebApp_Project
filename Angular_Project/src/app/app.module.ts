@@ -21,6 +21,8 @@ import { LoginComponent } from './components/authentication/auth_user/login/logi
 import { SignUpComponent } from './components/authentication/auth_user/sign-up/sign-up.component';
 import { SignupEmpComponent } from './components/authentication/auth_employee/signup-emp/signup-emp.component';
 import { LoginEmpComponent } from './components/authentication/auth_employee/login-emp/login-emp.component';
+import { WelcomeComponent } from './components/pages/dashboard/welcome/welcome.component';
+
 
 //MATERIAL
 import {MatCardModule} from '@angular/material/card';
@@ -36,6 +38,11 @@ import {MatMenuModule} from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule} from '@angular/material/divider';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS } from '@angular/material/radio';
+import {MatTableModule} from '@angular/material/table';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatExpansionModule} from '@angular/material/expansion';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 
 //OTHER IMPORT
@@ -57,7 +64,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     LoginComponent,
     SignUpComponent,
     SignupEmpComponent,
-    LoginEmpComponent
+    LoginEmpComponent,
+    WelcomeComponent,
+    GiftsComponent
 
   ],
   imports: [
@@ -78,10 +87,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatMenuModule,
     MatListModule,
     MatDividerModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatRadioModule,
+    MatTableModule,
+    MatDialogModule,
+    MatExpansionModule,
+    ScrollingModule
 
   ],
-  providers: [],
+  providers: [{
+    provide: MAT_RADIO_DEFAULT_OPTIONS,
+    useValue: { color: 'primary' },
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
