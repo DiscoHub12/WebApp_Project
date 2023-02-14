@@ -93,6 +93,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatDialogModule,
     MatExpansionModule,
     ScrollingModule
+  
 
   ],
   providers: [{
