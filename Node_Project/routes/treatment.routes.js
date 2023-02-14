@@ -7,7 +7,7 @@ module.exports = app => {
     //Init the routes :
     router.post("/create", treatment.create);
 
-    router.get("/find/:nome", treatment.find);
+    router.get("/find/:id", treatment.find);
 
     router.get("/findAll", treatment.findAll);
 
