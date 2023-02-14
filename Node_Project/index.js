@@ -12,10 +12,11 @@ app.use(express.urlencoded({ extended: true }));
 const db = require('./config/database.js');
 
 //require all request : 
-require('./routes/card.routes.js')(app);
 require('./routes/booking.routes.js')(app);
+require('./routes/card.routes.js')(app);
 require('./routes/employee.routes.js')(app);
-require('./routes/product.routes.js')(app); 
+require('./routes/gifts.routes.js')(app);
+require('./routes/treatment.routes.js')(app);
 require('./routes/user.routes.js')(app);
 
 
