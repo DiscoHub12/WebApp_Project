@@ -28,8 +28,8 @@ export class SidenavComponent {
       else if (route === '/booking') {
         this.router.navigate(['/dashboard/user/booking']);
       }
-      else if (route === '/products') {
-        this.router.navigate(['/dashboard/user/products']);
+      else if (route === '/gifts') {
+        this.router.navigate(['/dashboard/user/gifts']);
       }
       else if (route === '/treatments') {
         this.router.navigate(['/dashboard/user/treatments']);
@@ -44,8 +44,8 @@ export class SidenavComponent {
         else if (route === '/booking') {
           this.router.navigate(['/dashboard/employee/booking']);
         }
-        else if (route === '/products') {
-          this.router.navigate(['/dashboard/employee/products']);
+        else if (route === '/gifts') {
+          this.router.navigate(['/dashboard/employee/gifts']);
         }
         else if (route === '/treatments') {
           this.router.navigate(['/dashboard/employee/treatments']);
