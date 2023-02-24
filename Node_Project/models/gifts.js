@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = require('../config/database')
+const sequelize = require('../config/database');
+const User = require('./user.js'); 
 
 class Gifts extends Model {}
 
@@ -23,5 +24,6 @@ Gifts.init({
     sequelize,
     modelName: 'Gifts',
 });
+
 
 module.exports = Gifts;
