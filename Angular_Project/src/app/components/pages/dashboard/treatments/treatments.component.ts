@@ -20,7 +20,7 @@ export class TreatmentsComponent implements OnInit {
 
 
   //This is the variable for associated the User access account. (User or Employee).
-  userType !: User | Employee;
+  userType : User | Employee | undefined;
 
   //This is the variable, that indicates if the User is User or Employee, for determinate the div page. 
   isVisible = false;
@@ -44,6 +44,8 @@ export class TreatmentsComponent implements OnInit {
 
   showFormSearchTreatment = false;
 
+  idUtenteCercato!: Number;
+
 
 
   //-----VARIABLES FOR USER-----
@@ -51,20 +53,23 @@ export class TreatmentsComponent implements OnInit {
   //Variable that rapresent the User Treatments.
   treatmentsUser: Treatments[] = [];
 
+  searchedTreatmentUser: Treatments[] = [];
+
+  showFormSearchTreatmentUser = false;
+
+
 
 
   constructor(
     private authUser: UserService,
     private httpClient: HttpClient,
     private formBuilder: FormBuilder,
-    private router: Router
   ) { }
 
 
   ngOnInit() {
     this.initForm();
-    this.userType = new Employee(2, "Sofia", "Scattolini", 0)
-    //this.userType = this.authUser.getUser();
+    this.userType = this.authUser.getUser();
     if (this.userType instanceof Employee) {
       this.isVisible = true;
       this.getAllTreatments();
@@ -78,12 +83,12 @@ export class TreatmentsComponent implements OnInit {
   //This is the method for init the FormGroup. 
   initForm() {
     this.form = this.formBuilder.group({
-      idUser: ['', Validators.required],
-      name: ['', Validators.required],
-      description: ['', Validators.required],
-      date: ['', Validators.required],
       nome: ['', Validators.required],
-      cognome: ['', Validators.required]
+      cognome: ['', Validators.required],
+      nomeTrattamento: ['', Validators.required],
+      descrizione: ['', Validators.required],
+      data: ['', Validators.required],
+    
     });
   }
 
@@ -97,11 +102,17 @@ export class TreatmentsComponent implements OnInit {
     this.data = null;
   }
 
-
-  //This method rebuild the page.
-  ricaricaPagina() {
+  indietro () {
+    this.searchedTreatment = false;
+    this.treatmentCercato = [];
+    this.resetUtente();
     this.ngOnInit();
   }
+
+  resetUtente(){
+    this.idUtenteCercato = 0;
+  }
+
 
 
   //-----EMPLOYEE METHODS------
@@ -125,13 +136,21 @@ export class TreatmentsComponent implements OnInit {
 
   //This method add a new treatment -- rivedere 
   addTreatment() {
-    const name = this.form.value.name;
-    const description = this.form.value.description;
-    const date = this.form.value.date;
-    const nome = this.form.value.nome;
-    const cognome = this.form.value.cognome;
+    const name = this.form.value.nomeTrattamento;
+    const description = this.form.value.descrizione;
+    let date: any;
+    let dataDaControllare = new Date(this.form.value.data);
+    let dataCorrente = new Date();
+
+    if(dataDaControllare.getTime() > dataCorrente.getTime())
+     {
+      this.resetForm();
+      alert("Data incorrect");
+    } else date = this.form.value.data;
+    
     this.httpClient.post<any>(`${environment.baseUrl}/treatment/create`, {
-      nome: name,
+      idUtente : this.idUtenteCercato,
+      nomeTrattamento: name,
       descrizione: description,
       data: date
     }).subscribe(
@@ -140,9 +159,6 @@ export class TreatmentsComponent implements OnInit {
         if (this.data.status == 201) {
           alert("Trattamento aggiunto con successo");
         }
-      }, err => {
-        this.data = err;
-
       });
     this.resetData();
     this.resetForm();
@@ -153,27 +169,28 @@ export class TreatmentsComponent implements OnInit {
   findTreatment() {
     const nome = this.form.value.nome;
     const cognome = this.form.value.cognome;
+    let trattamentoTrovato = false;
     for (let treatment of this.treatments) {
       if (treatment.owner.nome == nome && treatment.owner.cognome == cognome) {
+        this.idUtenteCercato = treatment.idUtente;
         this.treatmentCercato.push(treatment);
         this.searchedTreatment = true;
+        trattamentoTrovato = true;
       }
     }
-    this.resetForm();
+    if (!trattamentoTrovato) {
+      alert("Nome o cognome errati, reinserirli");
+      this.resetForm();
+    }
   }
-
-  //This method close the Search Treatment.
-  closeSearchedTreatments() {
-    this.searchedTreatment = false;
-    this.treatmentCercato = [];
-  }
-
+  
 
 
   //-----USER METHODS----------
 
   //This method returns all treatments of a user
   getTreatmentUser() {
+    if(this.userType){
     this.httpClient.get<any>(`${environment.baseUrl}/treatment/findOne/${this.userType.id}`).subscribe(
       response => {
         this.data = response;
@@ -183,8 +200,26 @@ export class TreatmentsComponent implements OnInit {
           this.resetData();
         }
       }, err => {
-        this.data = err;
         alert("Something went wrong");
       });
+    }
+  }
+
+
+  searchTreatments(){
+    const nomeTrattamento = this.form.value.nome;
+    for(let treatment of this.treatmentsUser){
+      if(treatment.nomeTrattamento == nomeTrattamento){
+        this.searchedTreatmentUser.push(treatment);
+        this.searchedTreatment = true;
+      }
+    }
+    this.resetForm();
+  }
+
+  //This method close the Search Treatment.
+  closeSearchedTreatmentsUser() {
+    this.searchedTreatment = false;
+    this.searchedTreatmentUser = [];
   }
 }

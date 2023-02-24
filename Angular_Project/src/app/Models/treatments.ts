@@ -1,7 +1,7 @@
 export class Treatments {
     id: Number;
     idUtente: Number;
-    nome: String;
+    nomeTrattamento: String;
     descrizione: String;
     data: Date;
     owner : {
@@ -13,14 +13,14 @@ export class Treatments {
     constructor(
         id: Number,
         idUtente: Number,
-        nome: String,
+        nomeTrattamento: String,
         descrizione: String,
         data: Date,
         owner : any
     ) {
         this.id = id;
         this.idUtente = idUtente;
-        this.nome = nome;
+        this.nomeTrattamento = nomeTrattamento;
         this.descrizione = descrizione;
         this.data = data;
         this.owner = owner; 
@@ -35,8 +35,8 @@ export class Treatments {
     }
 
 
-    getNome(): String {
-        return this.nome;
+    getNomeTrattamento(): String {
+        return this.nomeTrattamento;
     }
 
     getDescrizione(): String {
