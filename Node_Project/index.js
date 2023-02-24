@@ -10,6 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //require db connection and instaure it: 
 const db = require('./config/database.js');
+const associations = require(`./models/associations`); 
 
 //require all request : 
 require('./routes/booking.routes.js')(app);
