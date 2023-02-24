@@ -13,6 +13,18 @@ module.exports = app => {
 
     router.post('create', gifts.create); 
 
+    router.post('update/:id', gifts.update); 
+
+    router.post('delete/:id', gifts.delete); 
+
+    router.get('find/:id', gifts.find); 
+
+    router.get('findAll', gifts.findAll);
+
+    router.post('addReward', gifts.addReward);
+
+    router.post('removeReward', gifts.removeReward); 
+
 
     //Router for this Module.
     app.use('/api/gifts', router);
