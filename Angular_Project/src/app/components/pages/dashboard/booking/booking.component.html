@@ -1,1 +1,45 @@
-<p>booking works!</p>
+<div class="page">
+    <div class="page-box">SEZIONE PRENOTAZIONI</div>
+    <div class="page-content">
+        <div class="page-content-data">
+            <div class="page-content-data-inner">
+
+                <!------USER DIV--------->
+                <div class="div-user" *ngIf="!isVisible">
+
+                    <div class="button-container">
+                        <button mat-raised-button class="btn-class" (click)="open = !open">Vedi
+                            Calendario</button>
+                            <br>
+                            <br>
+                        <button mat-raised-button class="btn-class">Vedi le tue prenotazioni
+                        </button>
+
+
+                        <br>
+                        <br>
+                        <mat-card class="demo-inline-calendar-card" *ngIf="open">
+                            <mat-calendar></mat-calendar>
+                            <button mat-raised-button class="btn-class" (click)="open = !open">
+                                Chiudi
+                            </button>
+                        </mat-card>
+
+                    </div>
+
+
+
+
+
+                    <!-----EMPLOYEE DIV------>
+                    <div class="div-employee" *ngIf="isVisible">
+                        <mat-card class="demo-inline-calendar-card">
+                            <mat-calendar></mat-calendar>
+                        </mat-card>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
