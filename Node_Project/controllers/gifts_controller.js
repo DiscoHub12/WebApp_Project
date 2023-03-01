@@ -1,7 +1,6 @@
 const db = require("../config/database.js");
 const Gifts = require("../models/gifts.js");
 const User = require("../models/user.js");
-
 //Todo aggiungere tutti i metodi per le Gifts.
 
 exports.create = (req, res) => {
@@ -20,7 +19,7 @@ exports.create = (req, res) => {
         punti : punti
     }
 
-    Gifts.create(gifts).then((data) => {
+    Gifts.create(gifts).then(data => {
         res.status(201).send({
             status: 201, 
             message : `Gifts created successfully`
@@ -134,37 +133,102 @@ exports.findAll = (req, res) => {
 
 }
 
-exports.addReward = async (req, res) => {
-    const user = User.findByPk(req.body.idUser); 
-    const reward = Gifts.findByPk(req.body.idGift); 
+exports.findAllUser = async (req, res) => {
+    const idUser = req.params.id; 
 
-    if(user && reward){
-        const alreadyReedem = await user.hasReward(reward); 
+    if(!idUser){
+        res.status(401).send({
+            status : 401, 
+            message : "User not found",
+        }); 
+    }
 
-        if(alreadyReedem){
-            res.status(400).send({
-                status : 400, 
-                message : `Reward already received`,
-            }); 
-        }
-        await user.addReward(reward, { through : {reeedemAt : new Date()}}); 
-        res.status(200).send({
-            status: 200, 
-            message : `Reward added successfully`, 
+    const user = await User.findByPk(idUser);
+
+    if(!user){
+        res.status(401).send({
+            status : 401, 
+            message : "User not found", 
+        }); 
+    }
+
+    const userGifts = await user.getGifts();
+
+    if(userGifts){
+        res.status(201).send({
+            status : 201, 
+            data : userGifts
+        }); 
+    }else if(userGifts == null){
+        res.status(202).send({
+            status : 202, 
+            message : "User don't have any Gifts.", 
         })
-    }else res.status(404).send({
-        status : 404, 
-        message : `Reward not found`,
-    })
-    //Todo implementare
+    }
+
+
 }
 
+exports.addReward = async (req, res) => {
+    const user = await User.findByPk(req.body.idUser); 
+    const reward = await Gifts.findByPk(req.body.idGift); 
+  
+    if(user && reward){
+      const alreadyReedem = await user.hasGifts(reward); 
+  
+      if(alreadyReedem){
+        res.status(400).send({
+          status : 400, 
+          message : `Reward already received`,
+        }); 
+      }
+  
+      await user.addGifts(reward, { through : {reedemAt : new Date()}}); 
+      res.status(200).send({
+        status: 200, 
+        message : `Reward added successfully`, 
+      })
+    } else {
+      res.status(404).send({
+        status : 404, 
+        message : `Reward not found`,
+      });
+    }
+  }
+
 exports.removeReward = async (req, res) => {
-    const user = User.findByPk(req.body.idUser); 
+    const user = await User.findByPk(req.body.idUser); 
+    const reward = await Gifts.findByPk(req.body.idGift); 
+  
+    if(user && reward){
+      const alreadyReedem = await user.hasGifts(reward); 
+  
+      if(!alreadyReedem){
+        res.status(400).send({
+            status : 400, 
+            message : `The User don't have this reward`, 
+        });
+      }
+  
+      await user.removeGifts(reward); 
+      res.status(200).send({
+        status: 200, 
+        message : `Reward removed successfully`, 
+      })
+    } else {
+      res.status(404).send({
+        status : 404, 
+        message : `Reward not found`,
+      })
+    }
+}
+
+/**
+const user = User.findByPk(req.body.idUser); 
     const reward = Gifts.findByPk(req.body.idGift); 
 
-    if(user && reward){
-        const alreadyReedem = await user.hasReward(reward); 
+     if(user && reward){
+      const alreadyReedem = await user.hasGifts(reward); 
 
         if(!alreadyReedem){
             res.status(400).send({
@@ -173,13 +237,12 @@ exports.removeReward = async (req, res) => {
             });
         }
 
-        await user.removeReward(reward); 
+        await user.removeGifts(reward); 
         res.status(200).send({
             status: 200, 
             message: `Reward was successfully removed`, 
         })
     }
-    //Todo implementare
-}
+ */
 
 

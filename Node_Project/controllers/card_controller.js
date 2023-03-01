@@ -121,7 +121,7 @@ exports.find = (req, res) => {
 exports.findCardUser = async (req, res) => {
     const idUtente = req.params.id;
 
-    Card.findOne({ where: { id: idUtente } }).then(
+    Card.findOne({ where: { idUtente: idUtente } }).then(
         data => {
             if (data) {
                 res.status(201).send({
