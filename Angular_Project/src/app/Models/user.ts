@@ -1,3 +1,5 @@
+import { Card } from "./card";
+
 export class User {
     id : Number;
     nome : String;

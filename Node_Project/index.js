@@ -10,15 +10,19 @@ app.use(express.urlencoded({ extended: true }));
 
 //require db connection and instaure it: 
 const db = require('./config/database.js');
-const associations = require(`./models/associations`); 
+const user = require('./models/user.js'); 
+const gifts = require('./models/gifts.js'); 
 
 //require all request : 
+require('./routes/gifts.routes.js')(app); 
+require('./routes/user.routes.js')(app);
 require('./routes/booking.routes.js')(app);
 require('./routes/card.routes.js')(app);
 require('./routes/employee.routes.js')(app);
-require('./routes/gifts.routes.js')(app);
 require('./routes/treatment.routes.js')(app);
-require('./routes/user.routes.js')(app);
+
+user.belongsToMany(gifts, { through: 'UserRewards' } ); 
+gifts.belongsToMany(user, { through: 'UserRewards'});
 
 
 db.sync().then(() => {
@@ -27,11 +31,23 @@ db.sync().then(() => {
     console.log("Failed to sync db : " + err.message);
 }); 
 
-
 app.listen(3000); 
 console.log("Server start at 3000...");
 
 
+/**
+const User = require('./user');
+const Gifts = require('./gifts');
+
+function associations() {
+    //Stabilisce la relazione in modo tale che User può ricevere più regali.
+    User.belongsToMany(Gifts, { through: 'UserReward' });
+    //Stabilisce la relazione in modo tale che un Premio può essere riscattato da più Userss
+    Gifts.belongsToMany(User, { through: 'UserReward' });
+}
+
+module.exports = associations;
+ */
 
 /**
 INDEX VECCHIO CON CHIAMATE: 
