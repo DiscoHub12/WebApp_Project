@@ -18,6 +18,8 @@ module.exports = app => {
 
     router.get("/findAll", booking.findAll);
 
+    router.get("/findOne/:id", booking.findOne);
+
     router.get("/findFree", booking.findFreeBooking);
 
     router.get("/findAllCompleted", booking.findAllCompleted);

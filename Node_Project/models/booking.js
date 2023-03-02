@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = require('../config/database')
+const sequelize = require('../config/database');
+const User = require('./user');
 
 class Booking extends Model { }
 
@@ -27,6 +28,8 @@ Booking.init({
     sequelize,
     modelName: 'Booking'
 });
+
+Booking.belongsTo(User, {foreignKey : 'idUtente', as : 'owner'})
 
 module.exports = Booking;
 
