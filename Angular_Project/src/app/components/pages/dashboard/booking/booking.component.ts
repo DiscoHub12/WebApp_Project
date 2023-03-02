@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { CalendarEvent } from 'angular-calendar';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Booking } from 'src/app/Models/booking';
 import { Employee } from 'src/app/Models/employee';
 import { User } from 'src/app/Models/user';
@@ -13,6 +13,9 @@ import { environment } from 'src/environments/environments';
   styleUrls: ['./booking.component.scss']
 })
 export class BookingComponent {
+
+  //This is the variable for the FormGroup.
+  public form !: FormGroup;
 
   //This is the variable for associated the User access account. (User or Employee).
   userType: User | Employee | undefined;
@@ -29,32 +32,66 @@ export class BookingComponent {
 
   open = false;
 
+  searchedBooking = false;
+
+
+
+  //-----VARIABLES FOR USER-----
+
+  //Variable that rapresent the User Bookings.
+  bookingsUser: Booking[] = [];
+
+  openList = false;
+
+  searchedBookingsUser: Booking[] = [];
+
+  showFormSearchBookingUser = false;
+
 
 
 
 
   constructor(
     private authUser: UserService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private formBuilder: FormBuilder
   ) { }
 
 
   ngOnInit() {
-    this.userType = new User (1, "Sofia", "Scattolini");
+    this.initForm();
+    this.userType = new User(1, "Sofia", "Scattolini");
     //this.userType = this.authUser.getUser();
     if (this.userType instanceof Employee) {
       this.isVisible = true;
+      this.getAllBookings();
     } else {
       this.isVisible = false;
+      this.getBookingUser();
     }
   }
 
+  //This is the method for init the FormGroup. 
+  initForm() {
+    this.form = this.formBuilder.group({
+      dataPrenotazione: ['', Validators.required],
+      completata : ['', Validators.required]
+    });
+  }
+
+
+
+  //-----EMPLOYEE METHODS------
+
+
+  //This method returns all bookings
   getAllBookings() {
     this.httpClient.get<any>(`${environment.baseUrl}/booking/findAll`).subscribe(response => {
       this.data = response;
       if (this.data.status === 201) {
         this.bookings = this.data.data;
         console.log(this.bookings);
+        this.resetData();
       }
       else {
         alert("Error");
@@ -63,6 +100,75 @@ export class BookingComponent {
       alert("Something went wrong");
 
     });
+  }
+
+
+
+  //-----USER METHODS----------
+
+  //This method returns all bookings of a user
+  getBookingUser() {
+    if (this.userType) {
+      this.httpClient.get<any>(`${environment.baseUrl}/booking/findOne/${this.userType.id}`).subscribe(
+        response => {
+          this.data = response;
+          if (this.data.status === 201) {
+            this.bookingsUser = this.data.data;
+            console.log(this.bookingsUser);
+            this.resetData();
+          }
+        }, err => {
+          alert("Something went wrong");
+        });
+    }
+  }
+
+  searchBookings() {
+    const data = this.form.value.dataPrenotazione;
+    const dataPrenotazione = this.convertToDate(data);
+    for (let booking of this.bookingsUser) {
+      const bookingDate = booking.dataPrenotazione instanceof Date ? booking.dataPrenotazione : this.convertToDate(booking.dataPrenotazione);
+      if (bookingDate.getTime() === dataPrenotazione.getTime()) {
+        this.searchedBookingsUser.push(booking);
+        this.searchedBooking = true;
+      }
+    }
+    this.resetForm();
+  }
+  
+  
+
+  convertToDate(data : String) : Date{
+    const [day, month, year] = data.split('-');
+    return new Date(+year, +month - 1, +day);
+  }
+
+
+
+  //-----OTHER METHODS----------
+
+   //This is the method for reset the FormGroup value.
+   resetForm() {
+    this.form.reset();
+  }
+
+
+  //This is the method for reset the Data from backend.
+  resetData() {
+    this.data = null;
+  }
+
+  completata(booking: Booking) {
+    if (booking.completata === 0)
+      return "No"
+    else
+      return "Si'"
+  }
+
+   //This method close the Search Booking.
+   closeSearchedBookingsUser() {
+    this.searchedBooking = false;
+    this.searchedBookingsUser = [];
   }
 
 

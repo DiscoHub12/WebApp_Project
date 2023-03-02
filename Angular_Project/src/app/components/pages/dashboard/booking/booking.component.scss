@@ -44,12 +44,34 @@
   text-align: center;
 }
 
-
+//SCSS FOR USER
 .div-user h3{
   margin-top : 50px;
   display: flex;
   justify-content: center;
   text-align: center;
+}
+
+
+.div-info h3{
+  margin-top : 50px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.mat-according {
+  width: 600px;
+  overflow: auto;
+}
+
+.mat-expansion-panel {
+  margin-bottom: 2px;
+  width: 600px;
+}
+
+.formSearchBooking {
+  margin-top: 20px;
 }
 
 

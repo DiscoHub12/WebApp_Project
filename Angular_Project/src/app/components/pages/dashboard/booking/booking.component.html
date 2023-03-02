@@ -7,39 +7,98 @@
                 <!------USER DIV--------->
                 <div class="div-user" *ngIf="!isVisible">
 
+
                     <div class="button-container">
                         <button mat-raised-button class="btn-class" (click)="open = !open">Vedi
                             Calendario</button>
-                            <br>
-                            <br>
-                        <button mat-raised-button class="btn-class">Vedi le tue prenotazioni
+                        <br>
+                        <br>
+                        <button mat-raised-button class="btn-class" (click)="openList = !openList">Vedi le tue
+                            prenotazioni
                         </button>
+                    </div>
 
-
+                    <div *ngIf="open">
                         <br>
-                        <br>
-                        <mat-card class="demo-inline-calendar-card" *ngIf="open">
+                        <mat-card class="demo-inline-calendar-card">
                             <mat-calendar></mat-calendar>
                             <button mat-raised-button class="btn-class" (click)="open = !open">
                                 Chiudi
                             </button>
                         </mat-card>
-
                     </div>
 
+                    <div class="div-info" *ngIf="openList">
+                        <h3>ECCO LE TUE PRENOTAZIONI</h3>
+                        <mat-accordion class="mat-according" *ngIf="bookingsUser != undefined && !searchedBooking">
+                            <mat-expansion-panel hideToggle class="mat-expansion-panel"
+                                *ngFor="let booking of bookingsUser">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Data prenotazione:{{booking.dataPrenotazione | date:'dd-MM-yyyy'}}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <mat-panel-description>
+                                    Completata : {{completata(booking)}}
+                                </mat-panel-description>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+
+                         <!----MAT ACCORDITION FOR BOOKINGS SEARCHED-->
+                  <mat-accordion class="mat-according" *ngIf="searchedBooking">
+                    <mat-expansion-panel hideToggle class="mat-expansion-panel" *ngFor="let booking of searchedBookingsUser">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                Data prenotazione:{{booking.dataPrenotazione | date:'dd-MM-yyyy'}}
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <mat-panel-description>
+                            Completata : {{completata(booking)}}
+                        </mat-panel-description>
+                    </mat-expansion-panel>
+                </mat-accordion>
+
+                        <br>
+                    <button mat-raised-button class="btn-class"
+                          (click)="showFormSearchBookingUser = !showFormSearchBookingUser">Cerca
+                          Prenotazione</button>
+
+                          <form class="formSearchBooking" *ngIf="showFormSearchBookingUser" [formGroup]="form">
+                            <mat-card>
+                                <mat-card-header>
+                                    <mat-card-title>CERCA PRENOTAZIONE</mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <h3>DATA PRENOTAZIONE</h3>
+                                    <mat-form-field>
+                                        <input matInput placeholder="Data Prenotazione" formControlName="dataPrenotazione">
+                                    </mat-form-field>
+                                </mat-card-content>
+                                <mat-card-actions>
+                                    <button mat-button (click)="searchBookings()">Cerca Prenotazione</button>
+                                    <button mat-button (click)="closeSearchedBookingsUser()">Chiudi</button>
+                                </mat-card-actions>
+                            </mat-card>
+                        </form>
 
 
-
-
-                    <!-----EMPLOYEE DIV------>
-                    <div class="div-employee" *ngIf="isVisible">
-                        <mat-card class="demo-inline-calendar-card">
-                            <mat-calendar></mat-calendar>
-                        </mat-card>
                     </div>
-
 
                 </div>
+
+
+
+
+
+                <!-----EMPLOYEE DIV------>
+                <div class="div-employee" *ngIf="isVisible">
+                    <mat-card class="demo-inline-calendar-card">
+                        <mat-calendar></mat-calendar>
+                    </mat-card>
+                </div>
+
+
+
             </div>
         </div>
     </div>

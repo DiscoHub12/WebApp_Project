@@ -2,25 +2,32 @@ export class Booking {
     id: Number;
     idUtente: Number;
     dataPrenotazione: Date;
-    completata: boolean;
+    completata: Number;
+    owner : {
+        nome : String,
+        cognome : String
+    }
 
 
     constructor(
         id: Number,
         idUtente: Number,
         dataPrenotazione: Date,
+        completata : Number,
+        owner : any
     ) {
         this.id = id;
         this.idUtente = idUtente;
         this.dataPrenotazione = dataPrenotazione;
-        this.completata = false;
+        this.completata = completata;
+        this.owner = owner;
     }
 
-    setCompletata(completata: boolean): void {
+    setCompletata(completata: Number): void {
         this.completata = completata;
     }
 
-    getCompletata(): boolean {
+    getCompletata(): Number {
         return this.completata;
     }
 
