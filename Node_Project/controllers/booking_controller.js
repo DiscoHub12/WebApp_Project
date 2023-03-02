@@ -6,7 +6,8 @@ const User = require("../models/user.js");
 //Create and Save a new Booking : 
 exports.create = (req, res) => {
   const idUtente = req.body.idUtente;
-  const dataPrenotazione = req.body.dataPrenotazione;;
+  const dataPrenotazione = req.body.dataPrenotazione;
+  const oraPrenotazione = req.body.oraPrenotazione;
   const completata = req.body.completata;
 
 
@@ -25,6 +26,7 @@ exports.create = (req, res) => {
           const booking = {
               idUtente: idUtente,
               dataPrenotazione: dataPrenotazione,
+              oraPrenotazione : oraPrenotazione,
               completata: completata
           }
           Booking.create(booking).then(data => {

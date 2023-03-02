@@ -20,6 +20,10 @@ Booking.init({
         type: DataTypes.DATE,
         allowNull: false,
     },
+    oraPrenotazione : {
+        type : DataTypes.INTEGER,
+        allowNull: false,
+    },
     completata: {
         type: DataTypes.INTEGER(1),
         allowNull: false
