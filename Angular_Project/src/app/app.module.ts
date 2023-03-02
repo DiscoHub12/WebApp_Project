@@ -43,6 +43,9 @@ import {MatTableModule} from '@angular/material/table';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 
 //OTHER IMPORT
@@ -92,7 +95,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatTableModule,
     MatDialogModule,
     MatExpansionModule,
-    ScrollingModule
+    ScrollingModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   
 
   ],
