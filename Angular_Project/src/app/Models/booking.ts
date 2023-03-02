@@ -2,6 +2,7 @@ export class Booking {
     id: Number;
     idUtente: Number;
     dataPrenotazione: Date;
+    oraPrenotazione: Number;
     completata: Number;
     owner : {
         nome : String,
@@ -13,12 +14,14 @@ export class Booking {
         id: Number,
         idUtente: Number,
         dataPrenotazione: Date,
+        oraPrenotazione : Number,
         completata : Number,
         owner : any
     ) {
         this.id = id;
         this.idUtente = idUtente;
         this.dataPrenotazione = dataPrenotazione;
+        this.oraPrenotazione = oraPrenotazione;
         this.completata = completata;
         this.owner = owner;
     }

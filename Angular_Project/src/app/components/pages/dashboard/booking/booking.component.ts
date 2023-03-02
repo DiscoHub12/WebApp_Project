@@ -49,8 +49,6 @@ export class BookingComponent {
 
 
 
-
-
   constructor(
     private authUser: UserService,
     private httpClient: HttpClient,
@@ -74,8 +72,7 @@ export class BookingComponent {
   //This is the method for init the FormGroup. 
   initForm() {
     this.form = this.formBuilder.group({
-      dataPrenotazione: ['', Validators.required],
-      completata : ['', Validators.required]
+      dataPrenotazione: ['dd-MM-yyyy', Validators.required]
     });
   }
 
@@ -124,10 +121,9 @@ export class BookingComponent {
   }
 
   searchBookings() {
-    const data = this.form.value.dataPrenotazione;
-    const dataPrenotazione = this.convertToDate(data);
+    const dataPrenotazione = new Date(this.form.value.dataPrenotazione);
     for (let booking of this.bookingsUser) {
-      const bookingDate = booking.dataPrenotazione instanceof Date ? booking.dataPrenotazione : this.convertToDate(booking.dataPrenotazione);
+      const bookingDate = new Date(booking.dataPrenotazione);
       if (bookingDate.getTime() === dataPrenotazione.getTime()) {
         this.searchedBookingsUser.push(booking);
         this.searchedBooking = true;
@@ -135,20 +131,14 @@ export class BookingComponent {
     }
     this.resetForm();
   }
-  
-  
 
-  convertToDate(data : String) : Date{
-    const [day, month, year] = data.split('-');
-    return new Date(+year, +month - 1, +day);
-  }
 
 
 
   //-----OTHER METHODS----------
 
-   //This is the method for reset the FormGroup value.
-   resetForm() {
+  //This is the method for reset the FormGroup value.
+  resetForm() {
     this.form.reset();
   }
 
@@ -165,11 +155,13 @@ export class BookingComponent {
       return "Si'"
   }
 
-   //This method close the Search Booking.
-   closeSearchedBookingsUser() {
+  //This method close the Search Booking.
+  closeSearchedBookingsUser() {
     this.searchedBooking = false;
     this.searchedBookingsUser = [];
+    this.showFormSearchBookingUser = false;
   }
 
 
 }
+
