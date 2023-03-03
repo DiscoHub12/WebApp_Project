@@ -1,36 +1,69 @@
+/**
+ * This .js file allows to export (then import it into the Server, 
+ * in this case index.js) all the Routes regarding the requestes 
+ * for the User model.
+ * @param {*} app to export.
+ */
 module.exports = app => {
 
-    //Require User controller for call methods for Routes
+    /**
+     * Variable used to indicate the corresponding 
+     * controller of User model, so as t call the
+     * corrisponding methods when requests are made.
+     */
     const user = require('../controllers/user_controller');
 
-    //Require JWT Controller for call JWT Method in Header Route
-    const auth = require("../auth/jwtController");
-
-    //Require express connection 
+    /**
+     * Variable used for Routing, it allows you to 
+     * export this file using the router app 'router'.
+     */
     var router = require('express').Router();
 
-    // ---- AUTHENTICATION ROUTES -----
 
+    /**
+     * This route allows you the registration of a new 
+     * User within the Platform.
+     */
     router.post("/registration", user.create);
 
+    /**
+     * This route allow User to log in.
+     */
     router.post("/login", user.login);
 
-    router.post("/logout", user.logout); 
+    /**
+     * This route allows you to logout the User logged into 
+     * the Platform.
+     */
+    router.post("/logout", user.logout);
 
-    router.post("refreshToken", user.refreshToken); 
+    /**
+     * This route allows you to get a new refresh-token for the User 
+     * logged into the Platform.
+     */
+    router.post("refreshToken", user.refreshToken);
 
-    // ---- OTHER ROUTES ----
-
-    //Route for delete User by Id
-    router.post("/delete/:id", user.delete);
-
-    //Route for update User account
+    /**
+     * This route allows you to update data for a specific User, 
+     * passing the corresponding and unique id as parameters.
+     */
     router.post("/update/:id", user.update);
 
-    //Route for find User by Id
+    /**
+     * This route allows you to delete a specific User account, 
+     * passing the corresponding and unique id as parameters.
+     */
+    router.post("/delete/:id", user.delete);
+
+    /**
+     * This route allows you to get a specific User, 
+     * passing the corresponding and unique id as parameters.
+     */
     router.get("/find/:id", user.find);
 
-    //Route for find all User
+    /**
+     * This route allows you to get all User accounts registered.
+     */
     router.get("/findAll", user.findAll);
 
 
