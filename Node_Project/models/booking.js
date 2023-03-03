@@ -21,7 +21,7 @@ Booking.init({
         allowNull: false,
     },
     oraPrenotazione : {
-        type : DataTypes.INTEGER,
+        type : DataTypes.TIME,
         allowNull: false,
     },
     completata: {
