@@ -15,7 +15,7 @@
                     <button mat-raised-button class="btn-class" (click)="showAllGifts = !showAllGifts">Vedi
                         Premi</button>
                     <button mat-raised-button class="btn-class" (click)="addNewGift = !addNewGift">Crea Premio</button>
-                    <button mat-raised-button class="btn-class" (click)="ricaricaPagina()">Ricarica Pagina</button>
+                    <button mat-raised-button class="btn-class" (click)="showUsers = !showUsers">Clienti</button>
                 </div>
 
                 <!----DIV PER TUTTE LE GIFTS-->
@@ -35,6 +35,7 @@
                                 {{gift.punti}}
                             </h3>
                         </mat-card-content>
+                        <button mat-button style="margin-top: 2px; color: red;" (click)="removeGifts(gift)">Rimuovi Premio</button>
                     </mat-card>
                 </div>
 
@@ -60,6 +61,25 @@
                         </mat-card-actions>
                     </mat-card>
                 </form>
+
+
+                <!-----DIV PER VEDERE GLI UTENTI CHE HANNO PREMI----->
+                <div class="divShowUsers" *ngIf="showUsers">
+                    <h3>Qui sottostante, potrai vedere gli Utenti iscritti che hanno <br>
+                    riscattato dei premi.</h3>
+                    <mat-accordion class="mat-according">
+                        <mat-expansion-panel hideToggle class="mat-expansion-panel" *ngFor="let user of allUsers">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Nome : {{user.nome}}
+                                </mat-panel-title>
+                                <mat-panel-description>
+                                    Cognome: {{user.cognome}}
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </div>
             </div>
 
 
@@ -100,7 +120,7 @@
                                 Punti per riscattare il seguente prodotto :
                                 {{gift.punti}}
                             </h3>
-                            <button mat-button style="margin-top: 2px;" (click)="retreiveGift(gift.id)">Riscatta Premio</button>
+                            <button mat-button style="margin-top: 2px;" (click)="retreiveGift(gift)">Riscatta Premio</button>
                         </mat-card-content>
                     </mat-card>
                 </div>

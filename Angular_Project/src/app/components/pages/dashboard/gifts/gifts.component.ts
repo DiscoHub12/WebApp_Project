@@ -36,14 +36,20 @@ export class GiftsComponent implements OnInit {
   //Boolean variables to indicate if the Employee want to create a new Gift
   addNewGift = false;
 
+  //Boolean variables to indicate if the Employee want to check all Users.
+  showUsers = false; 
+
+  allUsers: User[] = [];
+
+
 
 
   //VARIABLES FOR USER 
   allMyGifts: Gift[] = [];
 
-  myCard : Card | undefined | any; 
+  myCard: Card | undefined | any;
 
-  hasCard = false; 
+  hasCard = false;
 
   showMyReward = false;
 
@@ -61,21 +67,20 @@ export class GiftsComponent implements OnInit {
   ngOnInit(): void {
     this.initForms();
     //this.userType = this.userService.getUser();
-    this.userType = new User(1, "Alessio", "Giacche");
-    /**
+    this.userType = new Employee(1, "Alessio", "Giacche", 1);
      if (this.userType instanceof Employee) {
       this.isEmployee = true;
       this.getAllGifts();
-    }else
-     */
-     if (this.userType instanceof User) {
+      this.getAllUsers();
+    }
+    /**
+     * else if (this.userType instanceof User) {
       this.isEmployee = false;
+      this.getAllGifts();
       this.getAllGiftsUser();
       this.getCardUser();
-      this.getAllGifts();
-      console.log("User id : " + this.userType.getId()); 
     }
-
+     */
   }
 
   initForms() {
@@ -103,13 +108,26 @@ export class GiftsComponent implements OnInit {
         this.data = response;
         if (this.data.status == 200) {
           this.allGifts = this.data.data;
-          console.log("Tutti i Premi : " + this.allGifts); 
+          console.log("Tutti i Premi : " + this.allGifts);
         } else console.log("error");
       }, err => {
         alert("Something went wrong");
       });
     this.resetData();
     this.resetForm();
+  }
+
+  getAllUsers(){
+    this.httpClient.get<any>(`${environment.baseUrl}/user/findAll`).subscribe(
+      response => {
+        this.data = response; 
+        if(this.data.status == 200){
+          this.allUsers = this.data.data;
+        }
+      }, err => {
+        alert("Something went wrong");
+      }
+    )
   }
 
   createGifts() {
@@ -134,9 +152,26 @@ export class GiftsComponent implements OnInit {
 
   }
 
-  removeGifts() { }
+  removeGifts(gifts : Gift) { 
+    this.httpClient.post<any>(`${environment.baseUrl}/gifts/delete/${gifts.id}`, {}).subscribe(
+      response => {
+        this.data = response; 
+        if(this.data.status == 200){
+          alert("Premio rimosso con successo."); 
+          this.resetData(); 
+          this.resetForm();
+        }
+      }, err => {
+        alert("Error");
+      }
+    );
+  }
 
   findGift() { }
+
+  removeGiftsUser(){
+    //Todo implementare.
+  }
 
   annullaCreazione() {
     this.resetForm();
@@ -150,6 +185,10 @@ export class GiftsComponent implements OnInit {
 
   //-----USER METHODS------
 
+  /**
+   * This method allows you to take all the redeemed 
+   * rewards of a given Client.
+   */
   getAllGiftsUser() {
     this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUser/${this.userType?.getId()}`).subscribe(
       response => {
@@ -160,42 +199,88 @@ export class GiftsComponent implements OnInit {
       }, err => {
         console.log("Something went wrong");
       });
-      this.resetData(); 
-      this.resetForm();
+    this.resetData();
+    this.resetForm();
   }
 
-  getCardUser(){
+  /**
+   * This method allows you to take the user's Card 
+   * if you have one, to show the points.
+   */
+  getCardUser() {
     this.httpClient.get<any>(`${environment.baseUrl}/card/findCardUser/${this.userType?.getId()}`).subscribe(
-      response =>{
-        this.data = response; 
-        if(this.data.status == 201){
-          this.myCard = this.data.data; 
-          this.hasCard = true; 
+      response => {
+        this.data = response;
+        if (this.data.status == 201) {
+          this.myCard = this.data.data;
+          this.hasCard = true;
         }
       }, err => {
-        console.log("Something went wrong"); 
-      }); 
-      this.resetData(); 
-      this.resetForm();
+        console.log("Something went wrong");
+      });
+    this.resetData();
+    this.resetForm();
   }
 
-  retreiveGift(id : Number) {
-    for(let gift of this.allGifts){
-      if(gift.punti > this.myCard.punti){
-        alert(`Numero Punti non sufficenti`); 
-        return; 
-      }else {
-        this.httpClient.post<any>(`${environment.baseUrl}/gifts/addReward`, {idUser : this.userType?.getId, idGift : id}).subscribe(
-          response => {
-            this.data = response; 
-            if(this.data.status == 201){
-              alert("Premio riscattato con successo. Ricarica la pagina per vederlo."); 
+  /**
+   * This method allows you to redeem a possible reward, if the points are sufficient.
+   * @param gifts the Prize to be redeemed. 
+   */
+  retreiveGift(gifts : Gift) {
+    for (let gift of this.allGifts) {
+      if (gift.id == gifts.id) {
+        if (gift.punti > this.myCard.punti) {
+          alert(`Numero Punti non sufficenti`);
+          this.resetData();
+          this.resetForm();
+        } else {
+          this.httpClient.post<any>(`${environment.baseUrl}/gifts/addReward`, { idUser: this.userType?.getId(), idGift: gifts.id }).subscribe(
+            response => {
+              this.data = response;
+              if (this.data.status == 200) {
+                alert("Premio riscattato con successo. Ricarica la pagina per vederlo.");
+                console.log("Card : " + this.myCard.id + "Punti : " + gifts.punti);
+                this.removePoints(this.myCard.id, gifts.punti);
+                alert(`${gifts.punti} punti rimossi.`);
+              }
+            }, err => {
+              this.data = err;
+              if (this.data.status == 402) {
+                alert("Premio già riscattato.");
+                this.resetData();
+                this.resetForm();
+              } else {
+                console.log("Something went wrong");
+                this.resetData();
+                this.resetForm();
+              }
             }
-          }, err=> {
-              console.log("Something went wrong");
-          }
-        );
+          );
+        }
+        this.resetData();
+        this.resetForm();
       }
     }
+  }
+
+
+  /**
+   * This method allows any points to be removed from a Customer's 
+   * card when the Customer makes a reward redemption request.
+   * @param idCard the Card id of the Customer.
+   * @param numberPoints the number of points to be removed.
+   */
+  removePoints(idCard: Number, numberPoints: Number) {
+    this.httpClient.post<any>(`${environment.baseUrl}/card/removePoints/${idCard}`, { punti: numberPoints }).subscribe(
+      response => {
+        this.data = response;
+        if (this.data.status == 200) {
+          this.resetData();
+          this.resetForm();
+        }
+      }, err => {
+        alert("Something went wrong");
+      }
+    );
   }
 }
