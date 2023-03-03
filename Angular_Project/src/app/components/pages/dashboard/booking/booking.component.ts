@@ -29,10 +29,15 @@ export class BookingComponent {
   //This is a variable, to associate all Http response.
   data: any;
 
+  //Variable that rapresent the date selected.
+  selected!: Date | null;
+
 
   open = false;
 
   searchedBooking = false;
+
+  bookingsToday: Booking[] = [];
 
 
 
@@ -47,6 +52,8 @@ export class BookingComponent {
 
   showFormSearchBookingUser = false;
 
+  showFormAddBookingUser = false;
+
 
 
   constructor(
@@ -58,7 +65,7 @@ export class BookingComponent {
 
   ngOnInit() {
     this.initForm();
-    this.userType = new User(1, "Sofia", "Scattolini");
+    this.userType = new Employee(1, "Sofia", "Scattolini", 0);
     //this.userType = this.authUser.getUser();
     if (this.userType instanceof Employee) {
       this.isVisible = true;
@@ -72,7 +79,10 @@ export class BookingComponent {
   //This is the method for init the FormGroup. 
   initForm() {
     this.form = this.formBuilder.group({
-      dataPrenotazione: ['dd-MM-yyyy', Validators.required]
+      dataPrenotazione: ['dd-MM-yyyy', Validators.required],
+      oraPrenotazione: ['', Validators.required],
+      nome : ['', Validators.required],
+      cognome: ['', Validators.required]
     });
   }
 
@@ -98,6 +108,40 @@ export class BookingComponent {
 
     });
   }
+
+  //This method returns all bookings of the day
+  getAllBookingsToday() {
+    const dataCorrente = new Date();
+    for (const booking of this.bookings) {
+      const dataPrenotazione = new Date(booking.dataPrenotazione);
+      if (dataPrenotazione.getDate() === dataCorrente.getDate() &&
+          dataPrenotazione.getMonth() === dataCorrente.getMonth() &&
+          dataPrenotazione.getFullYear() === dataCorrente.getFullYear()) {
+        this.bookingsToday.push(booking);
+        this.openList = true;
+      }
+    }
+  }
+
+
+  searchBookingsUser(){
+    const nome = this.form.value.nome;
+    const cognome = this.form.value.cognome;
+    let clienteTrovato = false;
+    for (let booking of this.bookings) {
+      if (booking.owner.nome === nome && booking.owner.cognome === cognome) {
+        this.searchedBookingsUser.push(booking);
+        this.searchedBooking = true;
+        this.showFormSearchBookingUser = false;
+        clienteTrovato = true;
+      }
+    }
+    if (!clienteTrovato) {
+      alert("Cliente non trovato, riprova.");
+    }
+    this.resetForm();
+  }
+    
 
 
 
@@ -133,6 +177,11 @@ export class BookingComponent {
   }
 
 
+  addBooking() {
+
+  }
+
+
 
 
   //-----OTHER METHODS----------
@@ -162,6 +211,16 @@ export class BookingComponent {
     this.showFormSearchBookingUser = false;
   }
 
+
+  //This method close the Add Booking.
+  closeAddedBookingsUser() {
+    this.showFormAddBookingUser = false;
+  }
+  
+  close(){
+    this.openList = false;
+    this.bookingsToday = [];
+  }
 
 }
 
