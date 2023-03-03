@@ -208,3 +208,54 @@ app.post('/api/loginUser', function (req, response) {
 });
 */
 
+ALTRI ESEMPI : 
+//------ESEMPI DI CODICE COMMENTATI-------
+
+/**
+ * ALTRO ESEMPIO DI LOGIN 1)
+ * CODICE
+  let employee = await Employee.findOne( {
+        where: {
+            [db.Sequelize.Op.or] : [
+                { codice : codice}
+            ]
+        }
+    });
+
+    if(employee && passManager.comparePass(password, employee.password)){
+        let accessToken = auth.getAccessTokenEmployee(employee);
+        let refreshToken = auth.getRegfreshTokenEmployee(employee);
+        auth.refreshTokens.push(refreshToken);
+        const json = {nome : employee.nome, codice : employee.codice, restrizioni: employee.restrizioni, accessToken : accessToken, refreshToken: refreshToken};
+        res.status(201).send({
+            json,
+            message: "Employee created"
+        });
+    } else {
+        res.status(401).send({
+            message : "Password not correct"
+        });
+    }
+*/
+
+
+/**
+ * PER INVIARE UNA RISPOSTA CON JSON ALL'INTERNO
+ * CODICE :
+    const json = {nome : data.nome, codice : data.codice};
+        res.status(201).send({
+            //json,
+            message: "Employee created"
+        });
+ */
+
+/**
+ * PER PRENDERE UN TOKEN DALL'HEADER
+ * CODICE :
+    const token = req.header("Authorization");
+    res.status(201).send({
+        token,
+        message: "Employee created"
+    });
+ */
+
