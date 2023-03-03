@@ -1,248 +1,261 @@
 const db = require("../config/database.js");
 const Gifts = require("../models/gifts.js");
 const User = require("../models/user.js");
-//Todo aggiungere tutti i metodi per le Gifts.
+
 
 exports.create = (req, res) => {
     const nome = req.body.nome;
-    const punti = req.body.punti; 
+    const punti = req.body.punti;
 
-    if(!nome || !punti){
+    if (!nome || !punti) {
         res.status(400).send({
-            status: 400, 
-            message : `Filend can't be empty`,
-        }); 
+            status: 400,
+            message: `Filend can't be empty`,
+        });
     }
 
     const gifts = {
-        nome : nome,
-        punti : punti
+        nome: nome,
+        punti: punti
     }
 
     Gifts.create(gifts).then(data => {
         res.status(201).send({
-            status: 201, 
-            message : `Gifts created successfully`
+            status: 201,
+            message: `Gifts created successfully`
         })
     }).catch(err => {
-        res.status(401).send({
-            status: 401
+        res.status(500).send({
+            status: 401,
+            message: `Error creating gifts`,
         });
     });
 }
+
 
 exports.update = async (req, res) => {
     const id = req.params.id;
     const nome = req.body.nome;
-    const punti = req.body.punti; 
+    const punti = req.body.punti;
 
-    if(!nome || !punti){
+    if (!nome || !punti) {
         res.status(400).send({
             status: 400,
-            message: `Content can't be empty`, 
+            message: `Content can't be empty`,
         });
     }
 
-    const reward = Gifts.findByPk(id); 
+    const reward = Gifts.findByPk(id);
 
-    if(reward){
+    if (reward) {
         reward.set({
-            nome : `${nome}`, 
-            punti : `${punti}`,
+            nome: `${nome}`,
+            punti: `${punti}`,
         });
         await reward.save();
-        res.status(201).send({
-            status : 201, 
+        res.status(200).send({
+            status: 200,
             message: `Reward updated successfully`,
         });
-    }else res.status(401).send({
-        status : 401,
+    } else res.status(500).send({
+        status: 500,
         message: `Reward not updated, error.`,
     });
-
 }
+
 
 exports.delete = (req, res) => {
     const id = req.params.id;
 
-    if(!id){
+    if (!id) {
         res.status(400).send({
+            status: 400,
             message: `Reward not found`,
         });
     }
 
     Gifts.destroy({
-        where : { id : id }, 
+        where: { id: id },
     }).then(num => {
-        if(num == 1){
-            res.status(201).send({
-                status : 201, 
-                message : `Gift removed successfully`,
-            });
-        }else {
-            res.status(401).send({
-                status: 401, 
-                message : `Gift not found`,
+        if (num == 1) {
+            res.status(200).send({
+                status: 200,
+                message: `Gift removed successfully`,
+            })
+        } else {
+            res.status(404).send({
+                status: 404,
+                message: `Gift not found`,
             })
         }
     }).catch(err => {
         res.status(500).send({
-            message: "Could not delete Gift with id=" + id
+            status: 500,
+            message: `Could not delete gift with id=${id}`,
         });
     });
 }
 
+
 exports.find = (req, res) => {
     const id = req.params.id;
 
-    if(!id){
+    if (!id) {
         res.status(400).send({
-            status: 400, 
-            message : `Content not valid.`,
+            status: 400,
+            message: `Content not valid.`,
         });
     }
 
     Gifts.findByPk(id).then(data => {
         if (data) {
-            res.send(data);
+            res.status(200).send({
+                status: 200,
+                data: data,
+            });
         } else {
             res.status(404).send({
+                status: 404,
                 message: `Cannot find Gift with id=${id}.`
             });
         }
     }).catch(err => {
         res.status(500).send({
-            message: "Error retrieving Gift with id=" + id
+            status: 500,
+            message: +`Error retrieving Gift with id=${id}.`,
         });
     });
 }
+
 
 exports.findAll = (req, res) => {
 
     Gifts.findAll().then(data => {
         res.status(200).send({
-            status: 200, 
-            data, 
-            message : `All Gifts found`,
-        }); 
+            status: 200,
+            data,
+            message: `All Gifts found`,
+        });
     }).catch(err => {
         res.status(500).send({
-            message: "Error ", 
+            status: 500,
+            message: "Server errror.",
         });
-    }); 
-
+    });
 }
 
-exports.findAllUser = async (req, res) => {
-    const idUser = req.params.id; 
 
-    if(!idUser){
-        res.status(401).send({
-            status : 401, 
-            message : "User not found",
-        }); 
+exports.findAllUser = async (req, res) => {
+    const idUser = req.params.id;
+
+    if (!idUser) {
+        res.status(400).send({
+            status: 400,
+            message: "Content can't be empty",
+        });
     }
 
     const user = await User.findByPk(idUser);
 
-    if(!user){
-        res.status(401).send({
-            status : 401, 
-            message : "User not found", 
-        }); 
+    if (!user) {
+        res.status(404).send({
+            status: 404,
+            message: "User not found",
+        });
     }
 
     const userGifts = await user.getGifts();
 
-    if(userGifts){
-        res.status(201).send({
-            status : 201, 
-            data : userGifts
-        }); 
-    }else if(userGifts == null){
+    if (userGifts) {
+        res.status(200).send({
+            status: 200,
+            data: userGifts
+        });
+    } else if (userGifts == null) {
         res.status(202).send({
-            status : 202, 
-            message : "User don't have any Gifts.", 
+            status: 202,
+            message: "User don't have any Gifts.",
         })
     }
+}
 
 
+exports.findAllUserReedem = async (req, res) => {
+    const redeemedUsers = await User.findAll({
+        include: [{
+            model: Reward,
+            through: { // specifica la tabella di join
+                attributes: [] // indica di non selezionare le colonne di UserRewards
+            }
+        }]
+    });
+
+    if (redeemedUsers) {
+        res.status(200).send({
+            status: 200,
+            data: redeemedUsers,
+        })
+    } else {
+        res.status(404).send({
+            status: 404,
+            message: "User not found",
+        })
+    }
 }
 
 exports.addReward = async (req, res) => {
-    const user = await User.findByPk(req.body.idUser); 
-    const reward = await Gifts.findByPk(req.body.idGift); 
-  
-    if(user && reward){
-      const alreadyReedem = await user.hasGifts(reward); 
-  
-      if(alreadyReedem){
-        res.status(400).send({
-          status : 400, 
-          message : `Reward already received`,
-        }); 
-      }
-  
-      await user.addGifts(reward, { through : {reedemAt : new Date()}}); 
-      res.status(200).send({
-        status: 200, 
-        message : `Reward added successfully`, 
-      })
-    } else {
-      res.status(404).send({
-        status : 404, 
-        message : `Reward not found`,
-      });
-    }
-  }
+    const user = await User.findByPk(req.body.idUser);
+    const reward = await Gifts.findByPk(req.body.idGift);
 
-exports.removeReward = async (req, res) => {
-    const user = await User.findByPk(req.body.idUser); 
-    const reward = await Gifts.findByPk(req.body.idGift); 
-  
-    if(user && reward){
-      const alreadyReedem = await user.hasGifts(reward); 
-  
-      if(!alreadyReedem){
-        res.status(400).send({
-            status : 400, 
-            message : `The User don't have this reward`, 
-        });
-      }
-  
-      await user.removeGifts(reward); 
-      res.status(200).send({
-        status: 200, 
-        message : `Reward removed successfully`, 
-      })
+    if (user && reward) {
+        const alreadyReedem = await user.hasGifts(reward);
+
+        if (alreadyReedem) {
+            res.status(402).send({
+                status: 402,
+                message: "Reward already reedem.",
+            });
+            console.log("Premio già riscattato.");
+        } else {
+            await user.addGifts(reward, { through: { reedemAt: new Date() } });
+            res.status(200).send({
+                status: 200,
+                message: `Reward added successfully`,
+            });
+            console.log("Premio riscattato.");
+        }
     } else {
-      res.status(404).send({
-        status : 404, 
-        message : `Reward not found`,
-      })
+        res.status(404).send({
+            status: 404,
+            message: `Reward not found`,
+        });
     }
 }
 
-/**
-const user = User.findByPk(req.body.idUser); 
-    const reward = Gifts.findByPk(req.body.idGift); 
+exports.removeReward = async (req, res) => {
+    const user = await User.findByPk(req.body.idUser);
+    const reward = await Gifts.findByPk(req.body.idGift);
 
-     if(user && reward){
-      const alreadyReedem = await user.hasGifts(reward); 
+    if (user && reward) {
+        const alreadyReedem = await user.hasGifts(reward);
 
-        if(!alreadyReedem){
-            res.status(400).send({
-                status : 400, 
-                message : `The User don't have this reward`, 
+        if (!alreadyReedem) {
+            res.status(404).send({
+                status: 404,
+                message: `The User don't have this reward`,
             });
+        } else {
+            await user.removeGifts(reward);
+            res.status(200).send({
+                status: 200,
+                message: `Reward removed successfully`,
+            })
         }
-
-        await user.removeGifts(reward); 
-        res.status(200).send({
-            status: 200, 
-            message: `Reward was successfully removed`, 
-        })
+    } else {
+        res.status(404).send({
+            status: 404,
+            message: `Reward not found`,
+        });
     }
- */
-
+}
 

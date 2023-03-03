@@ -3,17 +3,15 @@ const bcrypt = require('bcrypt');
 const Employee = require("../models/employee");
 const passManager = require("../utils/passController");
 const auth = require("../auth/jwtController");
-
 //Secret for Authentication:
 const secret = "!Rj(98bC%9sVn&^c";
 
-// ---- AUTHENTICATION METHODS -----
-
 
 exports.create = async (req, res) => {
-    //Valid the request : 
-    if(req.body.nameEmployee == "" || req.body.nameEmployee == undefined || req.body.code == "" || req.body.code == undefined || req.body.passwordEmployee == "" || req.body.passwordEmployee == undefined){
+
+    if (req.body.nameEmployee == "" || req.body.nameEmployee == undefined || req.body.code == "" || req.body.code == undefined || req.body.passwordEmployee == "" || req.body.passwordEmployee == undefined) {
         res.status(400).send({
+            status: 400,
             message: "Content can't be empty!"
         });
         return;
@@ -29,7 +27,7 @@ exports.create = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     console.log("Salt : " + salt + " Hashed Password : " + hashedPassword);
 
-    
+
     console.log("Employee : " + nome + " Codice : " + codice + " Salt : " + salt + " Password : " + hashedPassword);
 
     const employee = {
@@ -42,7 +40,7 @@ exports.create = async (req, res) => {
 
     Employee.create(employee).then(data => {
         res.status(201).send({
-            status : 201,
+            status: 201,
             message: `Employee created with ${restrizioni} restrictions`
         });
     }).catch(err => {
@@ -50,14 +48,11 @@ exports.create = async (req, res) => {
             message: err.message || "Some error occurred while creating the new Tutorial."
         });
     });
-    console.log("Registration Successful");
-
 }
 
 
 exports.login = async (req, res) => {
-
-    if(req.body.codice == "" || req.body.codice == undefined || req.body.password == "" || req.body.password == undefined){
+    if (req.body.codice == "" || req.body.codice == undefined || req.body.password == "" || req.body.password == undefined) {
         res.status(400).send({
             message: "Content can't be empty!"
         });
@@ -76,7 +71,8 @@ exports.login = async (req, res) => {
         },
     }).then((employee) => {
         if (!employee) {
-            return res.status(401).send({
+            return res.status(404).send({
+                status: 404,
                 message: "Employee with this code not find.",
             });
         }
@@ -85,27 +81,25 @@ exports.login = async (req, res) => {
             .then((isMatch) => {
                 if (!isMatch) {
                     console.log("Password not valid");
-                    return res.status(401).send({
+                    return res.status(400).send({
+                        status: 400,
                         message: "Password not correct",
                     });
                 } else {
                     const accessToken = auth.getAccessTokenEmployee(employee);
                     const refreshToken = auth.getRegfreshTokenEmployee(employee);
                     auth.refreshTokens.push(refreshToken);
-                    const jsonResponse = {id: employee.id, nome: employee.nome, codice: employee.codice, restrizioni: employee.restrizioni}
-                    res.status(201).send({
-                        status : 201,
+                    const jsonResponse = { id: employee.id, nome: employee.nome, codice: employee.codice, restrizioni: employee.restrizioni }
+                    res.status(200).send({
+                        status: 200,
                         jsonResponse,
-                        accessToken: accessToken, 
+                        accessToken: accessToken,
                         refreshToken: refreshToken,
                         message: "Login Successfull",
                     });
                 }
             });
     });
-    console.log("Login Successfull");
-    console.log(auth.refreshTokens)
-
 };
 
 
@@ -115,6 +109,7 @@ exports.logout = async (req, res) => {
     //Validate the refresh token
     if (!refreshToken) {
         res.status(400).send({
+            status: 400,
             message: "Token not present.",
         });
     }
@@ -122,7 +117,8 @@ exports.logout = async (req, res) => {
     let index = auth.refreshTokens.indexOf(refreshToken);
 
     if (index == -1) {
-        return res.status(401).send({
+        return res.status(404).send({
+            status: 404,
             message: "You are not authenticated",
         });
     }
@@ -131,8 +127,9 @@ exports.logout = async (req, res) => {
     console.log(auth.refreshTokens);
 
     res.status(200).send({
+        status: 200,
         message: "Logout Successfull",
-    })
+    });
 }
 
 
@@ -140,12 +137,12 @@ exports.refreshToken = async (req, res) => {
     let refreshToken = req.body.refreshToken;
 
     if (!refreshToken || !auth.refreshTokens.includes(refreshToken)) {
-        return res.status(401).send({
+        return res.status(404).send({
+            status: 404,
             message: "You are not authenticated",
         });
     }
 
-    //
     let employee = auth.getEmployeeByRefreshToken(refreshToken);
 
     auth.refreshTokens = auth.refreshTokens.filter((token) => token != refreshToken);
@@ -156,13 +153,11 @@ exports.refreshToken = async (req, res) => {
     console.log(auth.refreshTokens)
 
     return res.status(200).send({
+        status: 200,
         accessToken: newAccessToken,
         refreshToken: newRefreshToken,
     });
 }
-
-
-// --- OTHER METHODS ------
 
 
 exports.delete = (req, res) => {
@@ -177,20 +172,22 @@ exports.delete = (req, res) => {
 
     Employee.destroy({ where: { id: id } }).then(num => {
         if (num == 1) {
-            res.send({
+            res.status(200).send({
+                status: 200,
                 message: "Employee was deleted successfully!"
             });
         } else {
-            res.send({
+            res.status(404).send({
+                status: 404,
                 message: `Cannot delete Employee with id=${id}. Maybe Employee was not found!`
             });
         }
-    })
-        .catch(err => {
-            res.status(500).send({
-                message: "Could not delete Emoloyee with id=" + id
-            });
+    }).catch(err => {
+        res.status(500).send({
+            status: 500,
+            message: `Could not delete Employee with id=${id}.`
         });
+    });
 }
 
 
@@ -200,7 +197,8 @@ exports.update = async (req, res) => {
 
     if (!id || !newPassword) {
         res.status(400).send({
-            message: "Fill all fields!"
+            status: 400,
+            message: "Content can't be empty!"
         });
         return;
     }
@@ -213,7 +211,8 @@ exports.update = async (req, res) => {
     });
     employee.save();
     console.log("Password employee changed : " + hashPassword);
-    res.status(201).send({
+    res.status(200).send({
+        status: 200,
         message: "Password correctly modified."
     });
 }
@@ -224,6 +223,7 @@ exports.find = (req, res) => {
 
     if (!id) {
         res.status(400).send({
+            status: 400,
             message: "Id can't be empty!"
         });
         return;
@@ -231,15 +231,20 @@ exports.find = (req, res) => {
 
     Employee.findByPk(id).then(data => {
         if (data) {
-            res.send(data);
+            res.status(200).send({
+                status: 200,
+                data: data,
+            });
         } else {
             res.status(404).send({
-                message: `Cannot find Tutorial with id=${id}.`
+                status: 404,
+                message: `Cannot find Employee with id=${id}.`
             });
         }
     }).catch(err => {
         res.status(500).send({
-            message: "Error retrieving Tutorial with id=" + id
+            status: 500,
+            message: `Error retrieving Employee with id=${id}.`
         });
     });
 }
@@ -248,67 +253,20 @@ exports.find = (req, res) => {
 exports.findAll = (req, res) => {
     Employee.findAll().then(data => {
         if (data) {
-            res.send(data);
+            res.status(200).send({
+                status: 200,
+                data: data,
+            });
         } else {
             res.status(404).send({
-                message: `Cannot find Cards. Probably error with connection.`
+                status: 404,
+                message: `Cannot find Employee. Probably error with connection.`
             });
         }
     }).catch(err => {
         res.status(500).send({
-            message:
-                err.message || "Some error occurred while retrieving tutorials."
+            status: 500,
+            message: err.message || "Some error occurred while retrieving tutorials."
         });
     });
 }
-
-
-//------ESEMPI DI CODICE COMMENTATI-------
-
-/**
- * ALTRO ESEMPIO DI LOGIN 1)
- * CODICE
-  let employee = await Employee.findOne( {
-        where: {
-            [db.Sequelize.Op.or] : [
-                { codice : codice}
-            ]
-        }
-    });
-
-    if(employee && passManager.comparePass(password, employee.password)){
-        let accessToken = auth.getAccessTokenEmployee(employee);
-        let refreshToken = auth.getRegfreshTokenEmployee(employee);
-        auth.refreshTokens.push(refreshToken);
-        const json = {nome : employee.nome, codice : employee.codice, restrizioni: employee.restrizioni, accessToken : accessToken, refreshToken: refreshToken};
-        res.status(201).send({
-            json,
-            message: "Employee created"
-        });
-    } else {
-        res.status(401).send({
-            message : "Password not correct"
-        });
-    }
-*/
-
-
-/**
- * PER INVIARE UNA RISPOSTA CON JSON ALL'INTERNO
- * CODICE :
-    const json = {nome : data.nome, codice : data.codice};
-        res.status(201).send({
-            //json,
-            message: "Employee created"
-        });
- */
-
-/**
- * PER PRENDERE UN TOKEN DALL'HEADER
- * CODICE :
-    const token = req.header("Authorization");
-    res.status(201).send({
-        token,
-        message: "Employee created"
-    });
- */

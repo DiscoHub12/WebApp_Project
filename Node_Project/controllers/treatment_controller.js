@@ -3,7 +3,6 @@ const Treatment = require("../models/treatment.js");
 const User = require("../models/user");
 
 
-//CREATE TREATMENT METHOD
 exports.create = (req, res) => {
     const idUtente = req.body.idUtente;
     const nomeTrattamento = req.body.nomeTrattamento;
@@ -20,7 +19,7 @@ exports.create = (req, res) => {
     }
 
     User.findOne({
-        where: { id : idUtente }
+        where: { id: idUtente }
     }).then(user => {
         if (user) {
             const treatment = {
@@ -36,14 +35,14 @@ exports.create = (req, res) => {
                 });
             }).catch(err => {
                 res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while creating the new Treatment."
+                    status: 500,
+                    message: err.message || "Some error occurred while creating the new Treatment."
                 })
             })
         }
         else {
-            res.status(405).send({
-                status: 405,
+            res.status(404).send({
+                status: 404,
                 message: `Cannot find User.`
             });
         }
@@ -51,7 +50,6 @@ exports.create = (req, res) => {
 }
 
 
-//FIND ALL TREATMENTS
 exports.findAll = (req, res) => {
     Treatment.findAll({
         include: [{
@@ -61,20 +59,21 @@ exports.findAll = (req, res) => {
         }]
     }).then(data => {
         if (data) {
-            res.status(201).send({
-                status: 201,
+            res.status(200).send({
+                status: 200,
                 data: data,
                 message: "Treatment list retrieved successfully."
             })
         } else {
             res.status(404).send({
+                status: 404,
                 message: `Cannot find Treatments. Probably error with connection.`
             });
         }
     }).catch(err => {
         res.status(500).send({
-            message:
-                err.message || "Some error occurred while retrieving Treatments."
+            status: 500,
+            message: err.message || "Some error occurred while retrieving Treatments."
         });
     });
 };
@@ -82,11 +81,17 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const idUser = req.params.id;
 
+    if (!idUser) {
+        res.status(400).send({
+            status: 400,
+            message: "Content can't be empty!"
+        });
+    }
     Treatment.findAll({ where: { idUtente: idUser } })
         .then(data => {
             if (data) {
-                res.status(201).send({
-                    status: 201,
+                res.status(200).send({
+                    status: 200,
                     data: data,
                     message: "Treatment list retrieved successfully."
                 })
@@ -99,20 +104,20 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message:
-                    err.message || "Some error occurred while retrieving Treatments."
+                status: 500,
+                message: err.message || "Some error occurred while retrieving Treatments."
             });
         });
 
 }
 
-//FIND ONE TREATMENT BY ID
+
 exports.find = (req, res) => {
     const id = req.params.id;
 
-
     if (!id) {
         res.status(400).send({
+            status: 400,
             message: "Content can't be empty!"
         });
         return;
@@ -121,21 +126,22 @@ exports.find = (req, res) => {
     Treatment.findByPk(id)
         .then(data => {
             if (data) {
-                res.status(201).send({
-                    status: 201,
+                res.status(200).send({
+                    status: 200,
                     data: data,
                     message: "Treatment list retrieved successfully."
                 })
             } else {
                 res.status(404).send({
+                    status: 404,
                     message: `Cannot find Treatment with id=${id}.`
                 });
             }
         }).catch(err => {
             res.status(500).send({
+                status: 500,
                 message: "Error retrieving Treatment with idUser=" + id
             });
-
         });
 }
 

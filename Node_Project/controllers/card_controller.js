@@ -5,7 +5,6 @@ const Card = require("../models/card");
 const User = require("../models/user");
 
 
-//CREATE CARD METHOD
 exports.create = (req, res) => {
     const nome = req.body.nome;
     const cognome = req.body.cognome;
@@ -13,7 +12,7 @@ exports.create = (req, res) => {
 
     if (!nome || !cognome) {
         res.status(400).send({
-            status: 404,
+            status: 400,
             message: "Content can't be empty!"
         });
         return;
@@ -43,60 +42,62 @@ exports.create = (req, res) => {
                         });
                     }).catch(err => {
                         res.status(500).send({
-                            status : 500,
+                            status: 500,
                             message: err.message || "Some error occurred while creating the Card."
                         })
                     })
                 }
             })
         } else {
-            res.status(405).send({
-                status: 405,
+            res.status(404).send({
+                status: 404,
                 message: "User not found!"
             });
         }
     });
 }
 
-//DELETE CARD METHOD 
+
 exports.delete = (req, res) => {
     const id = req.params.id;
 
-    //Validate the correct id params :
     if (!id) {
         res.status(400).send({
+            status: 400,
             message: "Id can't be empty!"
         });
-        return;
     }
 
     Card.destroy({
         where: { id: id }
+    }).then(num => {
+        if (num == 1) {
+            res.status(200).send({
+                status: 200,
+                message: "Card was deleted successfully!"
+            });
+        } else {
+            res.status(404).send({
+                status: 404,
+                message: `Cannot delete Card with id=${id}. Maybe Card was not found!`
+            });
+        }
     })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "Card was deleted successfully!"
-                });
-            } else {
-                res.send({
-                    message: `Cannot delete Card with id=${id}. Maybe Card was not found!`
-                });
-            }
-        })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Card with id=" + id
+                status: 500,
+                message: `Could not delete Card with id=${id}`,
             });
         });
 }
 
-//FIND ONE CARD BY ID
+
 exports.find = (req, res) => {
     const id = req.params.id;
 
     if (!id) {
         res.status(400).send({
+            status: 400,
             message: "Id can't be empty!"
         });
         return;
@@ -104,48 +105,58 @@ exports.find = (req, res) => {
 
     Card.findByPk(id).then(data => {
         if (data) {
-            res.send(data);
+            res.status(200).send({
+                status: 200,
+                data: data,
+            });
         } else {
             res.status(404).send({
+                status: 404,
                 message: `Cannot find Card with id=${id}.`
             });
         }
     }).catch(err => {
         res.status(500).send({
-            message: "Error retrieving Card with id=" + id
+            status: 500,
+            message: `Error retrieving Card with id=${id}`,
         });
     });
-
 }
+
 
 exports.findCardUser = async (req, res) => {
     const idUtente = req.params.id;
 
+    if (!idUtente) {
+        res.status(400).send({
+            status: 400,
+            message: "Content can't be empty!"
+        })
+    }
+
     Card.findOne({ where: { idUtente: idUtente } }).then(
         data => {
             if (data) {
-                res.status(201).send({
-                    status: 201,
+                res.status(200).send({
+                    status: 200,
                     data,
                     message: "Card was retrieved successfully!",
                 })
             } else {
                 res.status(404).send({
-                    status: 404, 
+                    status: 404,
                     message: `You don't have Card.`
                 });
             }
         }).catch(err => {
             res.status(500).send({
-                message:
-                    err.message || "Some error occurred while retrieving tutorials."
+                status: 500,
+                message: err.message || "Some error occurred while retrieving tutorials."
             });
         });
-
-
 }
 
-//FIND ALL CARDS
+
 exports.findAll = (req, res) => {
     Card.findAll({
         include: [{
@@ -155,34 +166,35 @@ exports.findAll = (req, res) => {
         }]
     }).then(data => {
         if (data) {
-            res.status(201).send({
-                status: 201,
+            res.status(200).send({
+                status: 200,
                 data,
                 message: "All Cards were retrieved successfully!",
             })
         } else {
             res.status(404).send({
+                status: 404,
                 message: `Cannot find Cards. Probably error with connection.`
             });
         }
     }).catch(err => {
         res.status(500).send({
-            message:
-                err.message || "Some error occurred while retrieving tutorials."
+            status: 500,
+            message: err.message || "Some error occurred while retrieving tutorials."
         });
     });
 }
 
-//ADD POINTS INTO CARD BY ID 
+
 exports.addPoints = async (req, res) => {
     const codice = req.body.codice;
     const punti = req.body.punti;
 
-    if(!codice || !punti){
+    if (!codice || !punti) {
         res.status(400).send({
+            status: 400,
             message: "Content can't be empty!"
         });
-        return;
     }
 
     const card = await Card.findOne({ where: { codice: codice } });
@@ -191,50 +203,47 @@ exports.addPoints = async (req, res) => {
         card.punti += punti
         await card.save();
 
-        res.status(201).send({
-            status: 201, 
+        res.status(200).send({
+            status: 200,
             message: "Points added."
         });
     } else {
         res.status(500).send({
+            status: 500,
             message: "Some error occurred while retrieving card."
         });
     }
 }
 
-//ADD POINTS INTO ALL CARD 
+
 exports.addPointsAll = async (req, res) => {
     const punti = req.body.punti;
 
     if (!punti) {
         res.status(400).send({
+            status: 400,
             message: "Number of points can't be null!"
         });
-        return;
     }
 
-    await Card.update({
-        punti: Sequelize.literal(`punti + ${punti}`)
-    }, {
-        where: {}
-    });
+    await Card.update({ punti: Sequelize.literal(`punti + ${punti}`) }, { where: {} });
 
-    res.status(201).send({
-        status: 201,
+    res.status(200).send({
+        status: 200,
         message: "Points add in all Cards.",
-    })
+    });
 }
 
-//REMOVE POINTS INTO CARD BY ID 
+
 exports.removePoints = async (req, res) => {
     const id = req.params.id;
     const punti = req.body.punti;
 
-    if (!id) {
+    if (!id || !punti) {
         res.status(400).send({
+            status: 400,
             message: "Id can't be empty!"
         });
-        return;
     }
 
     const card = await Card.findOne({ where: { id: id } });
@@ -242,37 +251,36 @@ exports.removePoints = async (req, res) => {
     if (card) {
         let puntiCard = card.punti;
         let puntiTotals = puntiCard - punti;
-        card.punti = puntiTotals
+        card.punti = puntiTotals;
 
         await card.save();
-        res.status(201).send({
+        res.status(200).send({
+            status: 200,
             message: "Points removed."
-        })
+        });
     } else {
         res.status(500).send({
-            message: "Some error occurred while retrieving tutorials."
+            message: "Some error occurred while removing Points."
         });
     }
 }
 
-//REMOVE POINTS INTO ALL CARDS
+
 exports.removePointsAll = async (req, res) => {
     const punti = req.body.punti;
 
     if (!punti) {
         res.status(400).send({
+            status: 400,
             message: "Number of points can't be null!"
         });
         return;
     }
 
-    await Card.update({
-        punti: Sequelize.literal(`punti - ${punti}`)
-    }, {
-        where: {}
-    });
+    await Card.update({ punti: Sequelize.literal(`punti - ${punti}`) }, { where: {} });
 
-    res.status(201).send({
+    res.status(200).send({
+        status: 200,
         message: "Points removed in all Cards.",
-    })
+    });
 }

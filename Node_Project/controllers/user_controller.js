@@ -3,17 +3,15 @@ const bcrypt = require('bcrypt');
 const User = require("../models/user");
 const passManager = require("../utils/passController.js");
 const auth = require("../auth/jwtController");
-
 //Secret for Authentication
 const secret = "!Rj(98bC%9sVn&^c";
-
-// ---- AUTHENTICATION METHODS -----
 
 
 exports.create = async (req, res) => {
 
-  if(req.body.email == "" || req.body.email == undefined || req.body.password == "" || req.body.password == undefined){
+  if (req.body.email == "" || req.body.email == undefined || req.body.password == "" || req.body.password == undefined) {
     res.status(400).send({
+      status: 400,
       message: "Content can't be empty!"
     });
     return;
@@ -36,11 +34,12 @@ exports.create = async (req, res) => {
 
   User.create(user).then(data => {
     res.status(201).send({
-      status: 201, 
+      status: 201,
       message: "User created successfully!",
-    }); 
+    });
   }).catch(err => {
     res.status(500).send({
+      status: 500,
       message: err.message || "Some error occurred while creating the new User."
     });
   });
@@ -49,7 +48,7 @@ exports.create = async (req, res) => {
 
 exports.login = async (req, res) => {
 
-  if(req.body.email == "" || req.body.email == undefined || req.body.password == "" || req.body.password == undefined){
+  if (req.body.email == "" || req.body.email == undefined || req.body.password == "" || req.body.password == undefined) {
     res.status(400).send({
       message: "Content can't be empty!"
     });
@@ -59,7 +58,7 @@ exports.login = async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
 
-  password = password + secret; 
+  password = password + secret;
 
   User.findOne({
     where: {
@@ -67,7 +66,8 @@ exports.login = async (req, res) => {
     },
   }).then((user) => {
     if (!user) {
-      return res.status(401).send({
+      return res.status(404).send({
+        status: 404,
         message: "User with this email not found.",
       });
     }
@@ -76,25 +76,25 @@ exports.login = async (req, res) => {
       .then((isMatch) => {
         if (!isMatch) {
           console.log("Password not valid");
-          return res.status(401).send({
+          return res.status(400).send({
+            status: 400,
             message: "Password not correct.",
           });
         } else {
           const accessToken = auth.getAccessTokenUser(user);
           const refreshToken = auth.getRegfreshTokenUser(user);
           auth.refreshTokens.push(refreshToken);
-          const jsonResponse = { id : user.id, nome: user.nome, cognome: user.cognome};
-          res.status(201).send({
-            status: 201,
+          const jsonResponse = { id: user.id, nome: user.nome, cognome: user.cognome };
+          res.status(200).send({
+            status: 200,
             jsonResponse,
-            accessToken: accessToken, 
+            accessToken: accessToken,
             refreshToken: refreshToken,
             message: "Login Successfull.",
           });
         }
       });
   });
-
   console.log("Login Successfull.");
   console.log(auth.refreshTokens);
 }
@@ -105,6 +105,7 @@ exports.logout = async (req, res) => {
 
   if (!refreshToken) {
     res.status(400).send({
+      status: 400,
       message: "Content can't be empty!"
     });
     return;
@@ -113,7 +114,8 @@ exports.logout = async (req, res) => {
   let index = auth.refreshTokens.indexOf(refreshToken);
 
   if (index == -1) {
-    res.status(401).send({
+    res.status(404).send({
+      status: 404,
       message: "You are not authenticated.",
     });
   }
@@ -122,22 +124,24 @@ exports.logout = async (req, res) => {
   console.log(auth.refreshTokens);
 
   res.status(200).send({
+    status: 200,
     message: "Logout Successfull.",
   });
 }
 
 exports.refreshToken = async (req, res) => {
-  let refreshToken = req.body.refreshToken; 
+  let refreshToken = req.body.refreshToken;
 
-  if(!refreshToken || auth.refreshTokens.includes(refreshToken)){
-    return res.status(401).send({
+  if (!refreshToken || auth.refreshTokens.includes(refreshToken)) {
+    return res.status(404).send({
+      status: 404,
       message: "You are not authenticated.",
     });
   }
 
   let user = auth.getUserByRefreshToken(refreshToken);
 
-  auth.refreshTokens = auth.refreshTokens.filter(token => token!== refreshToken);
+  auth.refreshTokens = auth.refreshTokens.filter(token => token !== refreshToken);
 
   let newAccessToken = auth.getAccessTokenUser(user);
   let newRefreshToken = auth.getRefreshTokenUser(user);
@@ -145,9 +149,10 @@ exports.refreshToken = async (req, res) => {
   console.log(auth.refreshTokens);
 
   return res.status(200).send({
+    status: 200,
     accessToken: newAccessToken,
     refreshToken: newRefreshToken,
-  }); 
+  });
 }
 
 
@@ -158,6 +163,7 @@ exports.delete = (req, res) => {
 
   if (!id) {
     res.status(400).send({
+      status: 400,
       message: "Id can't be empty!"
     });
     return;
@@ -167,17 +173,20 @@ exports.delete = (req, res) => {
     where: { id: id }
   }).then(num => {
     if (num == 1) {
-      res.send({
+      res.status(200).send({
+        status: 200,
         message: "User was deleted successfully"
       });
     } else {
-      res.send({
+      res.status(404).send({
+        status: 404,
         message: `Cannot delete User with id=${id}. Maybe User was not found!`
       });
     }
   }).catch(err => {
     res.status(500).send({
-      message: " Could not delete User with id : " + id
+      status: 500,
+      message: `Could not delete User with id=${id}.`
     });
   });
 };
@@ -190,6 +199,7 @@ exports.update = async (req, res) => {
 
   if (!id) {
     res.status(400).send({
+      status: 400,
       message: "Id can't be empty!"
     });
     return;
@@ -204,7 +214,8 @@ exports.update = async (req, res) => {
       email: `${email}`
     });
     await user.save();
-    res.status(201).send({
+    res.status(200).send({
+      status: 200,
       message: "Email changed."
     });
   }
@@ -213,7 +224,8 @@ exports.update = async (req, res) => {
       password: `${hashPassword}`
     });
     await user.save();
-    res.status(201).send({
+    res.status(200).send({
+      status: 200,
       message: "Password changed."
     });
   }
@@ -225,6 +237,7 @@ exports.find = (req, res) => {
 
   if (!id) {
     res.status(400).send({
+      status: 400,
       message: "Id can't be empty!"
     });
     return;
@@ -233,16 +246,21 @@ exports.find = (req, res) => {
   User.findByPk(id)
     .then(data => {
       if (data) {
-        res.send(data);
+        res.status(200).send({
+          status: 200,
+          data: data,
+        });
       } else {
         res.status(404).send({
+          status: 404,
           message: `Cannot find User with id=${id}.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving User with id=" + id
+        status: 500,
+        message: `Error retrieving User with id=${id}.`
       });
     });
 };
@@ -251,37 +269,19 @@ exports.find = (req, res) => {
 exports.findAll = (req, res) => {
   User.findAll({ where: {} })
     .then(data => {
-      res.send(data);
+      res.status(200).send({
+        status: 200,
+        data: data,
+        message: "Users retrieved successfully!"
+      })
     })
     .catch(err => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving users."
+        status: 500,
+        message: err.message || "Some error occurred while retrieving users."
       });
     });
 };
-
-/**
- * METODO DELETE ALL
- * CODICE : 
-exports.deleteAll = (req, res) => {
-  User.destroy({
-    where: {},
-    truncate: false
-  })
-    .then(nums => {
-      res.send({
-        message: `${nums} User were deleted successfully!`
-      });
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while removing all users."
-      });
-    });
-};
- */
 
 
 
