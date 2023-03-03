@@ -99,15 +99,26 @@ function authenticateTokenUser(req, res, next) {
  * Middleware for verify the authorization for Employee.
  */
 function authenticateTokenEmployee(req, res, next) {
-    const autHeader = req.headers['authorization'];
-    const token = autHeader && autHeader.split(' ')[1];
-    if (token == null) return res.sendStatus(401);
+    let authHeader = req.headers['authorization'];
+    if(authHeader){
+        let token = authHeader.split(' ')[1];
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, employee) => {
+            if (err){
+                return res.status(403).send({
+                    status: 403, 
+                    message : "Token is not valid!"
 
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, employee) => {
-        if (err) return res.sendStatus(403);
-        req.employee = employee;
-        next();
-    });
+                });
+            }
+            req.employee = employee;
+            next();
+        });
+    }else{
+        return res.status(401).send({
+            status: 401, 
+            message: "You are not authenticated.",
+        })
+    }
 }
 
 module.exports = { refreshTokens, getAccessTokenUser, getAccessTokenEmployee, getRegfreshTokenUser, getRegfreshTokenEmployee, getUserByToken, getEmployeeByToken, getUserByRefreshToken, getEmployeeByRefreshToken, authenticateTokenUser, authenticateTokenEmployee };
