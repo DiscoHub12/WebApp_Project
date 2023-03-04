@@ -19,7 +19,7 @@ export class LoginEmpComponent implements OnInit {
   public loginForm !: FormGroup;
 
   //Variable for associate the response Http when Login is successful.
-  response: any;
+  data: any;
 
   /**
    * Constructor for this Component.
@@ -53,13 +53,13 @@ export class LoginEmpComponent implements OnInit {
       password: password
     }).subscribe(
       response => {
-        this.response = response;
-        if (this.response.status == 201) {
-          const employeeLogged = new Employee(this.response.jsonResponse.id, this.response.jsonResponse.nome, this.response.jsonResponse.codice, this.response.jsonResponse.restrizioni);
+        this.data = response;
+        if (this.data.status == 200) {
+          const employeeLogged = new Employee(this.data.jsonResponse.id, this.data.jsonResponse.nome, this.data.jsonResponse.codice, this.data.jsonResponse.restrizioni);
           console.log("Employee Logged: " + JSON.stringify(employeeLogged));
-          console.log("Access token: " + this.response.access_token + "Refresh token: " + this.response.refresh_token);
+          console.log("Access token: " + this.data.access_token + "Refresh token: " + this.data.refresh_token);
           this.userService.setUser(employeeLogged);
-          this.authService.saveToken(this.response.accessToken, this.response.refreshToken);
+          this.authService.saveToken(this.data.accessToken, this.data.refreshToken);
           alert("Login successful");
           this.router.navigate(['dashboard/employee']);
         } else {
