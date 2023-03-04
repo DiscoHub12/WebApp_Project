@@ -14,11 +14,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class CardComponent implements OnInit {
 
+
+
+  //GENERAL VARIABLES 
+
   //This is the variable for the FormGroup.
   form !: FormGroup;
 
   //This is the variable for associated the User access account. (User or Employee).
-  userType : User | Employee | undefined;
+  userType: User | Employee | undefined;
 
   //This is the variable, that indicates if the User is User or Employee, for determinate the div page. 
   isEmployee: boolean | undefined;
@@ -57,7 +61,12 @@ export class CardComponent implements OnInit {
 
 
 
-  //Costructor for the CardComponent.
+  /**
+   * Constructor for this Component. 
+   * @param httpClient the HttpClient object.
+   * @param userService the UserService for get the User/Employee logged.
+   * @param formBuilder the FormBuilder object for the Forms.
+   */
   constructor(
     private httpClient: HttpClient,
     private userService: UserService,
@@ -99,7 +108,7 @@ export class CardComponent implements OnInit {
   }
 
   //This method rebuild the page.
-  ricaricaPagina() {
+  reloadPage() {
     this.ngOnInit();
   }
 
@@ -199,7 +208,7 @@ export class CardComponent implements OnInit {
 
   //Method that get the Card for specific User logged.
   getCardUser() {
-    if(this.userType){
+    if (this.userType) {
       this.httpClient.get<any>(`${environment.baseUrl}/card/findCardUser/${this.userType.id}`).subscribe(
         response => {
           this.data = response;
@@ -215,6 +224,5 @@ export class CardComponent implements OnInit {
           }
         });
     }
-    
   }
 }
