@@ -7,6 +7,7 @@ exports.create = (req, res) => {
   const idUtente = req.body.idUtente;
   const dataPrenotazione = req.body.dataPrenotazione;
   const oraPrenotazione = req.body.oraPrenotazione;
+  const trattamento = req.body.trattamento;
   const completata = req.body.completata;
 
 
@@ -26,6 +27,7 @@ exports.create = (req, res) => {
         idUtente: idUtente,
         dataPrenotazione: dataPrenotazione,
         oraPrenotazione: oraPrenotazione,
+        trattamento : trattamento,
         completata: completata
       }
       Booking.create(booking).then(data => {

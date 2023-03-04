@@ -37,6 +37,7 @@ export class BookingComponent {
 
   searchedBooking = false;
 
+  //Variables that rapresent all today Bookings
   bookingsToday: Booking[] = [];
 
 
@@ -95,8 +96,9 @@ export class BookingComponent {
   getAllBookings() {
     this.httpClient.get<any>(`${environment.baseUrl}/booking/findAll`).subscribe(response => {
       this.data = response;
-      if (this.data.status === 201) {
+      if (this.data.status === 200) {
         this.bookings = this.data.data;
+        this.getAllBookingsToday();
         console.log(this.bookings);
         this.resetData();
       }
@@ -118,7 +120,6 @@ export class BookingComponent {
           dataPrenotazione.getMonth() === dataCorrente.getMonth() &&
           dataPrenotazione.getFullYear() === dataCorrente.getFullYear()) {
         this.bookingsToday.push(booking);
-        this.openList = true;
       }
     }
   }
@@ -150,10 +151,10 @@ export class BookingComponent {
   //This method returns all bookings of a user
   getBookingUser() {
     if (this.userType) {
-      this.httpClient.get<any>(`${environment.baseUrl}/booking/findOne/${this.userType.id}`).subscribe(
+      this.httpClient.get<any>(`${environment.baseUrl}/booking/findAllUser/${this.userType.id}`).subscribe(
         response => {
           this.data = response;
-          if (this.data.status === 201) {
+          if (this.data.status === 200) {
             this.bookingsUser = this.data.data;
             console.log(this.bookingsUser);
             this.resetData();
@@ -177,11 +178,6 @@ export class BookingComponent {
   }
 
 
-  addBooking() {
-
-  }
-
-
 
 
   //-----OTHER METHODS----------
@@ -200,7 +196,7 @@ export class BookingComponent {
   completata(booking: Booking) {
     if (booking.completata === 0)
       return "No"
-    else
+    else 
       return "Si'"
   }
 
@@ -211,15 +207,9 @@ export class BookingComponent {
     this.showFormSearchBookingUser = false;
   }
 
-
-  //This method close the Add Booking.
-  closeAddedBookingsUser() {
-    this.showFormAddBookingUser = false;
-  }
   
   close(){
     this.openList = false;
-    this.bookingsToday = [];
   }
 
 }

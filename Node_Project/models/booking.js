@@ -14,15 +14,19 @@ Booking.init({
     },
     idUtente: {
         type: DataTypes.INTEGER(4),
-        allowNull: false,
+        allowNull: false
     },
     dataPrenotazione: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: false
     },
     oraPrenotazione : {
         type : DataTypes.TIME,
-        allowNull: false,
+        allowNull: false
+    },
+    trattamento : {
+        type: DataTypes.CHAR(80),
+        allowNull: false
     },
     completata: {
         type: DataTypes.INTEGER(1),
