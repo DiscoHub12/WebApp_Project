@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-info',
@@ -13,7 +12,13 @@ export class InfoComponent implements OnInit {
   constructor(private httpClient: HttpClient) { }
 
 
-  ngOnInit(): void { }
+  ngOnInit(){
+    const map = L.map('map').setView([43.6168, 13.5189], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    const marker = L.marker([43.6168, 13.5189]).addTo(map);
+   }
 
 }
 
