@@ -7,8 +7,8 @@ import { environment } from 'src/environments/environments';
 @Component({
   selector: 'app-signup-emp',
   templateUrl: './signup-emp.component.html',
-  styleUrls: ['./signup-emp.component.scss'], 
-  
+  styleUrls: ['./signup-emp.component.scss'],
+
 })
 
 
@@ -18,7 +18,7 @@ export class SignupEmpComponent implements OnInit {
   public signupForm !: FormGroup;
 
   //Variable for associate the response Http when Registration is successful
-  response : any;
+  data: any;
 
   /**
    * Constructor for this Component.
@@ -26,15 +26,18 @@ export class SignupEmpComponent implements OnInit {
    * @param httpClient the HttpClient module for this component.
    * @param router the Router module for this component for navigation.
    */
-  constructor(private formBuilder: FormBuilder, private httpClient: HttpClient, private router: Router) {
-  }
+  constructor(
+    private formBuilder: FormBuilder,
+    private httpClient: HttpClient,
+    private router: Router
+  ) { }
 
   //NgOnInit implementation
   ngOnInit(): void {
     this.signupForm = this.formBuilder.group({
       fullname: ['', Validators.required],
       code: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]], 
+      password: ['', [Validators.required, Validators.minLength(6)]],
       restriction: ['', Validators.required],
     },
     )
@@ -43,27 +46,27 @@ export class SignupEmpComponent implements OnInit {
   /**
    * Method for registration the new Employee.
    */
-  onSubmit(){
+  onSubmit() {
     const fullName = this.signupForm.value.fullname;
     const code = this.signupForm.value.code;
     const password = this.signupForm.value.password;
-    let restriction; 
-    if(this.signupForm.value.restriction == true){
+    let restriction;
+    if (this.signupForm.value.restriction == true) {
       restriction = 0;
-    }else restriction = 1;
+    } else restriction = 1;
     this.httpClient.post(`${environment.baseUrl}/employee/registration`, {
-      nameEmployee : fullName,
-      code : code,
-      passwordEmployee : password,
-      restrizioni : 0
+      nameEmployee: fullName,
+      code: code,
+      passwordEmployee: password,
+      restrizioni: 0
     }).subscribe(
       response => {
-        this.response = response;
-        if(this.response.status == 201){
+        this.data = response;
+        if (this.data.status == 201) {
           alert("Registrazione avvenuta con successo.");
           this.router.navigate(['login-emp']);
           this.resetForm();
-        }else {
+        } else {
           alert("Registrazione non riuscita.");
         }
       });
