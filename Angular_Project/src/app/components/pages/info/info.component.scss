@@ -1,4 +1,26 @@
+.introDiv{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+//SCSS PER LA MAPPA
+#map {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 400px;
+    /* Altezza desiderata */
+}
 
+.leaflet-container {
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+}
+
+.leaflet-marker-icon {
+    color: #ff0000;
+}
 
 /**
 ESEMPIO DI CSS:
