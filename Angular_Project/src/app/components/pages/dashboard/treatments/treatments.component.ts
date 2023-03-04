@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Employee } from 'src/app/Models/employee';
 import { Treatments } from 'src/app/Models/treatments';
 import { User } from 'src/app/Models/user';
@@ -73,7 +72,7 @@ export class TreatmentsComponent implements OnInit {
     if (this.userType instanceof Employee) {
       this.isVisible = true;
       this.getAllTreatments();
-    } else {
+    } else if (this.userType instanceof User){
       this.isVisible = false;
       this.getTreatmentUser();
     }
@@ -121,7 +120,7 @@ export class TreatmentsComponent implements OnInit {
   getAllTreatments() {
     this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAll`).subscribe(response => {
       this.data = response;
-      if (this.data.status === 201) {
+      if (this.data.status === 200) {
         this.treatments = this.data.data;
         console.log(this.treatments);
       }
@@ -134,7 +133,7 @@ export class TreatmentsComponent implements OnInit {
     });
   }
 
-  //This method add a new treatment -- rivedere 
+  //This method add a new treatment 
   addTreatment() {
     const name = this.form.value.nomeTrattamento;
     const description = this.form.value.descrizione;
@@ -180,8 +179,8 @@ export class TreatmentsComponent implements OnInit {
     }
     if (!trattamentoTrovato) {
       alert("Nome o cognome errati, reinserirli");
-      this.resetForm();
     }
+    this.resetForm();
   }
   
 
@@ -191,13 +190,15 @@ export class TreatmentsComponent implements OnInit {
   //This method returns all treatments of a user
   getTreatmentUser() {
     if(this.userType){
-    this.httpClient.get<any>(`${environment.baseUrl}/treatment/findOne/${this.userType.id}`).subscribe(
+    this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAllUser/${this.userType.id}`).subscribe(
       response => {
         this.data = response;
-        if (this.data.status === 201) {
+        if (this.data.status === 200) {
           this.treatmentsUser = this.data.data;
           console.log(this.treatmentsUser);
           this.resetData();
+        }else {
+          alert("Trattamenti utente non trovati.");
         }
       }, err => {
         alert("Something went wrong");
@@ -208,11 +209,16 @@ export class TreatmentsComponent implements OnInit {
 
   searchTreatments(){
     const nomeTrattamento = this.form.value.nome;
+    let trattamentoTrovato = false;
     for(let treatment of this.treatmentsUser){
       if(treatment.nomeTrattamento == nomeTrattamento){
         this.searchedTreatmentUser.push(treatment);
         this.searchedTreatment = true;
+        trattamentoTrovato = true;
       }
+    }
+    if (!trattamentoTrovato) {
+      alert("Nome errato, reinserirlo");
     }
     this.resetForm();
   }
