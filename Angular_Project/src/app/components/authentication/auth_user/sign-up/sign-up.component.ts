@@ -23,8 +23,11 @@ export class SignUpComponent {
    * @param httpClient the HttpClient module for this component.
    * @param router the Router module for this component for navigation.
    */
-  constructor(private formBuilder: FormBuilder, private httpClient: HttpClient, private router: Router) {
-  }
+  constructor(
+    private formBuilder: FormBuilder,
+    private httpClient: HttpClient,
+    private router: Router
+  ) { }
 
   //NgOnInit implementation
   ngOnInit(): void {
@@ -45,15 +48,15 @@ export class SignUpComponent {
     const lastname = this.signupForm.value.lastname;
     const email = this.signupForm.value.email;
     const password = this.signupForm.value.password;
-    this.httpClient.post(`${environment.baseUrl}/user/registration`, { 
-      nome: fullname, 
-      cognome: lastname, 
-      email: email, 
-      password: password 
+    this.httpClient.post(`${environment.baseUrl}/user/registration`, {
+      nome: fullname,
+      cognome: lastname,
+      email: email,
+      password: password
     }).subscribe(
       response => {
         this.response = response;
-        if(this.response.status == 201){
+        if (this.response.status == 201) {
           alert("Registrazione avvenua con successo.");
           this.router.navigate(['/login-user']);
           this.resetForm();
@@ -62,7 +65,7 @@ export class SignUpComponent {
     );
   }
 
-    //This method reset the form value of FormGroup.
+  //This method reset the form value of FormGroup.
   resetForm() {
     this.signupForm.reset();
   }

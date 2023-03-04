@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
     this.httpClient.post(`${environment.baseUrl}/user/login`, { email: email, password: password }).subscribe(
       response => {
         this.response = response;
-        if (this.response.status == 201) {
+        if (this.response.status == 200) {
           const userLogged = new User(this.response.jsonResponse.id, this.response.jsonResponse.nome, this.response.jsonResponse.cognome);
           console.log("User logged: " + JSON.stringify(userLogged));
           console.log("Access token: " + this.response.accessToken + "Refresh token: " + this.response.refreshToken);
@@ -70,24 +70,3 @@ export class LoginComponent implements OnInit {
   }
 
 }
-
-
-
-
-/**
- *  loginMethod(){
-   this.httpClient.get<any>(environment.baseUrl + 'loginUser').subscribe(res =>{
-     this.userLogged = res.find((a: any) => {
-       return a.eemail === this.loginForm.value.email && a.password === this.loginForm.value.password
-     });
-     if(this.userLogged){
-     alert('Login Success'); 
-     this.loginForm.reset();
-     }else {
-       alert("Error");
-     }
-   }, err => {
-     alert("Something went wrong");
-   })
- }
- */

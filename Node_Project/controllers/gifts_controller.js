@@ -182,8 +182,9 @@ exports.findAllUser = async (req, res) => {
 
 exports.findAllUserReedem = async (req, res) => {
     const redeemedUsers = await User.findAll({
+        attributes: ['id', 'nome', 'cognome'],
         include: [{
-            model: Reward,
+            model: Gifts,
             through: { // specifica la tabella di join
                 attributes: [] // indica di non selezionare le colonne di UserRewards
             }

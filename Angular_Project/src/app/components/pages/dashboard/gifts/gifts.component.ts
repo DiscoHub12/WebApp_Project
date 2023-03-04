@@ -15,6 +15,10 @@ import { environment } from 'src/environments/environments';
 })
 export class GiftsComponent implements OnInit {
 
+
+
+  //GENERAL VARIABLES 
+
   //This is the variable for the FormGroup.
   form !: FormGroup;
 
@@ -27,7 +31,11 @@ export class GiftsComponent implements OnInit {
   //This is a variable, to associate all Http response.
   data: any;
 
-  //VARIABLES FOR EMPLOYEE
+
+
+  //VARIABLES FOR EMPLOYEE DASHBOARD
+
+  //Variables to which all the created Gifts are associated.
   allGifts: Gift[] = [];
 
   //Boolean variables to indicate if the Employee want to see all Gifts created.
@@ -37,44 +45,64 @@ export class GiftsComponent implements OnInit {
   addNewGift = false;
 
   //Boolean variables to indicate if the Employee want to check all Users.
-  showUsers = false; 
+  showUsers = false;
 
-  allUsers: User[] = [];
+  //Variable associated with all registered Users who have redeemed at least 1 Reward
+  allUsers: any;
 
+  //Boolean variables to indicate if the User has been found.
+  userFind: any;
+
+  //Variable to which all the Rewards redeemed by the searched user are associated.
+  userFindGift: any;
 
 
 
   //VARIABLES FOR USER 
+
+  //Variable associated with all Rewards redeemed by the logged in User.
   allMyGifts: Gift[] = [];
 
+  //Variable to which the User's Card is associated, if one is in possession.
   myCard: Card | undefined | any;
 
+  //Boolean variables to indicate if the User has a Card.
   hasCard = false;
 
+  //Boolean variables to indicate if the User want to see all Rewards.
   showMyReward = false;
 
+  //Booolean variables to indicate if the User wants to see all Rewards.
   showGiftsForUser = false;
 
 
 
-
+  /**
+   * Constructor for this Component. 
+   * @param httpClient the HttpClient object.
+   * @param userService the UserService for get the User/Employee logged.
+   * @param formBuilder the FormBuilder object for the Forms.
+   */
   constructor(
     private httpClient: HttpClient,
     private userService: UserService,
     private formBuilder: FormBuilder
   ) { }
 
+  /**
+   * NgOnInit implementation.
+   */
   ngOnInit(): void {
     this.initForms();
     //this.userType = this.userService.getUser();
     this.userType = new Employee(1, "Alessio", "Giacche", 1);
-     if (this.userType instanceof Employee) {
+    if (this.userType instanceof Employee) {
       this.isEmployee = true;
       this.getAllGifts();
       this.getAllUsers();
     }
     /**
-     * else if (this.userType instanceof User) {
+    else if (this.userType instanceof User) {
       this.isEmployee = false;
       this.getAllGifts();
       this.getAllGiftsUser();
@@ -83,25 +111,13 @@ export class GiftsComponent implements OnInit {
      */
   }
 
-  initForms() {
-    this.form = this.formBuilder.group({
-      nome: ['', Validators.required],
-      punti: ['', Validators.required],
-    });
-  }
-
-  //This is the method for reset the FormGroup value.
-  resetForm() {
-    this.form.reset();
-  }
-
-  //This is the method for reset the Data from backend.
-  resetData() {
-    this.data = null;
-  }
 
   //-----EMPLOYEE METHODS------
 
+  /**
+   * This method allows you to contact the Backend to return  
+   * all previously created Rewards.
+   */
   getAllGifts() {
     this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAll`).subscribe(
       response => {
@@ -117,19 +133,28 @@ export class GiftsComponent implements OnInit {
     this.resetForm();
   }
 
-  getAllUsers(){
-    this.httpClient.get<any>(`${environment.baseUrl}/user/findAll`).subscribe(
+  /**
+   * This method allows you to contact the Backend to 
+   * fetch all Users who have redeemed at least one Reward.
+   */
+  getAllUsers() {
+    this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUserReedem`).subscribe(
       response => {
-        this.data = response; 
-        if(this.data.status == 200){
+        this.data = response;
+        if (this.data.status == 200) {
           this.allUsers = this.data.data;
         }
       }, err => {
         alert("Something went wrong");
-      }
-    )
+      });
+    this.resetData();
+    this.resetForm();
   }
 
+  /**
+   * This method allows you to contact the Backend to create 
+   * a new Reward.
+   */
   createGifts() {
     const nomePremio = this.form.value.nome;
     const punti = this.form.value.punti;
@@ -142,6 +167,7 @@ export class GiftsComponent implements OnInit {
           this.resetData();
           this.resetForm();
           this.addNewGift = false;
+          this.getAllGifts();
         }
       }, err => {
         console.log("Error");
@@ -152,35 +178,62 @@ export class GiftsComponent implements OnInit {
 
   }
 
-  removeGifts(gifts : Gift) { 
+  /**
+   * This method allows you to contact the Backend to remove 
+   * a particupar Reward.
+   */
+  removeGifts(gifts: Gift) {
     this.httpClient.post<any>(`${environment.baseUrl}/gifts/delete/${gifts.id}`, {}).subscribe(
       response => {
-        this.data = response; 
-        if(this.data.status == 200){
-          alert("Premio rimosso con successo."); 
-          this.resetData(); 
+        this.data = response;
+        if (this.data.status == 200) {
+          alert("Premio rimosso con successo.");
+          this.resetData();
           this.resetForm();
         }
       }, err => {
         alert("Error");
-      }
-    );
-  }
-
-  findGift() { }
-
-  removeGiftsUser(){
-    //Todo implementare.
-  }
-
-  annullaCreazione() {
+      });
+    this.resetData();
     this.resetForm();
   }
 
-  ricaricaPagina() {
-    this.getAllGifts();
+  /**
+   * This method allows you to search for a User who has 
+   * redeemed at least one Reward, through his lastname.
+   */
+  searchUsers() {
+    const cognome = this.form.value.cognome;
+    for (let user of this.allUsers) {
+      if (cognome == user.cognome) {
+        this.userFindGift = user;
+        this.userFind = true;
+        return;
+      }
+    }
+    this.userFind = false;
   }
 
+  /**
+   * This method allows you to close and reset the corresponding 
+   * values reguarding the User's search form.
+   */
+  closeSearchUsers() {
+    this.showUsers = false;
+    this.userFindGift = null;
+    this.userFind = false;
+    this.resetData();
+    this.resetForm();
+  }
+
+  /**
+   * This method allows you to cancel the creation of a 
+   * new Reward.
+   */
+  undoCreation() {
+    this.resetForm();
+    this.addNewGift = false;
+  }
 
 
   //-----USER METHODS------
@@ -193,7 +246,7 @@ export class GiftsComponent implements OnInit {
     this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUser/${this.userType?.getId()}`).subscribe(
       response => {
         this.data = response;
-        if (this.data.status == 201 || this.data.status == 201) {
+        if (this.data.status == 200 || this.data.status == 202) {
           this.allMyGifts = this.data.data;
         }
       }, err => {
@@ -211,7 +264,7 @@ export class GiftsComponent implements OnInit {
     this.httpClient.get<any>(`${environment.baseUrl}/card/findCardUser/${this.userType?.getId()}`).subscribe(
       response => {
         this.data = response;
-        if (this.data.status == 201) {
+        if (this.data.status == 200) {
           this.myCard = this.data.data;
           this.hasCard = true;
         }
@@ -226,7 +279,7 @@ export class GiftsComponent implements OnInit {
    * This method allows you to redeem a possible reward, if the points are sufficient.
    * @param gifts the Prize to be redeemed. 
    */
-  retreiveGift(gifts : Gift) {
+  retreiveGift(gifts: Gift) {
     for (let gift of this.allGifts) {
       if (gift.id == gifts.id) {
         if (gift.punti > this.myCard.punti) {
@@ -264,6 +317,9 @@ export class GiftsComponent implements OnInit {
   }
 
 
+
+  //---------GENERAL METHODS---------
+
   /**
    * This method allows any points to be removed from a Customer's 
    * card when the Customer makes a reward redemption request.
@@ -282,5 +338,26 @@ export class GiftsComponent implements OnInit {
         alert("Something went wrong");
       }
     );
+  }
+
+  /**
+ * Method to initialize all fields of the FormGroup.
+ */
+  initForms() {
+    this.form = this.formBuilder.group({
+      nome: ['', Validators.required],
+      cognome: ['', Validators.required],
+      punti: ['', Validators.required],
+    });
+  }
+
+  //This is the method for reset the FormGroup value.
+  resetForm() {
+    this.form.reset();
+  }
+
+  //This is the method for reset the Data from backend.
+  resetData() {
+    this.data = null;
   }
 }
