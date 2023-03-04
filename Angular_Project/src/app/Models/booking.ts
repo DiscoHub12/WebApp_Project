@@ -1,11 +1,11 @@
 import { Time } from "@angular/common";
-import { Timestamp } from "rxjs";
 
 export class Booking {
     id: Number;
     idUtente: Number;
     dataPrenotazione: Date;
     oraPrenotazione: Time;
+    trattamento: String;
     completata: Number;
     owner : {
         nome : String,
@@ -18,6 +18,7 @@ export class Booking {
         idUtente: Number,
         dataPrenotazione: Date,
         oraPrenotazione : Time,
+        trattamento : String,
         completata : Number,
         owner : any
     ) {
@@ -26,6 +27,7 @@ export class Booking {
         this.dataPrenotazione = dataPrenotazione;
         this.oraPrenotazione = oraPrenotazione;
         this.completata = completata;
+        this.trattamento = trattamento;
         this.owner = owner;
     }
 
@@ -51,6 +53,10 @@ export class Booking {
 
     setDataPrenotazione(dataPrenotazione: Date): void {
         this.dataPrenotazione = dataPrenotazione;
+    }
+
+    getTrattamento(){
+        return this.trattamento;
     }
 
 }
