@@ -6,4 +6,50 @@
 <!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
 <!-- * * * * * * * to get started with your project! * * * * * * * * -->
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<router-outlet></router-outlet>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<div id="container" *ngIf="showMenuBar">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Parrucchieria</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/info">Info</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Product</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</div>
+
+<body>
+    <div class="content-wrapper">
+        <router-outlet></router-outlet>
+    </div>
+    <footer>
+        <p>Copyright &copy; 2023 My Website</p>
+    </footer>
+</body>
+
+</html>
