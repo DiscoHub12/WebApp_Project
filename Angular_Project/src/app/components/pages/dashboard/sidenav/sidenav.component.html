@@ -3,6 +3,9 @@
   <a mat-list-item (click)="changeRoute('/account')">
     <mat-icon class="icon">account</mat-icon>Account
   </a>
+  <a mat-list-item (click)="changeRoute('/employees')" *ngIf="isEmployee">
+    <mat-icon class="icon">link</mat-icon>Account Dipendenti
+  </a>
   <a mat-list-item (click)="changeRoute('/card')">
     <mat-icon class="icon">link</mat-icon> Card
   </a>

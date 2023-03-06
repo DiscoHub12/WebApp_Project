@@ -26,6 +26,7 @@ import { GiftsComponent } from './components/pages/dashboard/gifts/gifts.compone
 import { AccountComponent } from './components/pages/dashboard/account/account.component';
 import { FooterComponent } from './componentsHome/footer/footer.component';
 import { HeaderHomeComponent } from './componentsHome/header-home/header-home.component';
+import { EmployeesComponent } from './components/pages/dashboard/employees/employees.component';
 
 //MATERIAL
 import { MatCardModule } from '@angular/material/card';
@@ -75,7 +76,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     GiftsComponent,
     AccountComponent,
     FooterComponent,
-    HeaderHomeComponent
+    HeaderHomeComponent,
+    EmployeesComponent
 
   ],
   imports: [

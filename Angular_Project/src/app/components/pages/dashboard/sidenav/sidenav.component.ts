@@ -14,10 +14,17 @@ export class SidenavComponent {
 
   userType: any;
 
+  isEmployee = false;
+
   constructor(private router: Router, private authUser: UserService) { }
 
   ngOnInit() {
     this.userType = this.authUser.getUser();
+    if(this.userType instanceof Employee){
+      this.isEmployee = true;
+    } else if(this.userType instanceof User) {
+      this.isEmployee = false;
+    }
   }
 
   changeRoute(route: string) {
