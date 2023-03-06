@@ -7,19 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Parrucchieria</title>
 </head>
-
+<div id="container" *ngIf="showMenuBar">
+    <app-header-home></app-header-home>
+</div>
 <body>
-    <div id="container" *ngIf="showMenuBar">
-        <app-header-home></app-header-home>
-    </div>
-    <main>
-        <div class="content-wrapper">
-            <router-outlet></router-outlet>
-        </div>
-    </main>
+    <router-outlet></router-outlet>
     <div *ngIf="showMenuBar">
         <app-footer></app-footer>
     </div>
 </body>
-
 </html>
