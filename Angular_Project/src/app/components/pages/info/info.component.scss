@@ -1,40 +1,102 @@
-.introDiv{
-    display: flex;
-    justify-content: center;
-    text-align: center;
-}
-//SCSS PER LA MAPPA
-#map {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 400px;
-    /* Altezza desiderata */
-}
+.masterDiv {
+    padding: 50px;
 
-.leaflet-container {
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
-}
+    h2 {
+        font-size: 32px;
+        margin-bottom: 20px;
+    }
 
-.leaflet-marker-icon {
-    color: #ff0000;
-}
+    .introDiv {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 50px;
 
-/**
-ESEMPIO DI CSS:
+        .col-md-4 {
+            margin-bottom: 30px;
+            width: 30%;
 
-.headerFormat {
-    background-color: blue;
-}
+            h2 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #3e3e3e;
+            }
 
-.testNav{
-    background-color: orange;
-}
+            ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
 
-.footerTest{
-    background-color: yellow;
-    border-width: 10px;
+                li {
+                    margin-bottom: 10px;
+                    font-size: 16px;
+                    color: #777;
+                }
+            }
+        }
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .col-md-4 {
+            margin-bottom: 30px;
+            width: 30%;
+
+            h2 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #3e3e3e;
+            }
+
+            p {
+                font-size: 16px;
+                color: #777;
+                line-height: 1.5;
+                margin-bottom: 20px;
+            }
+
+            ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+
+                li {
+                    margin-bottom: 10px;
+                    font-size: 16px;
+                    color: #777;
+
+                    &:before {
+                        content: "\f10d";
+                        font-family: FontAwesome;
+                        margin-right: 10px;
+                        color: #ffba37;
+                    }
+                }
+            }
+        }
+
+        #map {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 300px;
+            margin-top: 50px;
+            border-radius: 10px;
+        }
+
+        .leaflet-container {
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+        }
+
+        .leaflet-marker-icon {
+            color: #ff0000;
+        }
+    }
+
 }
-*/
