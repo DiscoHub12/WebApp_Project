@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
-import {HttpClientModule} from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 //COMPONENT IMPORTS
@@ -23,34 +23,36 @@ import { SignupEmpComponent } from './components/authentication/auth_employee/si
 import { LoginEmpComponent } from './components/authentication/auth_employee/login-emp/login-emp.component';
 import { WelcomeComponent } from './components/pages/dashboard/welcome/welcome.component';
 import { GiftsComponent } from './components/pages/dashboard/gifts/gifts.component';
+import { AccountComponent } from './components/pages/dashboard/account/account.component';
+import { FooterComponent } from './componentsHome/footer/footer.component';
+import { HeaderHomeComponent } from './componentsHome/header-home/header-home.component';
 
 //MATERIAL
-import {MatCardModule} from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input'
-import {MatToolbarModule} from '@angular/material/toolbar'; 
-import {MatIconModule} from '@angular/material/icon'; 
-import {MatSelectModule} from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input'
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import {MatMenuModule} from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
-import { MatDividerModule} from '@angular/material/divider';
-import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS } from '@angular/material/radio';
-import {MatTableModule} from '@angular/material/table';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatExpansionModule} from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
 
 
 //OTHER IMPORT
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AccountComponent } from './components/pages/dashboard/account/account.component';
 
 @NgModule({
   declarations: [
@@ -71,23 +73,25 @@ import { AccountComponent } from './components/pages/dashboard/account/account.c
     LoginEmpComponent,
     WelcomeComponent,
     GiftsComponent,
-    AccountComponent
+    AccountComponent,
+    FooterComponent,
+    HeaderHomeComponent
 
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule, 
+    AppRoutingModule,
     RouterModule,
     HttpClientModule,
     MatCardModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule, 
-    MatToolbarModule, 
+    MatInputModule,
+    MatToolbarModule,
     MatIconModule,
-    FormsModule, 
-    BrowserAnimationsModule, 
-    MatSelectModule, 
+    FormsModule,
+    BrowserAnimationsModule,
+    MatSelectModule,
     ReactiveFormsModule,
     MatMenuModule,
     MatListModule,
@@ -100,7 +104,7 @@ import { AccountComponent } from './components/pages/dashboard/account/account.c
     ScrollingModule,
     MatDatepickerModule,
     MatNativeDateModule
-  
+
 
   ],
   providers: [{
