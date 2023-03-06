@@ -41,6 +41,9 @@ export class SidenavComponent {
       else if (route === '/treatments') {
         this.router.navigate(['/dashboard/user/treatments']);
       }
+      else if (route === '/account') {
+        this.router.navigate(['/dashboard/user/account']);
+      }
     }
 
     if (this.userType instanceof Employee) {
@@ -56,6 +59,12 @@ export class SidenavComponent {
         }
         else if (route === '/treatments') {
           this.router.navigate(['/dashboard/employee/treatments']);
+        }
+        else if (route === '/employees') {
+          this.router.navigate(['/dashboard/employee/employees']);
+        }
+        else if (route === '/account') {
+          this.router.navigate(['/dashboard/employee/account']);
         }
       }
     }

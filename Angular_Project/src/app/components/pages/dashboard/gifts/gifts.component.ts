@@ -94,21 +94,17 @@ export class GiftsComponent implements OnInit {
    */
   ngOnInit(): void {
     this.initForms();
-    //this.userType = this.userService.getUser();
-    this.userType = new Employee(1, "Alessio", "Giacche", 1);
+    this.userType = this.userService.getUser();
     if (this.userType instanceof Employee) {
       this.isEmployee = true;
       this.getAllGifts();
       this.getAllUsers();
-    }
-    /**
-    else if (this.userType instanceof User) {
+    }else if (this.userType instanceof User) {
       this.isEmployee = false;
       this.getAllGifts();
       this.getAllGiftsUser();
       this.getCardUser();
     }
-     */
   }
 
 

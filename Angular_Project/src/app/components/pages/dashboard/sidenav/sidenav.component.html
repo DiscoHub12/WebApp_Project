@@ -1,7 +1,7 @@
 <mat-nav-list>
   <h2 matSubheader class="mt-2">DASHBOARD </h2>
   <a mat-list-item (click)="changeRoute('/account')">
-    <mat-icon class="icon">account</mat-icon>Account
+    <mat-icon class="icon">link</mat-icon>Account
   </a>
   <a mat-list-item (click)="changeRoute('/employees')" *ngIf="isEmployee">
     <mat-icon class="icon">link</mat-icon>Account Dipendenti
@@ -12,8 +12,8 @@
   <a mat-list-item (click)="changeRoute('/booking')" >
     <mat-icon class="icon">booking</mat-icon> Booking
   </a>
-  <a mat-list-item (click)="changeRoute('/products')" >
-    <mat-icon class="icon">gift</mat-icon> Gifts
+  <a mat-list-item (click)="changeRoute('/gifts')" >
+    <mat-icon class="icon">link</mat-icon> Gifts
   </a>
   <a mat-list-item (click)="changeRoute('/treatments')" >
     <mat-icon class="icon">link</mat-icon> Treatments
