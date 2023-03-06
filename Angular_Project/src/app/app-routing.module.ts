@@ -17,6 +17,7 @@ import { LoginEmpComponent } from './components/authentication/auth_employee/log
 import { SignupEmpComponent } from './components/authentication/auth_employee/signup-emp/signup-emp.component';
 import { AuthGuard } from './components/authentication/services/auth.guard';
 import { AccountComponent } from './components/pages/dashboard/account/account.component';
+import { EmployeesComponent } from './components/pages/dashboard/employees/employees.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -54,6 +55,9 @@ const routes: Routes = [
     children: [
       {
         path: 'account', component: AccountComponent, //canActivate: [AuthGuard],
+      },
+      {
+        path: 'employees', component: EmployeesComponent, //canActivate: [AuthGuard
       },
       {
         path: 'card', component: CardComponent, //canActivate: [AuthGuard]
