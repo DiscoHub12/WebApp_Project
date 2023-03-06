@@ -16,6 +16,7 @@ import { LoginComponent } from './components/authentication/auth_user/login/logi
 import { LoginEmpComponent } from './components/authentication/auth_employee/login-emp/login-emp.component';
 import { SignupEmpComponent } from './components/authentication/auth_employee/signup-emp/signup-emp.component';
 import { AuthGuard } from './components/authentication/services/auth.guard';
+import { AccountComponent } from './components/pages/dashboard/account/account.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -30,6 +31,9 @@ const routes: Routes = [
   {
     path: 'dashboard/user', component: DashboardComponent, //canActivate: [AuthGuard],
     children: [
+      {
+        path: 'account', component: AccountComponent, //canActivate: [AuthGuard],
+      },
       {
         path: 'card', component: CardComponent, //canActivate: [AuthGuard]
       },
@@ -48,6 +52,9 @@ const routes: Routes = [
   {
     path: 'dashboard/employee', component: DashboardComponent, //canActivate: [AuthGuard],
     children: [
+      {
+        path: 'account', component: AccountComponent, //canActivate: [AuthGuard],
+      },
       {
         path: 'card', component: CardComponent, //canActivate: [AuthGuard]
       },

@@ -50,6 +50,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 
 //OTHER IMPORT
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AccountComponent } from './components/pages/dashboard/account/account.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     SignupEmpComponent,
     LoginEmpComponent,
     WelcomeComponent,
-    GiftsComponent
+    GiftsComponent,
+    AccountComponent
 
   ],
   imports: [
