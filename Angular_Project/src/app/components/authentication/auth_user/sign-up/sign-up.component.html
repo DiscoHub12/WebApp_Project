@@ -3,32 +3,32 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="text-center">
-                    <h1>Sign Up</h1>
-                    <h6>Register Yourself</h6>
+                    <h1>Registrazione</h1>
+                    <h6>Sign-Up</h6>
                 </div>
                 <form>
                     <form [formGroup]="signupForm">
                         <div class="mb-3">
-                            <label for="inputName">Name</label>
+                            <label for="inputName">Nome</label>
                             <input matInput name="name" formControlName="fullname" type="text" class="form-control" id="inputName" maxlength="80" required> 
                         </div>
                         <div class="mb-3">
-                            <label for="inputLastName">Last name</label>
+                            <label for="inputLastName">Cognome</label>
                             <input matInput name="lastname" formControlName="lastname" type="text" class="form-control" id="inputLastName" maxlength="80" required> 
                         </div>
                         <div class="mb-3">
-                            <label for="inputEmail">Email adress</label>
+                            <label for="inputEmail">Email</label>
                             <input matInput name="email" formControlName="email" type="text" class="form-control" id="inputEmail" maxlength="100" required> 
-                            <div id="emailHelp" class="form-text"> We'll never share email with anyone else.</div>
+                            <div id="emailHelp" class="form-text">Non condivideremo mai la tua email.</div>
                         </div>
                         <div class="mb-3">
                             <label for="inputPassword">Password</label>
                             <input matInput name="password" formControlName="password" type="password" class="form-control" id="inputPassword" maxlenght="150" minlength="6" required> 
                             <div id="emailHelp" class="form-text"> La password deve avere minimo 6 caratteri</div>
                         </div>
-                        <button type="submit" class="btn btn-primary mb-2" [disabled]="signupForm.invalid" (click)="onSubmit()">Sign Up</button>
+                        <button type="submit" class="btn btn-primary mb-2" [disabled]="signupForm.invalid" (click)="onSubmit()">Registrati</button>
                     </form>
-                    <a style="color: #fff; margin-top: 5px;" routerLink="/login-user">Already registered? Click to login</a>
+                    <a style="color: #fff; margin-top: 5px;" routerLink="/login-user">Possiedi già un account ? Login.</a>
                 </form>
             </div>
         </div>
