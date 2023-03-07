@@ -14,7 +14,6 @@ import { TreatmentsComponent } from './components/pages/dashboard/treatments/tre
 import { SignUpComponent } from './components/authentication/auth_user/sign-up/sign-up.component';
 import { LoginComponent } from './components/authentication/auth_user/login/login.component';
 import { LoginEmpComponent } from './components/authentication/auth_employee/login-emp/login-emp.component';
-import { SignupEmpComponent } from './components/authentication/auth_employee/signup-emp/signup-emp.component';
 import { AuthGuard } from './components/authentication/services/auth.guard';
 import { AccountComponent } from './components/pages/dashboard/account/account.component';
 import { EmployeesComponent } from './components/pages/dashboard/employees/employees.component';
@@ -27,8 +26,6 @@ const routes: Routes = [
   { path: 'login-user', component: LoginComponent },
   { path: 'signup-user', component: SignUpComponent },
   { path: 'login-emp', component: LoginEmpComponent },
-  { path: 'signup-emp', component: SignupEmpComponent },
-
   {
     path: 'dashboard/user', component: DashboardComponent, //canActivate: [AuthGuard],
     children: [

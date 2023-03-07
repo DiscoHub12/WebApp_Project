@@ -19,7 +19,6 @@ import { CardComponent } from './components/pages/dashboard/card/card.component'
 import { TreatmentsComponent } from './components/pages/dashboard/treatments/treatments.component';
 import { LoginComponent } from './components/authentication/auth_user/login/login.component';
 import { SignUpComponent } from './components/authentication/auth_user/sign-up/sign-up.component';
-import { SignupEmpComponent } from './components/authentication/auth_employee/signup-emp/signup-emp.component';
 import { LoginEmpComponent } from './components/authentication/auth_employee/login-emp/login-emp.component';
 import { WelcomeComponent } from './components/pages/dashboard/welcome/welcome.component';
 import { GiftsComponent } from './components/pages/dashboard/gifts/gifts.component';
@@ -70,7 +69,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     TreatmentsComponent,
     LoginComponent,
     SignUpComponent,
-    SignupEmpComponent,
     LoginEmpComponent,
     WelcomeComponent,
     GiftsComponent,
