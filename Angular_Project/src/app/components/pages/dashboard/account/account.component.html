@@ -1,1 +1,131 @@
-<p>account works!</p>
+<div class="page">
+    <div class="page-box">IL TUO PROFILO</div>
+    <div class="page-content">
+        <div class="page-content-data">
+            <div class="page-content-data-inner">
+
+                <!-----EMPLOYEE DIV------>
+                <div class="div-employee" *ngIf="isEmployee">
+                    <!-- Visualizzazione informazioni utente -->
+                    <div class="div">
+                        <h2>INFORMAZIONI PERSONALI</h2>
+                        <p>Codice: {{userType.codice}}</p>
+                        <p>Nome: {{userType.nome}}</p>
+                        <p>Cognome: {{userType.cognome}}</p>
+
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormUpdatePassword = !showFormUpdatePassword">Modifica Password
+                        </button>
+                    </div>
+
+                    <!-- Modifica password -->
+                    <form class="formUpdatePassword" *ngIf="showFormUpdatePassword" [formGroup]="form">
+                        <mat-card>
+                            <mat-card-header>
+                                <mat-card-title style="text-align: center;">MODIFICA PASSWORD</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    Inserisci la vecchia password
+                                    <input type="password" placeholder="Password" formControlName="oldPassword">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    Inserisci la nuova password
+                                    <input type="password" placeholder="Password" formControlName="password">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    Ripeti la nuova password
+                                    <input type="password" placeholder="conferma password"
+                                        formControlName="confirmPassword">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <button mat-button (click)="updatePasswordEmployee()">Modifica Password</button>
+                                <button mat-button (click)="annulla()">Annulla</button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </form>
+                </div>
+
+
+                <!------USER DIV--------->
+                <div class="div-user" *ngIf="!isEmployee">
+
+                    <!-- Visualizzazione informazioni utente -->
+                    <div class="div">
+                        <h2>INFORMAZIONI PERSONALI</h2>
+                        <p>Email: {{userType.email}}</p>
+                        <p>Nome: {{userType.nome}}</p>
+                        <p>Cognome: {{userType.cognome}}</p>
+
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormUpdateEmail = !showFormUpdateEmail">Modifica Email
+                        </button>
+                        <br>
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormUpdatePassword = !showFormUpdatePassword">Modifica Password
+                        </button>
+                    </div>
+
+
+                    <!-- Modifica email -->
+                    <form class="formUpdateEmail" *ngIf="showFormUpdateEmail" [formGroup]="form">
+                        <mat-card>
+                            <mat-card-header>
+                                <mat-card-title style="text-align: center;">MODIFICA EMAIL</mat-card-title>
+                            </mat-card-header>
+                            <br>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    <input matInput placeholder="Nuova email" formControlName="email">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <button mat-button (click)="updateEmail()">Modifica</button>
+                                <button mat-button (click)="annulla()">Annulla</button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </form>
+
+
+                    <!-- Modifica password -->
+                    <form class="formUpdatePassword" *ngIf="showFormUpdatePassword" [formGroup]="form">
+                        <mat-card>
+                            <mat-card-header>
+                                <mat-card-title style="text-align: center;">MODIFICA PASSWORD</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    Inserisci la vecchia password
+                                    <input type="password" placeholder="Password" formControlName="oldPassword">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    Inserisci la nuova password
+                                    <input type="password" placeholder="Password" formControlName="password">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    Ripeti la nuova password
+                                    <input type="password" placeholder="conferma password"
+                                        formControlName="confirmPassword">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <button mat-button (click)="updatePasswordUser()">Modifica Password</button>
+                                <button mat-button (click)="annulla()">Annulla</button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

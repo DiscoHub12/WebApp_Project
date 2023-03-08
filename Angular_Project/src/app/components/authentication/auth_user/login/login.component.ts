@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
       response => {
         this.response = response;
         if (this.response.status == 200) {
-          const userLogged = new User(this.response.jsonResponse.id, this.response.jsonResponse.nome, this.response.jsonResponse.cognome);
+          const userLogged = new User(this.response.jsonResponse.id, this.response.jsonResponse.nome, this.response.jsonResponse.cognome, this.response.jsonResponse.email);
           console.log("User logged: " + JSON.stringify(userLogged));
           console.log("Access token: " + this.response.accessToken + "Refresh token: " + this.response.refreshToken);
           this.userService.setUser(userLogged);
@@ -61,10 +61,10 @@ export class LoginComponent implements OnInit {
           alert("Login successful");
           this.router.navigate(['dashboard/user']);
         } else {
-          alert("Password not correct.");
+          alert("Password or email not correct.");
         }
       }, err => {
-        alert('Password not correct.');
+        alert('Password or email not correct.');
       }
     );
   }
