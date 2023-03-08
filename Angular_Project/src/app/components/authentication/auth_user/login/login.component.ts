@@ -54,8 +54,6 @@ export class LoginComponent implements OnInit {
         this.response = response;
         if (this.response.status == 200) {
           const userLogged = new User(this.response.jsonResponse.id, this.response.jsonResponse.nome, this.response.jsonResponse.cognome);
-          console.log("User logged: " + JSON.stringify(userLogged));
-          console.log("Access token: " + this.response.accessToken + "Refresh token: " + this.response.refreshToken);
           this.userService.setUser(userLogged);
           this.authService.saveToken(this.response.accessToken, this.response.refreshToken);
           alert("Login successful");
