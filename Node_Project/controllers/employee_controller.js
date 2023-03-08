@@ -193,6 +193,7 @@ exports.delete = (req, res) => {
 
 exports.update = async (req, res) => {
     const id = req.params.id;
+    const oldPassword = req.body.oldPassword + secret;
     const newPassword = req.body.newPassword + secret;
 
     if (!id || !newPassword) {
@@ -204,17 +205,29 @@ exports.update = async (req, res) => {
     }
 
     const employee = await Employee.findByPk(id);
-    const saltEmployee = employee.salt;
-    const hashPassword = await bcrypt.hash(newPassword, saltEmployee);
-    employee.set({
-        password: `${hashPassword}`
-    });
-    employee.save();
-    console.log("Password employee changed : " + hashPassword);
-    res.status(200).send({
-        status: 200,
-        message: "Password correctly modified."
-    });
+
+
+    if (employee) {
+        const saltEmployee = employee.salt;
+        const hashPassword = await bcrypt.hash(newPassword, saltEmployee);
+        if (oldPassword != null && oldPassword != undefined) {
+            const hashOldPassword = await bcrypt.hash(oldPassword, saltUser);
+            if (employee.password === hashOldPassword) {
+                employee.set({
+                    password: `${hashPassword}`
+                });
+                await employee.save();
+                res.status(200).send({
+                    status: 200,
+                    message: "Employee data changed."
+                });
+            }
+            res.status(404).send({
+                status: 404,
+                message: "Passwords is not equals."
+            });
+        }
+    }
 }
 
 

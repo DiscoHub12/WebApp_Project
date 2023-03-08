@@ -84,7 +84,7 @@ exports.login = async (req, res) => {
           const accessToken = auth.getAccessTokenUser(user);
           const refreshToken = auth.getRegfreshTokenUser(user);
           auth.refreshTokens.push(refreshToken);
-          const jsonResponse = { id: user.id, nome: user.nome, cognome: user.cognome };
+          const jsonResponse = { id: user.id, nome: user.nome, cognome: user.cognome, email: user.email };
           res.status(200).send({
             status: 200,
             jsonResponse,
@@ -195,6 +195,7 @@ exports.delete = (req, res) => {
 exports.update = async (req, res) => {
   const id = req.params.id;
   const email = req.body.email;
+  const oldPassword = req.body.oldPassword + secret;
   const password = req.body.password + secret;
 
   if (!id) {
@@ -206,29 +207,40 @@ exports.update = async (req, res) => {
   }
 
   const user = await User.findByPk(id);
-  const saltUser = user.salt;
-  const hashPassword = await bcrypt.hash(password, saltUser);
 
-  if (email) {
-    user.set({
-      email: `${email}`
-    });
-    await user.save();
-    res.status(200).send({
-      status: 200,
-      message: "Email changed."
-    });
+  if (user) {
+    if (email != null || email != undefined) {
+      user.set({
+        email: `${email}`
+      });
+      await user.save();
+      res.status(200).send({
+        status: 200,
+        message: "User data changed."
+      });
+    } else if (password != null || password != undefined) {
+      const saltUser = user.salt;
+      const hashPassword = await bcrypt.hash(password, saltUser);
+      if (oldPassword != null && oldPassword != undefined) {
+        const hashOldPassword = await bcrypt.hash(oldPassword, saltUser);
+        if (user.password === hashOldPassword) {
+          user.set({
+            password: `${hashPassword}`
+          });
+          await user.save();
+          res.status(200).send({
+            status: 200,
+            message: "User data changed."
+          });
+        }
+          res.status(404).send({
+            status: 404,
+            message: "Passwords is not equals."
+          });
+      }
+    }
   }
-  if (password) {
-    user.set({
-      password: `${hashPassword}`
-    });
-    await user.save();
-    res.status(200).send({
-      status: 200,
-      message: "Password changed."
-    });
-  }
+
 }
 
 
