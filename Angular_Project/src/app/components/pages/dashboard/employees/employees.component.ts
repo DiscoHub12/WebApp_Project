@@ -28,17 +28,19 @@ export class EmployeesComponent implements OnInit {
 
   //VARIABLES FOR EMPLOYEE WITH 0 RESTRICTION
 
-  //
+  //Variable to which all Employee accounts within the platform are associated.
   allEmployeeAccounts: Employee[] = [];
 
-  //
+  //Boolean variable that indicates if the Employee want to create a new Account.
   showFormCreateAccount = false;
 
-  //
+  //Boolean variable that indicates if the Employee want to searc an Account.
   showFormSearchAccount = false;
 
+  //Boolean variable that indicates if the Employee searched and found an Account.
   searched = false;
 
+  //Temporary variable to which the Account of the searched 
   accountSearch: any;
 
   //VARIABLES EMPLOYEE WITH 1 RESTRICTION
@@ -58,10 +60,10 @@ export class EmployeesComponent implements OnInit {
     private formBuilder: FormBuilder
   ) { }
 
+  //NgOnInit implementation for this Component.
   ngOnInit(): void {
     this.initForm();
     this.userType = this.userService.getUser();
-    this.userType = new Employee(1, "Alessio", "1", 0);
     if (this.userType instanceof Employee) {
       if (this.userType.restrizioni == 0) {
         this.haveRestriction = false;
@@ -83,6 +85,10 @@ export class EmployeesComponent implements OnInit {
   }
 
 
+  /**
+   * This method contacts the Backend to fetch all created (Employee)
+   * accounts within the platform.
+   */
   getAllEmployeeAccounts() {
     this.httpClient.get<any>(`${environment.baseUrl}/employee/findAll`).subscribe(
       response => {
@@ -99,53 +105,72 @@ export class EmployeesComponent implements OnInit {
     this.resetFormAndData();
   }
 
+  /**
+   * This method allows you to create a new Employee account 
+   * in this platform, that contact the Backend.
+   */
   createEmployeeAccount() {
     const nome = this.form.value.nome;
     const codice = this.form.value.codice;
     const password = this.form.value.password;
     let restrizioni;
-    if (this.form.value.restriction == true) {
+    if (this.form.value.restrizioni == true) {
       restrizioni = 0;
     } else restrizioni = 1;
     this.httpClient.post(`${environment.baseUrl}/employee/registration`, {
       nameEmployee: nome,
       code: codice,
       passwordEmployee: password,
-      restrizioni: 0
+      restrizioni: restrizioni
     }).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 201) {
           alert("Registrazione avvenuta con successo.");
-          this.resetFormAndData();
-          this.getAllEmployeeAccounts();
-          this.showFormCreateAccount = false; 
+          this.closeCreateAccount();
         } else {
           alert("Registrazione non riuscita.");
-          this.resetFormAndData();
+          this.closeCreateAccount();
         }
       });
-    this.resetFormAndData();
+    this.closeCreateAccount();
   }
 
+  closeCreateAccount() {
+    this.resetFormAndData();
+    this.getAllEmployeeAccounts();
+    this.showFormCreateAccount = false;
+  }
+
+  /**
+   * This method allows you to remove an Employee Account, 
+   * passing the unique id, by contacting the Backend.
+   */
   removeAccountEmployee(id: Number) {
     this.httpClient.post(`${environment.baseUrl}/employee/delete/${id}`, {}).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 200) {
           alert("Account Rimosso con successo.");
-          this.resetFormAndData();
-          this.getAllEmployeeAccounts();
+          this.closeRemoveAccount();
         } else {
           alert("Error.");
-          this.resetFormAndData();
+          this.closeRemoveAccount();
         }
       }, err => {
         alert("Something went wrong.");
-        this.resetFormAndData();
+        this.closeRemoveAccount();
       });
   }
 
+  closeRemoveAccount() {
+    this.resetFormAndData();
+    this.getAllEmployeeAccounts();
+  }
+
+  /**
+   * This method allows you to search an Employee Account.
+   */
   searchAccount() {
     const nome = this.form.value.nome;
     for (let account of this.allEmployeeAccounts) {
