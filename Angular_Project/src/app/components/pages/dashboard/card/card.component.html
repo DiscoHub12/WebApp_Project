@@ -6,14 +6,30 @@
 
                 <!-----EMPLOYEE DIV------>
                 <div class="div-employee" *ngIf="isEmployee">
-                    <h2>HELLO -NOME</h2>
-                    <h3>ECCO LA LISTA DELLE TESSERE DEI TUOI CLIENTI</h3>
+                    <h2>HELLO NOME</h2>
+                    <h3>In questa sezione, potrai vedere le Card dei tuoi Clienti e gestirle <br>
+                        quindi creare una nuova Card, aggiungere punti e molto altro.</h3>
+                    <h2>Elenco le possibili operazioni</h2>
+                    <!------OPERATION DIV BUTTON------->
+                    <div class="button-container">
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormAddCard = !showFormAddCard">Crea
+                            Tessera</button>
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormSearchCard = !showFormSearchCard">Cerca
+                            Tessera</button>
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormAddPoints = !showFormAddPoints">Aggiungi
+                            Punti</button>
+                    </div>
 
                     <!----MAT ACCORDITION---->
 
                     <!---MAT ACCORDITION FOR ALL CARDS-->
 
-                    <mat-accordion class="mat-according" *ngIf="!searchedCard">
+                    <mat-accordion class="mat-according"
+                        *ngIf="!showFormAddCard && !showFormAddPoints && !showFormSearchCard">
+                        <h3>ECCO LA LISTA DELLE TESSERE DEI TUOI CLIENTI</h3>
                         <mat-expansion-panel hideToggle class="mat-expansion-panel" *ngFor="let card of allCards">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
@@ -24,40 +40,9 @@
                                 </mat-panel-description>
                             </mat-expansion-panel-header>
                             <p>{{card.owner.nome}} {{card.owner.cognome}}</p>
+                            <button mat-button style="background-color: red;" (click)="removeCard(card.id)">Rimuovi Card</button>
                         </mat-expansion-panel>
                     </mat-accordion>
-
-
-
-                    <!----MAT ACCORDITION FOR ONE CARD SEARCHED-->
-                    <mat-accordion class="mat-according" *ngIf="searchedCard && cardCercata">
-                        <mat-expansion-panel hideToggle class="mat-expansion-panel">
-                            <mat-expansion-panel-header>
-                                <mat-panel-title>
-                                    Tessera : {{cardCercata.codice}}
-                                </mat-panel-title>
-                                <mat-panel-description>
-                                    Points : {{cardCercata.punti}}
-                                </mat-panel-description>
-                            </mat-expansion-panel-header>
-                            <p>{{cardCercata.owner.nome}} {{cardCercata.owner.cognome}}</p>
-                        </mat-expansion-panel>
-                    </mat-accordion>
-
-                    <!------OPERATION DIV BUTTON------->
-                    <div class="button-container">
-                        <button mat-raised-button class="btn-class"
-                            (click)="showFormAddCard = !showFormAddCard">Aggiungi
-                            Tessera</button>
-                        <button mat-raised-button class="btn-class"
-                            (click)="showFormSearchCard = !showFormSearchCard">Cerca
-                            Tessera</button>
-                        <button mat-raised-button class="btn-class"
-                            (click)="showFormAddPoints = !showFormAddPoints">Aggiungi
-                            Punti</button>
-                        <button mat-raised-button class="btn-class" (click)="reloadPage()">Ricarica Pagina</button>
-                    </div>
-
 
                     <!------FORMS FOR EMPLOYEE----->
 
@@ -83,6 +68,7 @@
                             </mat-card-content>
                             <mat-card-actions>
                                 <button mat-button (click)="createCard()">Aggiungi Tessera</button>
+                                <button mat-button (click)="closeCreateForm()">Chiudi</button>
                             </mat-card-actions>
                         </mat-card>
                     </form>
@@ -110,6 +96,22 @@
                             </mat-card-actions>
                         </mat-card>
                     </form>
+
+                    <!----MAT ACCORDITION FOR ONE CARD SEARCHED-->
+                    <mat-accordion class="mat-accordingSearch" *ngIf="searchedCard && cardCercata">
+                        <mat-expansion-panel hideToggle class="mat-expansion-panel">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Tessera : {{cardCercata.codice}}
+                                </mat-panel-title>
+                                <mat-panel-description>
+                                    Points : {{cardCercata.punti}}
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <p>{{cardCercata.owner.nome}} {{cardCercata.owner.cognome}}</p>
+                            <button mat-button (click)="removeCard(cardCercata.id)">Rimuovi Card</button>
+                        </mat-expansion-panel>
+                    </mat-accordion>
 
                     <!-------FORM FOR ADD POINT INTO CARD------>
                     <form class="formAddPoints" *ngIf="showFormAddPoints" [formGroup]="form">
@@ -144,7 +146,8 @@
 
                     <div *ngIf="haveCard && cardUser && userType">
                         <h3 style="font-size: 23px;">CIAO {{userType.nome}}</h3>
-                        <h3 style="text-align: center; margin-top: 20px;">Ti ricordiamo che, più trattamenti farai, più punti ottieni, per riscuotere premi.</h3>
+                        <h3 style="text-align: center; margin-top: 20px;">Ti ricordiamo che, più trattamenti farai, più
+                            punti ottieni, per riscuotere premi.</h3>
                         <h3 style="font-size: 20px; margin-top: 20px;">INFORMAZIONI TESSERA</h3>
                         <mat-card class="card-user">
                             <mat-card-header>
@@ -155,7 +158,7 @@
                                 <p style="margin-top: 5px; color: green;">{{cardUser.punti}}</p>
                             </mat-card-content>
                         </mat-card>
-                    
+
                     </div>
 
                     <!----DIV IF USER DON'T HAVE CARD-->

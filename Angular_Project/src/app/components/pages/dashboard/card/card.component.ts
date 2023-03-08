@@ -80,10 +80,12 @@ export class CardComponent implements OnInit {
     if (this.userType instanceof Employee) {
       this.isEmployee = true;
       this.getAllCardUsers();
-    } else if (this.userType instanceof User) {
+    }
+    /**
+     * else if (this.userType instanceof User) {
       this.isEmployee = false;
       this.getCardUser();
-    }
+     */
   }
 
   //This is the method for init the FormGroup. 
@@ -120,14 +122,18 @@ export class CardComponent implements OnInit {
     this.httpClient.get<any>(`${environment.baseUrl}/card/findAll`).subscribe(
       response => {
         this.data = response;
-        if (this.data.status == 201) {
+        if (this.data.status == 200) {
           this.allCards = this.data.data;
-          console.log(this.allCards);
+          this.resetData();
+          this.resetForm();
         }
       }, err => {
         alert("Something went wrong");
+        this.resetData();
+        this.resetForm();
       });
     this.resetData();
+    this.resetForm();
   }
 
   //This method allows you to create a new Card.
@@ -140,16 +146,26 @@ export class CardComponent implements OnInit {
         this.data = response;
         if (this.data.status == 201) {
           alert("Card created successfully.");
+          this.resetData();
+          this.resetForm();
+          this.getAllCardUsers();
+          this.showFormAddCard = false;
         }
       }, err => {
         this.data = err;
-        if (this.data.status == 405) {
+        if (this.data.status == 404) {
           alert("User don't have account");
         } else if (this.data.status == 400) {
           alert("User already have Card.");
         }
       }
     );
+    this.resetData();
+    this.resetForm();
+  }
+
+  closeCreateForm() {
+    this.showFormAddCard = false;
     this.resetData();
     this.resetForm();
   }
@@ -169,6 +185,7 @@ export class CardComponent implements OnInit {
 
   //This method close the Search Card.
   closeSearchedCard() {
+    this.showFormSearchCard = false;
     this.searchedCard = false;
     this.cardCercata = undefined;
   }
@@ -180,8 +197,10 @@ export class CardComponent implements OnInit {
     this.httpClient.post(`${environment.baseUrl}/card/addPoints`, { codice: codice, punti: punti }).subscribe(
       response => {
         this.data = response;
-        if (this.data.status == 201) {
+        if (this.data.status == 200) {
           alert("Points added successfully!");
+          this.showFormAddPoints = false;
+          this.getAllCardUsers();
         } else alert("Error in adding points");
       });
     this.resetData();
@@ -193,12 +212,35 @@ export class CardComponent implements OnInit {
     this.httpClient.post(`${environment.baseUrl}/card/addPointsAll`, { punti: punti }).subscribe(
       response => {
         this.data = response;
-        if (this.data.status == 201) {
+        if (this.data.status == 200) {
           alert("Points added successfully!");
+          this.showFormAddPoints = false;
+          this.getAllCardUsers();
         } else alert("Error in adding points");
       });
     this.resetData();
     this.resetForm();
+  }
+
+  removeCard(id: Number) {
+    this.httpClient.post(`${environment.baseUrl}/card/delete/${id}`, {}).subscribe(
+      response => {
+        this.data = response;
+        if (this.data.status == 200) {
+          alert("Card rimossa con successo.");
+          this.getAllCardUsers();
+          this.resetData();
+          this.resetForm();
+        } else {
+          alert("Error.");
+          this.resetData();
+          this.resetForm();
+        }
+      }, err => {
+        alert("Something went wrong");
+        this.resetData();
+        this.resetForm();
+      })
   }
 
 

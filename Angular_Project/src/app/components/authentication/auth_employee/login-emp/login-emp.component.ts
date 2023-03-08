@@ -56,8 +56,6 @@ export class LoginEmpComponent implements OnInit {
         this.data = response;
         if (this.data.status == 200) {
           const employeeLogged = new Employee(this.data.jsonResponse.id, this.data.jsonResponse.nome, this.data.jsonResponse.codice, this.data.jsonResponse.restrizioni);
-          console.log("Employee Logged: " + JSON.stringify(employeeLogged));
-          console.log("Access token: " + this.data.access_token + "Refresh token: " + this.data.refresh_token);
           this.userService.setUser(employeeLogged);
           this.authService.saveToken(this.data.accessToken, this.data.refreshToken);
           alert("Login successful");

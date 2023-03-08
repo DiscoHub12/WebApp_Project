@@ -53,9 +53,13 @@ export class LoginComponent implements OnInit {
       response => {
         this.response = response;
         if (this.response.status == 200) {
+<<<<<<< HEAD
           const userLogged = new User(this.response.jsonResponse.id, this.response.jsonResponse.nome, this.response.jsonResponse.cognome, this.response.jsonResponse.email);
           console.log("User logged: " + JSON.stringify(userLogged));
           console.log("Access token: " + this.response.accessToken + "Refresh token: " + this.response.refreshToken);
+=======
+          const userLogged = new User(this.response.jsonResponse.id, this.response.jsonResponse.nome, this.response.jsonResponse.cognome);
+>>>>>>> DiscoHub12
           this.userService.setUser(userLogged);
           this.authService.saveToken(this.response.accessToken, this.response.refreshToken);
           alert("Login successful");

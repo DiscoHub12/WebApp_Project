@@ -39,7 +39,7 @@ export class GiftsComponent implements OnInit {
   allGifts: Gift[] = [];
 
   //Boolean variables to indicate if the Employee want to see all Gifts created.
-  showAllGifts = false;
+  showAllGifts = true;
 
   //Boolean variables to indicate if the Employee want to create a new Gift
   addNewGift = false;
@@ -99,7 +99,7 @@ export class GiftsComponent implements OnInit {
       this.isEmployee = true;
       this.getAllGifts();
       this.getAllUsers();
-    }else if (this.userType instanceof User) {
+    } else if (this.userType instanceof User) {
       this.isEmployee = false;
       this.getAllGifts();
       this.getAllGiftsUser();
@@ -160,18 +160,21 @@ export class GiftsComponent implements OnInit {
         this.data = response;
         if (this.data.status == 201) {
           alert("Gifts created successfully");
-          this.resetData();
-          this.resetForm();
-          this.addNewGift = false;
-          this.getAllGifts();
+          this.closeCreationGifts();
         }
       }, err => {
         console.log("Error");
       });
+    this.closeCreationGifts();
+
+  }
+
+  closeCreationGifts() {
+    this.addNewGift = false;
+    this.showAllGifts = true;
+    this.getAllGifts();
     this.resetData();
     this.resetForm();
-    this.addNewGift = false;
-
   }
 
   /**
@@ -184,14 +187,18 @@ export class GiftsComponent implements OnInit {
         this.data = response;
         if (this.data.status == 200) {
           alert("Premio rimosso con successo.");
-          this.resetData();
-          this.resetForm();
+          this.closeRemoveGifts();
         }
       }, err => {
         alert("Error");
       });
+    this.closeRemoveGifts();
+  }
+
+  closeRemoveGifts() {
     this.resetData();
     this.resetForm();
+    this.getAllGiftsUser();
   }
 
   /**
