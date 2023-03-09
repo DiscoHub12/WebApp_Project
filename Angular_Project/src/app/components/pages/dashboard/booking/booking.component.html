@@ -8,10 +8,9 @@
                 <div class="div-user" *ngIf="!isVisible">
 
 
-                    <div class="button-container">
+                    <div class="button-container" *ngIf="!open">
                         <button mat-raised-button class="btn-class" (click)="open = !open">Vedi
                             Calendario</button>
-                        <br>
                         <br>
                         <button mat-raised-button class="btn-class" (click)="openList = !openList">Vedi le tue
                             prenotazioni
@@ -19,14 +18,13 @@
                     </div>
 
                     <!----CALENDAR FOR BOOKING-->
-                    <div *ngIf="open && !showFormAddBookingUser">
-                        <br>
-                        <mat-card class="demo-inline-calendar-card">
-                            <mat-calendar [(selected)]="selected"></mat-calendar>
-                            <button mat-raised-button class="btn-class" (click)="open = !open">
-                                Chiudi
+                    <div class='demo-app' *ngIf="open">
+                        <div class='demo-app-main'>
+                            <full-calendar [options]="calendarOptions"></full-calendar>
+                            <br>
+                            <button mat-raised-button class="btn-class" (click)="open = !open">Chiudi
                             </button>
-                        </mat-card>
+                        </div>
                     </div>
 
                     <div class="div-info" *ngIf="openList">
@@ -47,8 +45,10 @@
                                 <mat-panel-description>
                                     Completata : {{completata(booking)}}
                                     <br>
-                                    Ora Prenotazione: {{ booking.oraPrenotazione}}
+                                    Ora Prenotazione: {{ booking.oraInizio}}
                                 </mat-panel-description>
+                                <button mat-raised-button class="btn-class" (click)="remove(booking)">Cancella
+                                </button>
                             </mat-expansion-panel>
                         </mat-accordion>
 
@@ -67,8 +67,10 @@
                                 <mat-panel-description>
                                     Completata : {{completata(booking)}}
                                     <br>
-                                    Ora Prenotazione: {{ booking.oraPrenotazione}}
+                                    Ora Prenotazione: {{ booking.oraInizio}}
                                 </mat-panel-description>
+                                <button mat-raised-button class="btn-class" (click)="remove(booking)">Cancella
+                                </button>
                             </mat-expansion-panel>
                         </mat-accordion>
 
@@ -107,15 +109,13 @@
                 <!-----EMPLOYEE DIV------>
                 <div class="div-employee" *ngIf="isVisible">
 
-                    <div *ngIf="!searchedBooking">
+                    <div *ngIf="!open">
                         <button mat-raised-button class="btn-class" (click)="openList = !openList">Vedi le
                             prenotazioni di oggi
                         </button>
                         <br>
-                        <br>
-                        <button mat-raised-button class="btn-class" (click)="open = !open">Prendi prenotazione
+                        <button mat-raised-button class="btn-class" (click)="open = !open">Vedi Calendario
                         </button>
-                        <br>
                         <br>
                         <button mat-raised-button class="btn-class"
                             (click)="showFormSearchBookingUser = !showFormSearchBookingUser">Cerca prenotazioni cliente
@@ -123,14 +123,14 @@
                     </div>
 
                     <!----CALENDAR FOR BOOKING-->
-                    <div *ngIf="open && !showFormAddBookingUser">
-                        <br>
-                        <mat-card class="demo-inline-calendar-card">
-                            <mat-calendar [(selected)]="selected"></mat-calendar>
-                            <button mat-raised-button class="btn-class" (click)="open = !open">
-                                Chiudi
+                    <div class='demo-app' *ngIf="open">
+                        <div class='demo-app-main'>
+                            <full-calendar [options]='calendarOptions'>
+                            </full-calendar>
+                            <br>
+                            <button mat-raised-button class="btn-class" (click)="open = !open">Chiudi
                             </button>
-                        </mat-card>
+                        </div>
                     </div>
 
 
@@ -143,7 +143,7 @@
                                 *ngFor="let booking of bookingsToday">
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        Ora prenotazione: {{booking.oraPrenotazione}}
+                                        Ora prenotazione: {{booking.oraInizio}}
                                     </mat-panel-title>
                                     <mat-card-subtitle>
                                         Trattamento : {{booking.trattamento}}
@@ -152,6 +152,12 @@
                                 <mat-panel-description>
                                     Cliente: {{ booking.owner.nome}} {{booking.owner.cognome}}
                                 </mat-panel-description>
+                                <button mat-raised-button class="btn-class" (click)="remove(booking)">Cancella
+                                </button>
+                                <br>
+                                <br>
+                                <button mat-raised-button class="btn-class" (click)="setCompletata(booking)">Completata
+                                </button>
                             </mat-expansion-panel>
                         </mat-accordion>
 
@@ -174,15 +180,22 @@
                                 </mat-card-subtitle>
                             </mat-expansion-panel-header>
                             <mat-panel-description>
-                                Ora Prenotazione: {{ booking.oraPrenotazione}}
+                                Ora Prenotazione: {{ booking.oraInizio}}
                             </mat-panel-description>
                             <br>
                             <mat-panel-description>
                                 Data prenotazione: {{booking.dataPrenotazione | date:'dd-MM-yyyy'}}
                             </mat-panel-description>
+                            <button mat-raised-button class="btn-class" (click)="remove(booking)">Cancella
+                            </button>
+                            <br>
+                            <br>
+                            <button mat-raised-button class="btn-class" (click)="setCompletata(booking)">Completata
+                            </button>
                         </mat-expansion-panel>
                         <br>
-                        <button mat-raised-button class="btn-class" (click)="closeSearchedBookingsUser()">Chiudi</button>
+                        <button mat-raised-button class="btn-class"
+                            (click)="closeSearchedBookingsUser()">Chiudi</button>
                     </mat-accordion>
 
                     <!----FORM TO SEARCH A BOOKING-->

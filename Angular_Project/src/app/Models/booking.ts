@@ -4,7 +4,8 @@ export class Booking {
     id: Number;
     idUtente: Number;
     dataPrenotazione: Date;
-    oraPrenotazione: Time;
+    oraInizio: Time;
+    oraFine: Time;
     trattamento: String;
     completata: Number;
     owner : {
@@ -17,7 +18,8 @@ export class Booking {
         id: Number,
         idUtente: Number,
         dataPrenotazione: Date,
-        oraPrenotazione : Time,
+        oraInizio : Time,
+        oraFine: Time,
         trattamento : String,
         completata : Number,
         owner : any
@@ -25,7 +27,8 @@ export class Booking {
         this.id = id;
         this.idUtente = idUtente;
         this.dataPrenotazione = dataPrenotazione;
-        this.oraPrenotazione = oraPrenotazione;
+        this.oraInizio = oraInizio;
+        this.oraFine = oraFine;
         this.completata = completata;
         this.trattamento = trattamento;
         this.owner = owner;
