@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/components/authentication/services/auth.service';
 import { Employee } from 'src/app/Models/employee';
 import { User } from 'src/app/Models/user';
 import { UserService } from 'src/app/service/user.service';
@@ -46,7 +47,8 @@ export class AccountComponent implements OnInit {
   constructor(
     private httpClient: HttpClient,
     private userService: UserService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder, 
+    private authService : AuthService,
   ) { }
 
 
@@ -55,8 +57,7 @@ export class AccountComponent implements OnInit {
    */
   ngOnInit(): void {
     this.initForm();
-    //this.userType = this.userService.getUser();
-    this.userType = new User(1, "Sofia", "Scattolini", "sofiascattolini@gmail.com");
+    this.userType = this.userService.getUser();
     if (this.userType instanceof Employee) {
       this.isEmployee = true;
     } else if (this.userType instanceof User) {
@@ -108,10 +109,21 @@ export class AccountComponent implements OnInit {
   /**
    * Method that contact the Backend to update the email information for User.
    */
+  //Todo continuare l'implementazione.
   updateEmail() {
     const newEmail = this.form.value.email;
+    const token = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+
+    
     if (this.userType instanceof User) {
-      this.httpClient.post(`${environment.baseUrl}/user/updateEmail/${this.userType.id}`, { email: newEmail }).subscribe(response => {
+      this.httpClient.post(`${environment.baseUrl}/user/updateEmail/${this.userType.id}`, { email: newEmail }, httpOptions).subscribe(response => {
         this.data = response;
         if (this.data.status == 200) {
           this.userType.setEmail(newEmail);
@@ -122,8 +134,23 @@ export class AccountComponent implements OnInit {
           this.closeUpdateEmail();
         }
       }, err => {
-        alert("Something went wrong");
-        this.closeUpdateEmail();
+        this.data = err; 
+        if(this.data.status == 403){
+          alert("Token scaduto");
+          console.log(localStorage.getItem('refreshToken'));
+          this.httpClient.post(`${environment.baseUrl}/user/refreshToken`, {refreshToken : refreshToken}).subscribe(
+            response => {
+              this.data = response; 
+              console.log("Sono dentro");
+              if(this.data.status == 200){
+                this.authService.saveToken(this.data.accessToken, this.data.refreshToken);
+                alert("Token aggiornato.");
+              }
+            }
+          )
+        }else if(this.data.status == 401){
+          alert("Sessione scaduta."); 
+        }
       });
     }
     this.closeUpdateEmail();
