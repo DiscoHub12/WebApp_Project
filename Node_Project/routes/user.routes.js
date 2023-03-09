@@ -13,6 +13,8 @@ module.exports = app => {
      */
     const user = require('../controllers/user_controller');
 
+    const autneticate = require('../auth/jwtController.js');
+
     /**
      * Variable used for Routing, it allows you to 
      * export this file using the router app 'router'.
@@ -41,13 +43,19 @@ module.exports = app => {
      * This route allows you to get a new refresh-token for the User 
      * logged into the Platform.
      */
-    router.post("refreshToken", user.refreshToken);
+    router.post("/refreshToken",  user.refreshToken);
 
     /**
-     * This route allows you to update data for a specific User, 
+     * This route allows you to update Email for a specific User, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post("/update/:id", user.update);
+    router.post("/updateEmail/:id", user.updateEmail); 
+
+    /**
+     * This route allows you to update Password for a specific User, 
+     * passing the corresponding and unique id as parameters.
+     */
+    router.post("/updatePassword/:id", user.updatePassword); 
 
     /**
      * This route allows you to delete a specific User account, 
