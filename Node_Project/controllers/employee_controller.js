@@ -88,7 +88,7 @@ exports.login = async (req, res) => {
                 } else {
                     const accessToken = auth.getAccessTokenEmployee(employee);
                     const refreshToken = auth.getRegfreshTokenEmployee(employee);
-                    auth.refreshTokens.push(refreshToken);
+                    auth.addRefreshToken(refreshToken);
                     const jsonResponse = { id: employee.id, nome: employee.nome, codice: employee.codice, restrizioni: employee.restrizioni }
                     res.status(200).send({
                         status: 200,
@@ -136,7 +136,7 @@ exports.logout = async (req, res) => {
 exports.refreshToken = async (req, res) => {
     let refreshToken = req.body.refreshToken;
 
-    if (!refreshToken || !auth.refreshTokens.includes(refreshToken)) {
+    if (!refreshToken || !auth.containsToken(refreshToken)) {
         return res.status(404).send({
             status: 404,
             message: "You are not authenticated",
@@ -159,6 +159,8 @@ exports.refreshToken = async (req, res) => {
     });
 }
 
+
+//-----OTHER METHODS-----
 
 exports.delete = (req, res) => {
     const id = req.params.id;
@@ -196,7 +198,7 @@ exports.update = async (req, res) => {
     const oldPassword = req.body.oldPassword + secret;
     const newPassword = req.body.newPassword + secret;
 
-    if (!id || !newPassword) {
+    if (!req.params.id || !req.body.newPassword) {
         res.status(400).send({
             status: 400,
             message: "Content can't be empty!"
@@ -206,26 +208,35 @@ exports.update = async (req, res) => {
 
     const employee = await Employee.findByPk(id);
 
-
     if (employee) {
-        const saltEmployee = employee.salt;
-        const hashPassword = await bcrypt.hash(newPassword, saltEmployee);
         if (oldPassword != null && oldPassword != undefined) {
-            const hashOldPassword = await bcrypt.hash(oldPassword, saltUser);
-            if (employee.password === hashOldPassword) {
-                employee.set({
-                    password: `${hashPassword}`
+            const saltEmployee = employee.salt;
+            const hashPassword = await bcrypt.hash(newPassword, saltEmployee);
+            return passManager.comparePass(oldPassword, employee.password)
+                .then((isMatch) => {
+                    console.log("Old : " + oldPassword + "Real : " + employee.password);
+
+                    if (!isMatch) {
+                        return res.status(404).send({
+                            status: 404,
+                            message: "Password not correct",
+                        });
+                    } else {
+                        employee.set({
+                            password: `${hashPassword}`
+                        });
+                        employee.save();
+                        res.status(200).send({
+                            status: 200,
+                            message: "Employee data update."
+                        });
+                    }
+                }, err => {
+                    res.status(500).send({
+                        status: 500,
+                        message: err.message || "Some error occurred while updating the Employee data."
+                    });
                 });
-                await employee.save();
-                res.status(200).send({
-                    status: 200,
-                    message: "Employee data changed."
-                });
-            }
-            res.status(404).send({
-                status: 404,
-                message: "Passwords is not equals."
-            });
         }
     }
 }
@@ -264,7 +275,9 @@ exports.find = (req, res) => {
 
 
 exports.findAll = (req, res) => {
-    Employee.findAll().then(data => {
+    Employee.findAll({
+        attributes: ['id', 'nome', 'codice', 'restrizioni']
+    }).then(data => {
         if (data) {
             res.status(200).send({
                 status: 200,
