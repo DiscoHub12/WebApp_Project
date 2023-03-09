@@ -1,20 +1,18 @@
 :host {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-  
-  mat-drawer {
-    width: 260px;
-  }
-  mat-drawer-container {
-    height: 100%;
-  }
-  
-  mat-drawer {
-    background: #0f172a;
-  }
-  
-  .highlighted-text {
-    text-transform: uppercase;
-  }
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+mat-drawer {
+  background-color: #0f172a;
+  width: 260px;
+}
+
+mat-drawer-container {
+  height: 100%;
+}
+
+.highlighted-text {
+  text-transform: uppercase;
+}
