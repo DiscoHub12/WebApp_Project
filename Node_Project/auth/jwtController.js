@@ -6,12 +6,21 @@ const jwt = require('jsonwebtoken');
  */
 let refreshTokens = [];
 
+function addRefreshToken(token) {
+    this.refreshTokens.push(token); 
+    console.log("Token aggiunto : " + token);
+}
+
+function containsToken(token){
+    return this.refreshTokens.includes(token);
+}
+
 /**
  * Function that return the JWT Access Token for User.
  * @param {*} the user to returns the JWT.
  */
 function getAccessTokenUser(user) {
-    return jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRESIN });
+    return jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' });
 }
 
 /**
@@ -27,7 +36,7 @@ function getRegfreshTokenUser(user) {
  * @param {*}  the employee to returns the JWT.
  */
 function getAccessTokenEmployee(employee) {
-    return jwt.sign({ id: employee.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRESIN });
+    return jwt.sign({ id: employee.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
 }
 
 /**
@@ -121,4 +130,18 @@ function authenticateTokenEmployee(req, res, next) {
     }
 }
 
-module.exports = { refreshTokens, getAccessTokenUser, getAccessTokenEmployee, getRegfreshTokenUser, getRegfreshTokenEmployee, getUserByToken, getEmployeeByToken, getUserByRefreshToken, getEmployeeByRefreshToken, authenticateTokenUser, authenticateTokenEmployee };
+module.exports = 
+{ refreshTokens, 
+    getAccessTokenUser, 
+    getAccessTokenEmployee, 
+    getRegfreshTokenUser, 
+    getRegfreshTokenEmployee, 
+    getUserByToken, 
+    getEmployeeByToken, 
+    getUserByRefreshToken, 
+    getEmployeeByRefreshToken, 
+    authenticateTokenUser, 
+    authenticateTokenEmployee, 
+    addRefreshToken, 
+    containsToken,
+ };
