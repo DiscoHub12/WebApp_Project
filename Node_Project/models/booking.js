@@ -20,7 +20,11 @@ Booking.init({
         type: DataTypes.DATE,
         allowNull: false
     },
-    oraPrenotazione : {
+    oraInizio : {
+        type : DataTypes.TIME,
+        allowNull: false
+    },
+    oraFine : {
         type : DataTypes.TIME,
         allowNull: false
     },

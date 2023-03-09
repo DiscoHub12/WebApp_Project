@@ -3,15 +3,18 @@ const Booking = require("../models/booking");
 const User = require("../models/user.js");
 
 
+
 exports.create = (req, res) => {
-  const idUtente = req.body.idUtente;
+  const nome = req.body.nome;
+  const cognome = req.body.cognome;
   const dataPrenotazione = req.body.dataPrenotazione;
-  const oraPrenotazione = req.body.oraPrenotazione;
+  const oraInizio = req.body.oraInizio;
+  const oraFine = req.body.oraFine;
   const trattamento = req.body.trattamento;
   const completata = req.body.completata;
 
 
-  if (!idUtente) {
+  if (!nome || !cognome) {
     res.status(400).send({
       status: 400,
       message: "Content can't be empty!"
@@ -20,13 +23,15 @@ exports.create = (req, res) => {
   }
 
   User.findOne({
-    where: { id: idUtente }
+    where: { nome: nome, 
+    cognome: cognome }
   }).then(user => {
     if (user) {
       const booking = {
-        idUtente: idUtente,
+        idUtente: user.id,
         dataPrenotazione: dataPrenotazione,
-        oraPrenotazione: oraPrenotazione,
+        oraInizio: oraInizio,
+        oraFine: oraFine,
         trattamento : trattamento,
         completata: completata
       }
@@ -106,11 +111,10 @@ exports.deleteAll = (req, res) => {
 
 exports.update = async (req, res) => {
   const id = req.params.id;
-  const dataPrenotazione = req.body.dataPrenotazione;
   const completata = req.body.completata;
 
 
-  if (dataPrenotazione == null || dataPrenotazione == "" || completata == null || completata == "" || !id) {
+  if (completata == null || completata == "" || !id) {
     res.status(400).send({
       status: 400,
       message: "Content can not be empty!"
@@ -121,9 +125,7 @@ exports.update = async (req, res) => {
   const booking = await Booking.findByPk(id);
 
   if (booking) {
-    booking.dataPrenotazione = dataPrenotazione;
     booking.completata = completata;
-    console.log("DataPrenotazione: " + dataPrenotazione);
 
     await booking.save();
 
