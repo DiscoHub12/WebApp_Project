@@ -31,14 +31,49 @@
   text-align: center;
 }
 
-.div h3{
-  margin-top : 50px;
+//SCSS PER EMPLOYEE
+.divEmployee {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   text-align: center;
 }
 
-.formUpdateEmail {
-  margin-top: 20px;
+.formInformation {
+  margin-top: 30px;
+  height: 240px;
+  width: 500px;
 }
 
+.formUpdatePassword {
+  margin-top: 80px;
+}
+
+//SCSS PER USER
+.div-user {
+  margin-top: 20px;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  display: flex;
+}
+
+.formInformationUser {
+  flex-direction: column;
+  align-items: center;
+  margin-top: 15px;
+  height: 240px;
+  width: 500px;
+}
+
+.formUpdateEmail {
+  margin-top: 30px;
+  height: 240px;
+  width: 500px;
+}
+
+.formUpdatePasswordUser {
+  margin-top: 10px;
+  height: 240px;
+  width: 480px;
+}

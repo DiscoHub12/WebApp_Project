@@ -27,18 +27,14 @@ export class AccountComponent implements OnInit {
   //This is a variable, to associate all Http response.
   data: any;
 
+  //Boolean variables to indicate the visibility of the information.
+  showInformation = true;
 
+  //Boolean variables to indicate if the User want to update the email.
   showFormUpdateEmail = false;
 
+  //Boolean variables to indicate if the User or Employee want to update the password.
   showFormUpdatePassword = false;
-
-
-  password: String | undefined;
-  newEmail: String | undefined;
-  oldPassword: String | undefined;
-  newPassword: String | undefined;
-  confirmPassword: String | undefined;
-  salt: String | undefined;
 
 
   /**
@@ -59,7 +55,8 @@ export class AccountComponent implements OnInit {
    */
   ngOnInit(): void {
     this.initForm();
-    this.userType = this.userService.getUser();
+    //this.userType = this.userService.getUser();
+    this.userType = new User(1, "Sofia", "Scattolini", "sofiascattolini@gmail.com");
     if (this.userType instanceof Employee) {
       this.isEmployee = true;
     } else if (this.userType instanceof User) {
@@ -79,77 +76,104 @@ export class AccountComponent implements OnInit {
   }
 
 
+  //----EMPLOYEE METHODS----
 
+  /**
+   * Method that contact the Backend to update the Password.
+   */
+  updatePasswordEmployee() {
+    if (this.form.value.password === this.form.value.confirmPassword) {
+      const newPassword = this.form.value.confirmPassword;
+      const oldPassword = this.form.value.oldPassword;
+      this.httpClient.post(`${environment.baseUrl}/employee/update/${this.userType.id}`, { oldPassword: oldPassword, newPassword: newPassword }).subscribe(
+        response => {
+          this.data = response;
+          if (this.data.status == 200) {
+            alert("Password aggiornata con successo.");
+            this.closeUpdatePassword();
+          } else if (this.data.status == 404) {
+            alert("Password errata.");
+            this.closeUpdatePassword();
+          }
+        }, err => {
+          alert("Something went wrong");
+          this.closeUpdatePassword();
+        });
+    }
+  }
+
+
+  //-----USER METHODS-----
+
+  /**
+   * Method that contact the Backend to update the email information for User.
+   */
   updateEmail() {
-    this.newEmail = this.form.value.email;
+    const newEmail = this.form.value.email;
     if (this.userType instanceof User) {
-      this.httpClient.post(`${environment.baseUrl}/user/update/${this.userType.id}`, { email: this.newEmail }).subscribe(response => {
+      this.httpClient.post(`${environment.baseUrl}/user/updateEmail/${this.userType.id}`, { email: newEmail }).subscribe(response => {
         this.data = response;
         if (this.data.status == 200) {
-          this.userType.setEmail(this.newEmail);
+          this.userType.setEmail(newEmail);
           alert("Email aggiornata con successo.");
-          console.log(this.userType.email);
+          this.closeUpdateEmail();
         } else {
           alert("Email non aggiornata");
+          this.closeUpdateEmail();
         }
       }, err => {
         alert("Something went wrong");
+        this.closeUpdateEmail();
       });
     }
+    this.closeUpdateEmail();
+  }
+
+
+  /**
+   * Method that contact the Backend to update the password information for User.
+   */
+  updatePasswordUser() {
+    if (this.form.value.password === this.form.value.confirmPassword) {
+      const newPassword = this.form.value.confirmPassword;
+      const oldPassword = this.form.value.oldPassword;
+      this.httpClient.post(`${environment.baseUrl}/user/updatePassword/${this.userType.id}`, { oldPassword: oldPassword, newPassword: newPassword }).subscribe(response => {
+        this.data = response;
+        if (this.data.status == 200) {
+          alert("Password aggiornata con successo");
+          this.closeUpdatePassword();
+        } else {
+          alert(this.data.message);
+          this.closeUpdatePassword();
+        }
+      }, err => {
+        this.data = err;
+        alert(this.data.message);
+        this.closeUpdatePassword();
+      });
+    } else {
+      alert("Le password non corrispondono.");
+      this.closeUpdatePassword();
+    }
+    this.closeUpdatePassword();
+  }
+
+
+  //----GENERIC METHODS-----
+
+  closeUpdatePassword() {
+    this.showFormUpdatePassword = false;
+    this.resetData();
+    this.resetForm();
+  }
+
+
+  closeUpdateEmail() {
     this.showFormUpdateEmail = false;
     this.resetData();
     this.resetForm();
   }
 
-
-
-
-
-
-  updatePasswordUser() {
-    if (this.form.value.password === this.form.value.confirmPassword) {
-      this.newPassword = this.form.value.confirmPassword;
-      const oldPassword = this.form.value.oldPassword;
-      this.httpClient.post(`${environment.baseUrl}/user/update/${this.userType.id}`, { oldPassword: oldPassword, password: this.newPassword }).subscribe(response => {
-        this.data = response;
-        if (this.data.status == 200) {
-          alert("Password aggiornata con successo");
-        } else {
-          alert(this.data.message);
-        }
-      }, err => {
-        alert("Something went wrong");
-      });
-    } else {
-      alert("Password non uguali riprovare");
-    }
-    this.showFormUpdatePassword = false;
-    this.resetData();
-    this.resetForm();
-  }
-
-
-  updatePasswordEmployee() {
-    if (this.form.value.password === this.form.value.confirmPassword) {
-      this.newPassword = this.form.value.confirmPassword;
-      const oldPassword = this.form.value.oldPassword;
-      this.httpClient.post(`${environment.baseUrl}/employee/update/${this.userType.id}`, { oldPassword: oldPassword, password: this.newPassword }).subscribe(response => {
-        this.data = response;
-        if (this.data.status == 200) {
-          alert("Password aggiornata con successo");
-        } else {
-          alert(this.data.message);
-        }
-      }, err => {
-        alert("Something went wrong");
-      });
-    } else {
-      alert("Password non uguali riprovare");
-    }
-    this.showFormUpdatePassword = false;
-    this.resetData();
-    this.resetForm();
-  }
 
   annulla() {
     this.showFormUpdateEmail = false;
