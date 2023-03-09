@@ -1,6 +1,6 @@
 <mat-nav-list>
-  <h2 matSubheader class="mt-2">DASHBOARD </h2>
-  <a mat-list-item class="mat-list-item" (click)="changeRoute('/account')">
+  <h2 matSubheader class="title">DASHBOARD </h2>
+  <a mat-list-item (click)="changeRoute('/account')">
     <mat-icon class="icon">account_circle</mat-icon>Account
   </a>
   <a mat-list-item (click)="changeRoute('/employees')" *ngIf="isEmployee">

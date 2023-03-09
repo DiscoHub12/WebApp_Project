@@ -1,42 +1,31 @@
-:host {
-    .mat-icon {
-      vertical-align: middle;
-      margin-right: 1rem;
-    }
-  }
+.mat-icon {
+  vertical-align: center;
+  margin-right: 1rem;
+  color: white;
+}
 
-  .mt-2 {
-    color: #fff;
-    text-align: center;
-  }
+.title {
+  color: #fff;
+  text-align: center;
+}
 
-  .mat-list-item {
-    color: #94a3b8 ;
-    font-size: 0.8rem;
-    height: 44px !important;
-    margin-bottom: 4px;
-    &:hover {
-      color: #f2f5f7 ;
-    }
-    ::ng-deep {
-      .mat-list-item-content {
-        border-radius: 5px;
-        margin: 0 8px;
-        &:hover {
-          background: #2c3344 !important;
-        }
-      }
-    }
-  }
-  
-  .mat-subheader {
-    color: #818cf8;
-    font-size: 0.6rem;
-    font-weight: 100;
-    letter-spacing: 1px;
-  }
+.icon {
+  color: white;
+}
 
+.mat-divider{
+  border-top-width: 1px;
+  border-color: white;
+}
 
-  .icon {
-    color : #fff;
+.mat-list-item{
+  color: white !important;
+  font-size: 0.8rem;
+  height: 44px !important;
+  margin-bottom: 4px;
+  border-radius: 5px;
+  margin: 0 8px;
+  &:hover{
+    background-color: #2c3344 !important;
   }
+}
