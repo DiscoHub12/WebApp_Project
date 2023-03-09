@@ -108,8 +108,7 @@ export class BookingComponent {
   //NgOnInit implementation
   ngOnInit() {
     this.initForm();
-    this.userType = new Employee(11, "Sofia", "Scattolini", 0);
-    //this.userType = this.authUser.getUser();
+    this.userType = this.authUser.getUser();
     if (this.userType instanceof Employee) {
       this.isVisible = true;
     } else {
