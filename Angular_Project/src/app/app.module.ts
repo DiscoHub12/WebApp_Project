@@ -53,6 +53,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 
 //OTHER IMPORT
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
   declarations: [
@@ -103,7 +104,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatExpansionModule,
     ScrollingModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    FullCalendarModule
 
 
   ],
