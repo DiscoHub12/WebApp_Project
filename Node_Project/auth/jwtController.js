@@ -7,11 +7,11 @@ const jwt = require('jsonwebtoken');
 let refreshTokens = [];
 
 function addRefreshToken(token) {
-    this.refreshTokens.push(token); 
+    this.refreshTokens.push(token);
     console.log("Token aggiunto : " + token);
 }
 
-function containsToken(token){
+function containsToken(token) {
     return this.refreshTokens.includes(token);
 }
 
@@ -20,7 +20,7 @@ function containsToken(token){
  * @param {*} the user to returns the JWT.
  */
 function getAccessTokenUser(user) {
-    return jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' });
+    return jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' });
 }
 
 /**
@@ -36,7 +36,7 @@ function getRegfreshTokenUser(user) {
  * @param {*}  the employee to returns the JWT.
  */
 function getAccessTokenEmployee(employee) {
-    return jwt.sign({ id: employee.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' });
+    return jwt.sign({ id: employee.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' });
 }
 
 /**
@@ -109,39 +109,32 @@ function authenticateTokenUser(req, res, next) {
  */
 function authenticateTokenEmployee(req, res, next) {
     let authHeader = req.headers['authorization'];
-    if(authHeader){
+    if (authHeader) {
         let token = authHeader.split(' ')[1];
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, employee) => {
-            if (err){
-                return res.status(403).send({
-                    status: 403, 
-                    message : "Token is not valid!"
-
-                });
-            }
-            req.employee = employee;
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            if (err) return res.status(403).send({
+                status: 403, 
+                message : "Token is not valid!",
+            });
+            req.user = user;
             next();
-        });
-    }else{
-        return res.status(401).send({
-            status: 401, 
-            message: "You are not authenticated.",
         })
-    }
+    } else return res.status(401).send("You are not authenticated!");
 }
 
-module.exports = 
-{ refreshTokens, 
-    getAccessTokenUser, 
-    getAccessTokenEmployee, 
-    getRegfreshTokenUser, 
-    getRegfreshTokenEmployee, 
-    getUserByToken, 
-    getEmployeeByToken, 
-    getUserByRefreshToken, 
-    getEmployeeByRefreshToken, 
-    authenticateTokenUser, 
-    authenticateTokenEmployee, 
-    addRefreshToken, 
+module.exports =
+{
+    refreshTokens,
+    getAccessTokenUser,
+    getAccessTokenEmployee,
+    getRegfreshTokenUser,
+    getRegfreshTokenEmployee,
+    getUserByToken,
+    getEmployeeByToken,
+    getUserByRefreshToken,
+    getEmployeeByRefreshToken,
+    authenticateTokenUser,
+    authenticateTokenEmployee,
+    addRefreshToken,
     containsToken,
- };
+};

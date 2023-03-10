@@ -25,7 +25,7 @@ exports.create = (req, res) => {
             Card.findOne({
                 where: { idUtente: user.id },
             }).then(result => {
-                if (result) {
+                if (result != null) {
                     res.status(400).send({
                         status: 400,
                         message: "Card already exists!"
@@ -200,7 +200,10 @@ exports.addPoints = async (req, res) => {
     const card = await Card.findOne({ where: { codice: codice } });
 
     if (card) {
-        card.punti += punti
+        const puntiAttuali = card.punti; 
+        const updated = puntiAttuali + punti; 
+        console.log(updated);
+        card.set({ punti: updated });
         await card.save();
 
         res.status(200).send({

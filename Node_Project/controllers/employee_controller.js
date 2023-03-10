@@ -39,13 +39,13 @@ exports.create = async (req, res) => {
     };
 
     Employee.create(employee).then(data => {
-        res.status(201).send({
+        return res.status(201).send({
             status: 201,
             message: `Employee created with ${restrizioni} restrictions`
         });
     }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while creating the new Tutorial."
+        return res.status(500).send({
+            message: err.message || "Some error occurred while creating the new Employee Account."
         });
     });
 }

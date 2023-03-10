@@ -31,7 +31,7 @@ module.exports = app => {
      * This route allows you the registration of a new 
      * Employee within the Platform.
      */
-    router.post("/registration", employee.create);
+    router.post("/registration", authenticate.authenticateTokenEmployee, employee.create);
 
     /**
      * This route allow Employee to log in.
@@ -54,7 +54,7 @@ module.exports = app => {
      * This route allows you to remove a account about Employee, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post("/delete/:id", employee.delete);
+    router.post("/delete/:id", authenticate.authenticateTokenEmployee, employee.delete);
 
     /**
      * This route allows you to update the data of a specific Employee, 
@@ -71,7 +71,7 @@ module.exports = app => {
     /**
      * This route allows you to get all the Employees account created.
      */
-    router.get("/findAll", employee.findAll);
+    router.get("/findAll", authenticate.authenticateTokenEmployee, employee.findAll);
 
 
 

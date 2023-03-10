@@ -31,25 +31,25 @@ module.exports = app => {
      * This route allows you to create a new Card 
      * for a specific registered User.
      */
-    router.post("/create", card.create);
+    router.post("/create", authenticate.authenticateTokenEmployee, card.create);
 
     /**
      * This route allows you to delete a specific Card, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post("/delete/:id", card.delete);
+    router.post("/delete/:id", authenticate.authenticateTokenEmployee, card.delete);
 
     /**
      * This route allows you to add a specific number of points, 
      * into one specific Card.
      */
-    router.post("/addPoints", card.addPoints);
+    router.post("/addPoints", authenticate.authenticateTokenEmployee, card.addPoints);
 
     /**
      * This route allows you to add a specific number of points, 
      * into all existing Card.
      */
-    router.post("/addPointsAll", card.addPointsAll);
+    router.post("/addPointsAll", authenticate.authenticateTokenEmployee, card.addPointsAll);
 
     /**
      * This route allows you to remove a specific number of points, 
@@ -73,12 +73,12 @@ module.exports = app => {
      * This route allows you to get a specific Card from a 
      * specific User, passing the corresponding and unique id as parameters.
      */
-    router.get("/findCardUser/:id", card.findCardUser);
+    router.get("/findCardUser/:id", authenticate.authenticateTokenUser, card.findCardUser);
 
     /**
      * This route allows you to get all Cards created.
      */
-    router.get("/findAll", card.findAll);
+    router.get("/findAll", authenticate.authenticateTokenEmployee, card.findAll);
 
 
 
