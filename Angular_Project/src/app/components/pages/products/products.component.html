@@ -1,19 +1,20 @@
 <div class="container">
-  
+
   <div class="explainPage">
     <h2>Nostri Prodotti</h2>
     <h3>Qui sottostante, un piccolo elenco di prodotti <br>
-    che usiamo per i nostri trattamenti</h3>
+      che usiamo per i nostri trattamenti</h3>
   </div>
 
-    <div class="card-deck">
-      <div class="card" *ngFor="let product of products">
-        <img src="{{product.imageUrl}}" class="card-img-top" alt="{{product.name}}">
-        <div class="card-body">
-          <h5 class="card-title">{{product.name}}</h5>
-          <p class="card-text">{{product.description}}</p>
-          <p class="card-text"><small class="text-muted">{{product.price}} €</small></p>
-        </div>
-      </div>
-    </div>
+  <div class="card-deck">
+    <mat-card class="card" *ngFor="let product of products">
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>{{product.name}}</mat-card-title>
+          <mat-card-subtitle>{{product.price}}€</mat-card-subtitle>
+          <img src="{{product.imageUrl}}" class="card-img-top" alt="{{product.name}}">
+        </mat-card-title-group>
+      </mat-card-header>
+    </mat-card>
   </div>
+</div>

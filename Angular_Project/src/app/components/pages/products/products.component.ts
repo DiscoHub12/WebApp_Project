@@ -9,58 +9,50 @@ export class ProductsComponent {
 
   products = [
     {
-      name: 'Prodotto 1',
-      description: 'Questa è una descrizione del prodotto 1',
-      price: 10,
-      imageUrl: 'https://via.placeholder.com/500x325'
+      name: 'Shampo capelli ricci',
+      price: 5,
+      imageUrl: './assets/imm.jpeg'
     },
     {
-      name: 'Prodotto 2',
-      description: 'Questa è una descrizione del prodotto 2',
-      price: 20,
-      imageUrl: 'https://via.placeholder.com/500x325'
+      name: 'Shampo capelli lisci',
+      price: 5,
+      imageUrl: './assets/imm.jpeg'
     },
     {
-      name: 'Prodotto 3',
-      description: 'Questa è una descrizione del prodotto 3',
-      price: 30,
-      imageUrl: 'https://via.placeholder.com/500x325'
-    } ,
-    {
-      name: 'Prodotto 4',
-      description: 'Questa è una descrizione del prodotto 1',
-      price: 10,
-      imageUrl: 'https://via.placeholder.com/500x325'
+      name: 'Shampo capelli crespi',
+      price: 8,
+      imageUrl: './assets/imm.jpeg'
     },
     {
-      name: 'Prodotto 5',
-      description: 'Questa è una descrizione del prodotto 2',
-      price: 20,
-      imageUrl: 'https://via.placeholder.com/500x325'
+      name: 'Shampo anti forfora',
+      price: 9,
+      imageUrl: './assets/imm.jpeg'
     },
     {
-      name: 'Prodotto 6',
-      description: 'Questa è una descrizione del prodotto 3',
-      price: 30,
-      imageUrl: 'https://via.placeholder.com/500x325'
-    },  {
-      name: 'Prodotto 7',
-      description: 'Questa è una descrizione del prodotto 1',
-      price: 10,
-      imageUrl: 'https://via.placeholder.com/500x325'
+      name: 'Balsamo capelli lisci',
+      price: 7,
+      imageUrl: './assets/imm.jpeg'
     },
     {
-      name: 'Prodotto 8',
-      description: 'Questa è una descrizione del prodotto 2',
-      price: 20,
-      imageUrl: 'https://via.placeholder.com/500x325'
+      name: 'Balsamo capelli ricci',
+      price: 7,
+      imageUrl: './assets/imm.jpeg'
+    }, 
+    {
+      name: 'Gel uomo',
+      price: 9,
+      imageUrl: './assets/imm.jpeg'
     },
     {
-      name: 'Prodotto 9',
-      description: 'Questa è una descrizione del prodotto 3',
-      price: 30,
-      imageUrl: 'https://via.placeholder.com/500x325'
-    }
+      name: 'Schiuma per capelli',
+      price: 6,
+      imageUrl: './assets/imm.jpeg'
+    },
+    {
+      name: 'Dopo barba',
+      price: 8,
+      imageUrl: './assets/imm.jpeg'
+    },
   ]
 
 }

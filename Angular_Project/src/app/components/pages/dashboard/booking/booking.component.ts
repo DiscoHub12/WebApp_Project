@@ -88,7 +88,7 @@ export class BookingComponent {
     selectable: true,
     selectMirror: true,
     dayMaxEvents: true,
-    select: this.addBooking.bind(this)
+    select: this.showAlertToAdd.bind(this)
   };
 
 
@@ -111,7 +111,7 @@ export class BookingComponent {
     this.userType = this.authUser.getUser();
     if (this.userType instanceof Employee) {
       this.isVisible = true;
-    } else {
+    } else if(this.userType instanceof User){
       this.isVisible = false;
       this.getBookingUser();
     }
@@ -139,7 +139,6 @@ export class BookingComponent {
       this.data = response;
       if (this.data.status === 200) {
         this.bookings = this.data.data;
-        this.getAllBookingsToday();
         this.stampData();
       }
       else {
@@ -187,7 +186,7 @@ export class BookingComponent {
     this.calendarOptions.events = events;
   }
 
-  
+
   private getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';
@@ -199,6 +198,8 @@ export class BookingComponent {
 
   //This method returns all bookings of the day
   getAllBookingsToday() {
+    this.openList = true;
+    this.bookingsToday = [];
     const dataCorrente = new Date();
     for (const booking of this.bookings) {
       const dataPrenotazione = new Date(booking.dataPrenotazione);
@@ -220,12 +221,15 @@ export class BookingComponent {
           this.data = response;
           if (this.data.status == 200) {
             this.addTreatment(booking, descrizione);
+            booking.completata = 1;
           } else {
             alert("Prenotazione non aggiornata riprovare");
           }
         }, err => {
           alert("Something went wrong");
         });
+    } else {
+      alert("Prenotazione già completata");
     }
   }
 
@@ -242,7 +246,7 @@ export class BookingComponent {
       response => {
         this.data = response;
         if (this.data.status == 201) {
-          alert("Trattamento aggiunto con successo. Ricaricare la pagina.");
+          alert("Trattamento aggiunto con successo.");
         } else {
           alert("Trattamento non aggiunto riprovare");
         }
@@ -269,6 +273,25 @@ export class BookingComponent {
       alert("Cliente non trovato, riprova.");
     }
     this.resetForm();
+  }
+
+  removeBookingEmp(booking: Booking) {
+    this.httpClient.post(`${environment.baseUrl}/booking/delete/${booking.id}`, {}).subscribe(response => {
+      this.data = response;
+      if (this.data.status === 200) {
+        alert("Prenotazione rimossa con successo.");
+      } else {
+        alert("Error.");
+      }
+    }, err => {
+      alert("Something went wrong.");
+    });
+    const index = this.bookingsToday.indexOf(booking);
+    this.bookingsToday.splice(index);
+    const index1 = this.searchedBookingsUser.indexOf(booking);
+    this.searchedBookingsUser.splice(index1);
+    this.getAllBookings();
+    this.resetData();
   }
 
 
@@ -299,14 +322,40 @@ export class BookingComponent {
   //This method allows user to search a Bookings
   searchBookings() {
     const dataPrenotazione = new Date(this.form.value.dataPrenotazione);
+    let prenotazioneTrovata = false;
     for (let booking of this.bookingsUser) {
       const bookingDate = new Date(booking.dataPrenotazione);
       if (bookingDate.getTime() === dataPrenotazione.getTime()) {
         this.searchedBookingsUser.push(booking);
+        alert("Prenotazione trovata con successo.");
         this.searchedBooking = true;
+        prenotazioneTrovata = true;
+        this.showFormSearchBookingUser = false;
       }
     }
+    if (!prenotazioneTrovata) {
+      alert("Prenotazione non trovata. Riprovare.");
+    }
     this.resetForm();
+  }
+
+  removeBookingUser(booking: Booking) {
+    this.httpClient.post(`${environment.baseUrl}/booking/delete/${booking.id}`, {}).subscribe(response => {
+      this.data = response;
+      if (this.data.status === 200) {
+        alert("Prenotazione rimossa con successo.");
+      } else {
+        alert("Error.");
+      }
+    }, err => {
+      alert("Something went wrong.");
+    });
+    const index = this.searchedBookingsUser.indexOf(booking);
+    this.searchedBookingsUser.splice(index);
+    this.getAllBookings();
+    this.getAllBookingsToday();
+    this.getBookingUser();
+    this.resetData();
   }
 
 
@@ -328,6 +377,7 @@ export class BookingComponent {
 
   //This method close the Search Booking.
   closeSearchedBookingsUser() {
+    this.getBookingUser();
     this.searchedBooking = false;
     this.searchedBookingsUser = [];
     this.showFormSearchBookingUser = false;
@@ -343,21 +393,7 @@ export class BookingComponent {
 
   close() {
     this.openList = false;
-  }
-
-
-  remove(booking: Booking) {
-    this.httpClient.post(`${environment.baseUrl}/booking/delete/${booking.id}`, {}).subscribe(response => {
-      this.data = response;
-      if (this.data.status === 200) {
-        alert("Prenotazione rimossa con successo. Ricarica la pagina per vedere le modifiche.");
-      } else {
-        alert("Error.");
-      }
-    }, err => {
-      alert("Something went wrong.");
-    });
-    this.resetData();
+    this.bookingsToday = [];
   }
 
 
@@ -375,28 +411,46 @@ export class BookingComponent {
     calendarOptions.weekends = !calendarOptions.weekends;
   }
 
-  addBooking(selectInfo: DateSelectArg) {
+  showAlertToAdd(selectInfo: DateSelectArg) {
     const title = prompt('Inserisci il nome del trattamento da effettuare');
     const nome = prompt('Inserisci il nome del cliente');
     const cognome = prompt('Inserisci il cognome del cliente');
+
     const calendarApi = selectInfo.view.calendar;
 
     calendarApi.unselect(); //  clear date selection
 
-    if (title) {
-      this.httpClient.post(`${environment.baseUrl}/booking/create`, {
-        nome: nome, cognome: cognome, dataPrenotazione: selectInfo.view.activeStart, oraInizio: selectInfo.startStr,
-        oraFine: selectInfo.endStr, trattamento: title, completata: 0
-      }).subscribe(response => {
-        this.data = response;
-        if (this.data.status === 201) {
-          alert("Prenotazione aggiunta con successo. Ricarica la pagina per vedere la prenotazione.");
+    if (title && nome && cognome) {
+      if (this.userType instanceof User) {
+        if (nome != this.userType.nome || cognome != this.userType.cognome) {
+          alert("Nome e cognome errati. Riprovare.");
+        } else {
+          this.addBooking(selectInfo, title, nome, cognome);
         }
-      }, err => {
-        alert("Errore");
-      })
+      } else if(this.userType instanceof Employee){
+        this.addBooking(selectInfo, title, nome, cognome);
+      }
     }
   }
 
+  addBooking(selectInfo: DateSelectArg, title: string, nome: string, cognome: string) {
+    this.httpClient.post(`${environment.baseUrl}/booking/create`, {
+      nome: nome, cognome: cognome, dataPrenotazione: selectInfo.view.activeStart, oraInizio: selectInfo.startStr,
+      oraFine: selectInfo.endStr, trattamento: title, completata: 0
+    }).subscribe(response => {
+      this.data = response;
+      if (this.data.status === 201) {
+        alert("Prenotazione aggiunta con successo.");
+        if (this.userType instanceof User) {
+          this.getAllBookings();
+          this.getBookingUser();
+        } else if (this.userType instanceof Employee) {
+          this.getAllBookings();
+        }
+      }
+    }, err => {
+      alert("Errore");
+    });
+  }
 }
 
