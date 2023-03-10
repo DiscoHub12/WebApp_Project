@@ -30,7 +30,7 @@ module.exports = app => {
     /**
      * This route allows you to create a new Treatment.
      */
-    router.post("/create", treatment.create);
+    router.put("/create", authenticate.authenticateTokenUser, treatment.create);
 
     /**
      * This route allows you to get a specific Treatment, 

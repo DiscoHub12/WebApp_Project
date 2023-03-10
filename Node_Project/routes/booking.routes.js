@@ -30,53 +30,53 @@ module.exports = app => {
     /**
      * This route allows you to create a new Booking.
      */
-    router.post("/create", booking.create);
+    router.put("/create", authenticate.authenticateTokenUser, booking.create);
 
     /**
      * This route allows you to update a Booking, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post("/update/:id", booking.update);
+    router.post("/update/:id", authenticate.authenticateTokenEmployee,  booking.update);
 
     /**
      * This route allows you to delete a specific Booking, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post("/delete/:id", booking.delete);
+    router.delete("/delete/:id", authenticate.authenticateTokenUser, booking.delete);
 
     /**
      * This route allows you to delete all Booking existing.
      */
-    router.post("/deleteAll", booking.deleteAll);
+    router.post("/deleteAll", authenticate.authenticateTokenEmployee, booking.deleteAll);
 
     /**
      * This route allows you to get a specific Booking, 
      * passing the corresponding and unique id as parameters.
      */
-    router.get("/find/:id", booking.find);
+    router.get("/find/:id", authenticate.authenticateTokenUser, booking.find);
 
     /**
      * This route allows you to get all Bookings existing.
      */
-    router.get("/findAll", booking.findAll);
+    router.get("/findAll", authenticate.authenticateTokenEmployee, booking.findAll);
 
     /**
      * This route allows you to get all Bookings for a specific
      * User, passing the corresponding and unique id as parameters.
      */
-    router.get("/findAllUser/:id", booking.findOne);
+    router.get("/findAllUser/:id", authenticate.authenticateTokenUser, booking.findOne);
 
     /**
      * This route allows you to get all Bookings that have
      * not yet been completed.
      */
-    router.get("/findAllNotCompleted", booking.findFreeBooking);
+    router.get("/findAllNotCompleted", authenticate.authenticateTokenUser, booking.findFreeBooking);
 
     /**
      * This route allows you to get all Bookings that have 
      * completed.
      */
-    router.get("/findAllCompleted", booking.findAllCompleted);
+    router.get("/findAllCompleted", authenticate.authenticateTokenUser, booking.findAllCompleted);
 
 
 
