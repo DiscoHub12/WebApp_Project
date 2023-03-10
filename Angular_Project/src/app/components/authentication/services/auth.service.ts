@@ -12,16 +12,6 @@ import { Router } from "@angular/router";
 })
 export class AuthService {
 
-  data: any;
-
-  token = localStorage.getItem('accessToken');
-
-
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Authorization': 'Bearer ' + this.token
-    })
-  };
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -29,58 +19,32 @@ export class AuthService {
   saveToken(accessToken: string, refreshToken: string) {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
+    console.log("Access Token : " + accessToken + "\nRefreshToken : " + refreshToken);
   }
 
   //Method for request new tokens for User when the tokens are expired.
   refreshTokenUser() {
-    this.http.post(`${environment.baseUrl}/user/refreshToken`, { refreshToken: localStorage.getItem('refreshToken') }).subscribe(
-      response => {
-        this.data = response;
-        if (this.data.status == 200) {
-          this.saveToken(this.data.accessToken, this.data.refreshToken);
-          alert("Token aggiornato. Riprovare.");
-        }
-      }, err => {
-        this.data = err;
-        if (this.data.status == 401) {
-          alert("Sessione scaduta. Rieffettua il Login.");
-          this.router.navigate(['']);
-        }
-      });
+    const refreshToken = localStorage.getItem('refreshToken');
+    console.log("Sono dentro al metodo refresh, con token :" + refreshToken);
+    return this.http.post(`${environment.baseUrl}/user/refreshToken`, { refreshToken });
   }
 
   //Method for request new tokens for Employee when the tokens are expired.
   refreshTokenEmployee() {
-    this.http.post(`${environment.baseUrl}/employee/refreshToken`, { refreshToken: localStorage.getItem('refreshToken') }).subscribe(
-      response => {
-        this.data = response;
-        if (this.data.status == 200) {
-          this.saveToken(this.data.accessToken, this.data.refreshToken);
-          alert("Token aggiornato. Riprovare.");
-        }
-      }, err => {
-        this.data = err;
-        if (this.data.status == 401) {
-          alert("Sessione scaduta. Rieffettua il Login.");
-          this.router.navigate(['']);
-        }
-      });
+    const refreshToken = localStorage.getItem('refreshToken');
+    console.log("Sono dentro al metodo refresh, con token :" + refreshToken);
+    return this.http.post(`${environment.baseUrl}/employee/refreshToken`, { refreshToken });
   }
+
 
   //Verifica se il token JWT è presente nella cache locale del browser. Se il token non esiste 
   //viene reindirizzato alla home, altrimenti torna true indicando che l'utente è autenticato.
   isAuthenticated(): boolean {
     const token = localStorage.getItem('accessToken');
-
     if (!token) {
       this.router.navigate(['']);
       return false;
     }
     return true;
   }
-
-  resetData() {
-    this.data = null;
-  }
-
 }
