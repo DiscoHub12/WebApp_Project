@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Booking } from 'src/app/Models/booking';
@@ -111,7 +111,7 @@ export class BookingComponent {
     this.userType = this.authUser.getUser();
     if (this.userType instanceof Employee) {
       this.isVisible = true;
-    } else if(this.userType instanceof User){
+    } else if (this.userType instanceof User) {
       this.isVisible = false;
       this.getBookingUser();
     }
@@ -135,14 +135,22 @@ export class BookingComponent {
 
   //This method returns all bookings
   getAllBookings() {
-    this.httpClient.get<any>(`${environment.baseUrl}/booking/findAll`).subscribe(response => {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.get<any>(`${environment.baseUrl}/booking/findAll`, httpOptions).subscribe(response => {
       this.data = response;
       if (this.data.status === 200) {
         this.bookings = this.data.data;
         this.stampData();
       }
-      else {
-        alert("Error");
+      else if (this.data.status === 404) {
+        alert("Errore nella ricerca delle prenotazioni.");
+      } else {
+        alert("Errore.");
       }
     }, err => {
       alert("Something went wrong");
@@ -152,12 +160,11 @@ export class BookingComponent {
   }
 
   //This method print booking in the calendar
-  stampData() {
+  private stampData() {
     let events: any[] = [];
     for (let i = 0; i < this.bookings.length; i++) {
       const booking = this.bookings[i];
       const date = new Date(booking.dataPrenotazione).toISOString().replace(/T.*$/, '');
-      console.log(date);
       if (this.userType instanceof User) {
         if (booking.idUtente === this.userType?.getId()) {
           events.push({
@@ -214,9 +221,15 @@ export class BookingComponent {
 
   //This method set complete booking
   setCompletata(booking: Booking) {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
     if (booking.completata === 0) {
       const descrizione = this.completaPrenotazioneConDescrizione();
-      this.httpClient.post(`${environment.baseUrl}/booking/update/${booking.id}`, { completata: 1 }).subscribe(
+      this.httpClient.post(`${environment.baseUrl}/booking/update/${booking.id}`, { completata: 1 }, httpOptions).subscribe(
         response => {
           this.data = response;
           if (this.data.status == 200) {
@@ -242,13 +255,21 @@ export class BookingComponent {
 
   //This method create new Treatment when booking is completed
   addTreatment(booking: Booking, descrizione: string | null) {
-    this.httpClient.post(`${environment.baseUrl}/treatment/create`, { idUtente: booking.idUtente, nomeTrattamento: booking.trattamento, descrizione: descrizione, data: booking.dataPrenotazione }).subscribe(
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.put(`${environment.baseUrl}/treatment/create`, { idUtente: booking.idUtente, nomeTrattamento: booking.trattamento, descrizione: descrizione, data: booking.dataPrenotazione }, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 201) {
           alert("Trattamento aggiunto con successo.");
+        } else if (this.data.status == 404) {
+          alert("Utente non trovato riprovare.");
         } else {
-          alert("Trattamento non aggiunto riprovare");
+          alert("Errore nella creazione del trattamento.");
         }
       }, err => {
         alert("Something went wrong");
@@ -276,21 +297,31 @@ export class BookingComponent {
   }
 
   removeBookingEmp(booking: Booking) {
-    this.httpClient.post(`${environment.baseUrl}/booking/delete/${booking.id}`, {}).subscribe(response => {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.delete(`${environment.baseUrl}/booking/delete/${booking.id}`, httpOptions).subscribe(response => {
       this.data = response;
       if (this.data.status === 200) {
         alert("Prenotazione rimossa con successo.");
+        if (this.userType instanceof Employee) {
+          const index = this.bookingsToday.indexOf(booking);
+          this.bookingsToday.splice(index);
+          const index1 = this.searchedBookingsUser.indexOf(booking);
+          this.searchedBookingsUser.splice(index1);
+          this.getAllBookings();
+        }
+      } else if (this.data.status === 404) {
+        alert("Prenotazione non trovata riprovare.");
       } else {
-        alert("Error.");
+        alert("Errore nella rimozione.");
       }
     }, err => {
       alert("Something went wrong.");
     });
-    const index = this.bookingsToday.indexOf(booking);
-    this.bookingsToday.splice(index);
-    const index1 = this.searchedBookingsUser.indexOf(booking);
-    this.searchedBookingsUser.splice(index1);
-    this.getAllBookings();
     this.resetData();
   }
 
@@ -301,14 +332,23 @@ export class BookingComponent {
 
   //This method returns all bookings of a user
   getBookingUser() {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
     if (this.userType) {
-      this.httpClient.get<any>(`${environment.baseUrl}/booking/findAllUser/${this.userType.id}`).subscribe(
+      this.httpClient.get<any>(`${environment.baseUrl}/booking/findAllUser/${this.userType.id}`, httpOptions).subscribe(
         response => {
           this.data = response;
           if (this.data.status === 200) {
             this.bookingsUser = this.data.data;
-            console.log(this.bookingsUser);
             this.stampData();
+          } else if (this.data.status === 404) {
+            alert("Prenotazioni non trovate");
+          } else {
+            alert("Errore");
           }
         }, err => {
           alert("Something went wrong");
@@ -340,21 +380,30 @@ export class BookingComponent {
   }
 
   removeBookingUser(booking: Booking) {
-    this.httpClient.post(`${environment.baseUrl}/booking/delete/${booking.id}`, {}).subscribe(response => {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.delete(`${environment.baseUrl}/booking/delete/${booking.id}`, httpOptions).subscribe(response => {
       this.data = response;
       if (this.data.status === 200) {
         alert("Prenotazione rimossa con successo.");
+        if (this.userType instanceof User) {
+          const index = this.searchedBookingsUser.indexOf(booking);
+          this.searchedBookingsUser.splice(index);
+          this.getBookingUser();
+          this.getAllBookings();
+        }
+      } else if (this.data.status === 404) {
+        alert("Prenotazione non trovata riprovare.");
       } else {
-        alert("Error.");
+        alert("Errore nella rimozione.");
       }
     }, err => {
       alert("Something went wrong.");
     });
-    const index = this.searchedBookingsUser.indexOf(booking);
-    this.searchedBookingsUser.splice(index);
-    this.getAllBookings();
-    this.getAllBookingsToday();
-    this.getBookingUser();
     this.resetData();
   }
 
@@ -427,17 +476,23 @@ export class BookingComponent {
         } else {
           this.addBooking(selectInfo, title, nome, cognome);
         }
-      } else if(this.userType instanceof Employee){
+      } else if (this.userType instanceof Employee) {
         this.addBooking(selectInfo, title, nome, cognome);
       }
     }
   }
 
   addBooking(selectInfo: DateSelectArg, title: string, nome: string, cognome: string) {
-    this.httpClient.post(`${environment.baseUrl}/booking/create`, {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.put(`${environment.baseUrl}/booking/create`, {
       nome: nome, cognome: cognome, dataPrenotazione: selectInfo.view.activeStart, oraInizio: selectInfo.startStr,
       oraFine: selectInfo.endStr, trattamento: title, completata: 0
-    }).subscribe(response => {
+    }, httpOptions).subscribe(response => {
       this.data = response;
       if (this.data.status === 201) {
         alert("Prenotazione aggiunta con successo.");
@@ -447,6 +502,10 @@ export class BookingComponent {
         } else if (this.userType instanceof Employee) {
           this.getAllBookings();
         }
+      } else if (this.data.status === 404) {
+        alert("Utente non trovato.");
+      } else {
+        alert("Errore nella creazione.");
       }
     }, err => {
       alert("Errore");
