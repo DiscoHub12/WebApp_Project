@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 //COMPONENT IMPORTS
@@ -54,6 +54,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 //OTHER IMPORT
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { JwtInterceptor } from './components/authentication/services/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -112,6 +113,11 @@ import { FullCalendarModule } from '@fullcalendar/angular';
   providers: [{
     provide: MAT_RADIO_DEFAULT_OPTIONS,
     useValue: { color: 'primary' },
+  }, 
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: JwtInterceptor,
+    multi: true
   }],
   bootstrap: [AppComponent]
 })

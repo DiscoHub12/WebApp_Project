@@ -88,31 +88,29 @@ export class AccountComponent implements OnInit {
     if (this.form.value.password === this.form.value.confirmPassword) {
       const newPassword = this.form.value.confirmPassword;
       const oldPassword = this.form.value.oldPassword;
-      this.httpClient.post(`${environment.baseUrl}/employee/update/${this.userType.id}`, { oldPassword: oldPassword, newPassword: newPassword }).subscribe(
+      const token = localStorage.getItem('accessToken');
+      console.log("Metodo update con access : " + token);
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Authorization': 'Bearer ' + token
+        })
+      };
+      this.httpClient.post(`${environment.baseUrl}/employee/update/${this.userType.id}`, { oldPassword: oldPassword, newPassword: newPassword }, httpOptions).subscribe(
         response => {
           this.data = response;
           if (this.data.status == 200) {
             alert("Password aggiornata con successo.");
+            this.closeUpdatePassword();
           } else {
             alert("Password errata. Riprovare");
           }
-        }, err => {
-          this.data = err;
-          if (this.data.status == 403) {
-            alert("Token scaduto");
-            this.authService.refreshTokenEmployee();
-          } else if (this.data.status == 401) {
-            alert("Sessione scaduta. Rieffettua il Login.");
-            this.closeUpdatePassword();
-            this.router.navigate(['']);
-          }
         });
     } else {
-      alert("Le password non corrispondono. Riprova.");
-      return;
+      alert("Le password non corrispondono.");
     }
     this.closeUpdatePassword();
   }
+
 
   //-----USER METHODS-----
 
@@ -137,19 +135,8 @@ export class AccountComponent implements OnInit {
         } else {
           alert("Errore. Email non aggiornata. Riprova.");
         }
-      }, err => {
-        this.data = err;
-        if (this.data.status == 403) {
-          alert("Token scaduto");
-          this.authService.refreshTokenUser();
-        } else if (this.data.status == 401) {
-          alert("Sessione scaduta. Rieffettua il Login.");
-          this.closeUpdateEmail();
-          this.router.navigate(['']);
-        }
       });
     }
-    this.closeUpdateEmail();
   }
 
 
@@ -172,18 +159,6 @@ export class AccountComponent implements OnInit {
           alert("Password aggiornata con successo");
         } else {
           alert("Password non aggiornata. Errore. Riprova.");
-        }
-      }, err => {
-        this.data = err;
-        if (this.data.status == 403) {
-          alert("Token scaduto");
-          this.authService.refreshTokenUser();
-        } else if (this.data.status == 401) {
-          alert("Sessione scaduta. Rieffettua il Login.");
-          this.closeUpdateEmail();
-          this.router.navigate(['']);
-        } else if(this.data.status == 404){
-          alert("Password errata. Riprova.");
         }
       });
     } else {
