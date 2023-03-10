@@ -1,21 +1,27 @@
 <mat-nav-list>
   <h2 matSubheader class="title">DASHBOARD </h2>
   <a mat-list-item (click)="changeRoute('/account')">
-    <mat-icon class="icon">account_circle</mat-icon>Account
+    <mat-icon class="icon">account_circle</mat-icon>
+    <span class="mat-list-item-content">Account</span>
   </a>
   <a mat-list-item (click)="changeRoute('/employees')" *ngIf="isEmployee">
-    <mat-icon class="icon">person_add</mat-icon>Account Dipendenti
+    <mat-icon class="icon">person_add</mat-icon>
+    <span class="mat-list-item-content">Account Dipendenti</span>
   </a>
   <a mat-list-item (click)="changeRoute('/card')">
-    <mat-icon class="icon">call_to_action</mat-icon> Card
+    <mat-icon class="icon">call_to_action</mat-icon>
+    <span class="mat-list-item-content">Card</span>
   </a>
   <a mat-list-item (click)="changeRoute('/booking')">
-    <mat-icon class="icon">calendar_today</mat-icon> Prenotazioni
+    <mat-icon class="icon">calendar_today</mat-icon>
+    <span class="mat-list-item-content">Prenotazioni</span>
   </a>
-  <a mat-list-item (click)="changeRoute('/gifts')" >
-    <mat-icon class="icon">widgets</mat-icon> Premi
+  <a mat-list-item (click)="changeRoute('/gifts')">
+    <mat-icon class="icon">widgets</mat-icon>
+    <span class="mat-list-item-content">Premi</span>
   </a>
-  <a mat-list-item (click)="changeRoute('/treatments')" >
-    <mat-icon class="icon">table_chart</mat-icon> Trattamenti
+  <a mat-list-item (click)="changeRoute('/treatments')">
+    <mat-icon class="icon">table_chart</mat-icon>
+    <span class="mat-list-item-content">Trattamenti</span>
   </a>
 </mat-nav-list>
