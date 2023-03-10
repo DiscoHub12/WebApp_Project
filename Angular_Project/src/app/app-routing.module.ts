@@ -27,49 +27,49 @@ const routes: Routes = [
   { path: 'signup-user', component: SignUpComponent },
   { path: 'login-emp', component: LoginEmpComponent },
   {
-    path: 'dashboard/user', component: DashboardComponent, //canActivate: [AuthGuard],
+    path: 'dashboard/user', component: DashboardComponent, canActivate: [AuthGuard],
     children: [
       {
-        path: 'account', component: AccountComponent, //canActivate: [AuthGuard],
+        path: 'account', component: AccountComponent, canActivate: [AuthGuard],
       },
       {
-        path: 'card', component: CardComponent, //canActivate: [AuthGuard]
+        path: 'card', component: CardComponent, canActivate: [AuthGuard]
       },
       {
-        path: 'booking', component: BookingComponent, //canActivate: [AuthGuard]
+        path: 'booking', component: BookingComponent, canActivate: [AuthGuard]
       },
       {
-        path: 'gifts', component: GiftsComponent, //canActivate: [AuthGuard]
+        path: 'gifts', component: GiftsComponent, canActivate: [AuthGuard]
       },
       {
-        path: 'treatments', component: TreatmentsComponent, //canActivate: [AuthGuard]
+        path: 'treatments', component: TreatmentsComponent, canActivate: [AuthGuard]
       }
     ]
   },
   //dashboard/employee/:id
   {
-    path: 'dashboard/employee', component: DashboardComponent, //canActivate: [AuthGuard],
+    path: 'dashboard/employee', component: DashboardComponent, canActivate: [AuthGuard],
     children: [
       {
-        path: 'account', component: AccountComponent, //canActivate: [AuthGuard],
+        path: 'account', component: AccountComponent, canActivate: [AuthGuard],
       },
       {
-        path: 'employees', component: EmployeesComponent, //canActivate: [AuthGuard
+        path: 'employees', component: EmployeesComponent, canActivate: [AuthGuard]
       },
       {
-        path: 'card', component: CardComponent, //canActivate: [AuthGuard]
+        path: 'card', component: CardComponent, canActivate: [AuthGuard]
       },
       {
-        path: 'card/:id', component: CardComponent, //canActivate: [AuthGuard]
+        path: 'card/:id', component: CardComponent, canActivate: [AuthGuard]
       },
       {
-        path: 'booking', component: BookingComponent, //canActivate: [AuthGuard]
+        path: 'booking', component: BookingComponent, canActivate: [AuthGuard]
       },
       {
-        path: 'gifts', component: GiftsComponent, //canActivate: [AuthGuard]
+        path: 'gifts', component: GiftsComponent, canActivate: [AuthGuard]
       },
       {
-        path: 'treatments', component: TreatmentsComponent, //canActivate: [AuthGuard]
+        path: 'treatments', component: TreatmentsComponent, canActivate: [AuthGuard]
       }
     ]
   }

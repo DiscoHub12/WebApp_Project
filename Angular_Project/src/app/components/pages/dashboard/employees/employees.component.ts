@@ -1,6 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/components/authentication/services/auth.service';
 import { Employee } from 'src/app/Models/employee';
 import { UserService } from 'src/app/service/user.service';
 import { environment } from 'src/environments/environments';
@@ -57,7 +59,9 @@ export class EmployeesComponent implements OnInit {
   constructor(
     private httpClient: HttpClient,
     private userService: UserService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
   ) { }
 
   //NgOnInit implementation for this Component.
@@ -90,17 +94,30 @@ export class EmployeesComponent implements OnInit {
    * accounts within the platform.
    */
   getAllEmployeeAccounts() {
-    this.httpClient.get<any>(`${environment.baseUrl}/employee/findAll`).subscribe(
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.get<any>(`${environment.baseUrl}/employee/findAll`, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 200) {
           this.allEmployeeAccounts = this.data.data;
           this.resetFormAndData();
-        } else alert("Error");
-        this.resetFormAndData();
+        }
       }, err => {
-        alert("Something went wrong.");
-        this.resetFormAndData();
+        this.data = err;
+        if (this.data.status == 403) {
+          console.log("Token scaduto.");
+          this.authService.refreshTokenEmployee();
+          this.getAllEmployeeAccounts();
+          this.resetFormAndData();
+        } else if (this.data.status == 401) {
+          alert("Sessione scaduta. Rieffettua il Login.");
+          this.router.navigate(['']);
+        }
       });
     this.resetFormAndData();
   }
@@ -110,6 +127,12 @@ export class EmployeesComponent implements OnInit {
    * in this platform, that contact the Backend.
    */
   createEmployeeAccount() {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
     const nome = this.form.value.nome;
     const codice = this.form.value.codice;
     const password = this.form.value.password;
@@ -122,7 +145,7 @@ export class EmployeesComponent implements OnInit {
       code: codice,
       passwordEmployee: password,
       restrizioni: restrizioni
-    }).subscribe(
+    }, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 201) {
@@ -132,7 +155,19 @@ export class EmployeesComponent implements OnInit {
           alert("Registrazione non riuscita.");
           this.closeCreateAccount();
         }
-      });
+      }, err => {
+        this.data = err;
+        if (this.data.status == 403) {
+          console.log("Token scaduto.");
+          this.authService.refreshTokenEmployee();
+          alert("Riprova."); 
+          this.closeCreateAccount();
+        } else if (this.data.status == 401) {
+          alert("Sessione scaduta. Rieffettua il Login.");
+          this.router.navigate(['']);
+        }
+      }
+    );
     this.closeCreateAccount();
   }
 
@@ -147,7 +182,13 @@ export class EmployeesComponent implements OnInit {
    * passing the unique id, by contacting the Backend.
    */
   removeAccountEmployee(id: Number) {
-    this.httpClient.post(`${environment.baseUrl}/employee/delete/${id}`, {}).subscribe(
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.post(`${environment.baseUrl}/employee/delete/${id}`, {}, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 200) {
@@ -158,8 +199,15 @@ export class EmployeesComponent implements OnInit {
           this.closeRemoveAccount();
         }
       }, err => {
-        alert("Something went wrong.");
-        this.closeRemoveAccount();
+        this.data = err;
+        if (this.data.status == 403) {
+          console.log("Token scaduto.");
+          this.authService.refreshTokenEmployee();
+          this.removeAccountEmployee(id);
+        } else if (this.data.status == 401) {
+          alert("Sessione scaduta. Rieffettua il Login.");
+          this.router.navigate(['']);
+        }
       });
   }
 

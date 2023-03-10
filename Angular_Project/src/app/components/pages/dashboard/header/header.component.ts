@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Employee } from 'src/app/Models/employee';
@@ -20,10 +20,10 @@ export class HeaderComponent {
   response: any;
 
   constructor(
-    private authUser: UserService, 
-    private httpClient : HttpClient,
+    private authUser: UserService,
+    private httpClient: HttpClient,
     private router: Router
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.userType = this.authUser.getUser();
@@ -36,15 +36,16 @@ export class HeaderComponent {
 
   //Logout method -- finire 
   logout() {
+    const refreshToken = localStorage.getItem('refreshToken');
     if (this.userType instanceof User) {
-      this.httpClient.post(`${environment.baseUrl}/user/logout`, {}).subscribe(
+      this.httpClient.post(`${environment.baseUrl}/user/logout`, {refreshToken: refreshToken}).subscribe(
         response => {
           this.response = response;
-          if (this.response.status == 201) {
+          if (this.response.status == 200) {
             alert("Logout Successfully");
             this.router.navigate(['']);
           } else {
-            alert ("Logout Failed");
+            alert("Logout Failed");
           }
         }, err => {
           alert("Logout Failed");
@@ -52,14 +53,14 @@ export class HeaderComponent {
       );
     }
     if (this.userType instanceof Employee) {
-      this.httpClient.post(`${environment.baseUrl}/employee/logout`, {}).subscribe(
+      this.httpClient.post(`${environment.baseUrl}/employee/logout`, {refreshToken: refreshToken}).subscribe(
         response => {
           this.response = response;
-          if (this.response.status == 201) {
+          if (this.response.status == 200) {
             alert("Logout Successfully");
             this.router.navigate(['']);
           } else {
-            alert ("Logout Failed");
+            alert("Logout Failed");
           }
         }, err => {
           alert("Logout Failed");
