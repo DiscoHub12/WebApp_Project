@@ -112,8 +112,8 @@ exports.logout = async (req, res) => {
   let index = auth.refreshTokens.indexOf(refreshToken);
 
   if (index == -1) {
-    res.status(404).send({
-      status: 404,
+    res.status(401).send({
+      status: 401,
       message: "You are not authenticated.",
     });
   }
@@ -131,8 +131,8 @@ exports.refreshToken = async (req, res) => {
   let refreshToken = req.body.refreshToken;
 
   if (!refreshToken || !auth.containsToken(refreshToken)) {
-    return res.status(404).send({
-      status: 404,
+    return res.status(401).send({
+      status: 401,
       message: "You are not authenticated.",
     });
   }
@@ -144,6 +144,7 @@ exports.refreshToken = async (req, res) => {
   let newAccessToken = auth.getAccessTokenUser(user);
   let newRefreshToken = auth.getRegfreshTokenUser(user);
   auth.refreshTokens.push(newRefreshToken);
+  console.log("Nuovi Token : " + "\nAccessToken : " + newAccessToken + "\nRefreshToken : " + newRefreshToken);
   console.log(auth.refreshTokens);
 
   return res.status(200).send({
@@ -194,7 +195,7 @@ exports.updateEmail = async (req, res) => {
   const email = req.body.email;
 
   if (!id || !email) {
-    res.status(400).send({
+    return res.status(400).send({
       status: 400,
       message: "Content can't be empty!"
     })
@@ -207,12 +208,12 @@ exports.updateEmail = async (req, res) => {
       email: `${email}`
     });
     await user.save();
-    res.status(200).send({
+    return res.status(200).send({
       status: 200,
       message: "Email updated successfully"
     });
   } else {
-    res.status(404).send({
+    return res.status(404).send({
       status: 404,
       message: `Cannot update User with id=${id}. Maybe User was not found!`
     });
@@ -225,7 +226,7 @@ exports.updatePassword = async (req, res) => {
   const newPassword = req.body.newPassword + secret;
 
   if (!id || !oldPassword || !newPassword) {
-    res.status(400).send({
+    return res.status(400).send({
       status: 400,
       message: "Content can't be empty!"
     });
@@ -252,13 +253,13 @@ exports.updatePassword = async (req, res) => {
               password: `${hashPassword}`
             });
             user.save();
-            res.status(200).send({
+            return res.status(200).send({
               status: 200,
               message: "Password updated successfully"
             });
           }
         }, err => {
-          res.status(500).send({
+          return res.status(500).send({
             status: 500,
             message: err.message || "Some error occurred while updating the Employee data."
           });
