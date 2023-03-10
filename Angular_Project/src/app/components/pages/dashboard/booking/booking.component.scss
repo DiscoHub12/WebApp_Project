@@ -5,6 +5,14 @@
   font-size: 2rem;
 }
 
+.page-box {
+  background: #1e293b;
+  color: white;
+  font-size: 36px;
+  min-height: 120px;
+  padding: 1rem;
+}
+
 
 .page-content {
   background: white;
@@ -21,13 +29,13 @@
 
 
 .page-content-data-inner {
+  display: flex;
   justify-content: center;
   text-align: center;
 }
 
 
 .div-employee h3 {
-  display: flex;
   justify-content: center;
   text-align: center;
 }
@@ -47,19 +55,22 @@
 }
 
 
-.page-box {
-  background: #1e293b;
-  color: white;
-  font-size: 36px;
-  min-height: 120px;
-  padding: 1rem;
-}
-
-
 .formSearchBooking {
   margin-top: 20px;
 }
 
+.mat-according {
+  width: 600px;
+  overflow: auto;
+}
+
+.mat-expansion-panel {
+  margin-bottom: 2px;
+  width: 600px;
+}
+
+
+//SCSS for calendar
 .fc { /* the calendar root */
   max-width: 1100px;
   margin: 0 auto;
@@ -76,14 +87,6 @@
   flex-grow: 1;
   justify-content: center;
   padding: 3em;
+  text-align: center;
 }
 
-.mat-according {
-  width: 600px;
-  overflow: auto;
-}
-
-.mat-expansion-panel {
-  margin-bottom: 2px;
-  width: 600px;
-}
