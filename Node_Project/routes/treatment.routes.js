@@ -14,6 +14,12 @@ module.exports = app => {
     const treatment = require("../controllers/treatment_controller");
 
     /**
+     * Variable that allows you to call methods for authentication, 
+     * jwt and more.
+     */
+    const authenticate = require('../auth/jwtController.js');
+
+    /**
      * Variable used for Routing, it allows you to 
      * export this file using the router app 'router'.
      */

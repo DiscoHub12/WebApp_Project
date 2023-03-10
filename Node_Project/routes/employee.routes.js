@@ -14,6 +14,12 @@ module.exports = app => {
     const employee = require('../controllers/employee_controller.js');
 
     /**
+     * Variable that allows you to call methods for authentication, 
+     * jwt and more.
+     */
+    const authenticate = require('../auth/jwtController.js');
+
+    /**
      * Variable used for Routing, it allows you to 
      * export this file using the router app 'router'.
      */
@@ -54,7 +60,7 @@ module.exports = app => {
      * This route allows you to update the data of a specific Employee, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post("/update/:id", employee.update);
+    router.post("/update/:id", authenticate.authenticateTokenEmployee, employee.update);
 
     /**
      * This route allows you to get a specific Employee 

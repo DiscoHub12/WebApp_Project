@@ -13,13 +13,18 @@ module.exports = app => {
      */
     const user = require('../controllers/user_controller');
 
-    const autneticate = require('../auth/jwtController.js');
+    /**
+     * Variable that allows you to call methods for authentication, 
+     * jwt and more.
+     */
+    const authenticate = require('../auth/jwtController.js');
 
     /**
      * Variable used for Routing, it allows you to 
      * export this file using the router app 'router'.
      */
     var router = require('express').Router();
+
 
 
     /**
@@ -49,13 +54,13 @@ module.exports = app => {
      * This route allows you to update Email for a specific User, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post("/updateEmail/:id", user.updateEmail); 
+    router.post("/updateEmail/:id", authenticate.authenticateTokenUser, user.updateEmail); 
 
     /**
      * This route allows you to update Password for a specific User, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post("/updatePassword/:id", user.updatePassword); 
+    router.post("/updatePassword/:id", authenticate.authenticateTokenUser, user.updatePassword); 
 
     /**
      * This route allows you to delete a specific User account, 
