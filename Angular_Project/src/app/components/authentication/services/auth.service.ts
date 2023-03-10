@@ -12,49 +12,75 @@ import { Router } from "@angular/router";
 })
 export class AuthService {
 
-  private httpOptions = {
-    headers: new HttpHeaders ({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+  data: any;
+
+  token = localStorage.getItem('accessToken');
+
+
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Authorization': 'Bearer ' + this.token
     })
   };
-  
-  constructor(private http: HttpClient, private router : Router) { }
+
+  constructor(private http: HttpClient, private router: Router) { }
 
   //Method for save the token in localStorage when user is logged.
-  saveToken(accessToken: string, refreshToken: string){
+  saveToken(accessToken: string, refreshToken: string) {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
   }
-  
+
   //Method for request new tokens for User when the tokens are expired.
-  refreshTokenUser(userData: User): Observable<any> {
-    return this.http.post<any>(environment.baseUrl + "/user/refreshToken", userData, this.httpOptions)
-      .pipe(tap(response => {
-        localStorage.setItem('accessToken', response.accessToken);
-        localStorage.setItem('refreshToken', response.refreshToken);
-      }));
+  refreshTokenUser() {
+    this.http.post(`${environment.baseUrl}/user/refreshToken`, { refreshToken: localStorage.getItem('refreshToken') }).subscribe(
+      response => {
+        this.data = response;
+        if (this.data.status == 200) {
+          this.saveToken(this.data.accessToken, this.data.refreshToken);
+          alert("Token aggiornato. Riprovare.");
+        }
+      }, err => {
+        this.data = err;
+        if (this.data.status == 401) {
+          alert("Sessione scaduta. Rieffettua il Login.");
+          this.router.navigate(['']);
+        }
+      });
   }
-  
+
   //Method for request new tokens for Employee when the tokens are expired.
-  refreshTokenEmployee(userData: Employee): Observable<any> {
-    return this.http.post<any>(environment.baseUrl + "/employee/refreshToken", userData, this.httpOptions)
-      .pipe(tap(response => {
-        localStorage.setItem('accessToken', response.accessToken);
-        localStorage.setItem('refreshToken', response.refreshToken);
-      }));
+  refreshTokenEmployee() {
+    this.http.post(`${environment.baseUrl}/employee/refreshToken`, { refreshToken: localStorage.getItem('refreshToken') }).subscribe(
+      response => {
+        this.data = response;
+        if (this.data.status == 200) {
+          this.saveToken(this.data.accessToken, this.data.refreshToken);
+          alert("Token aggiornato. Riprovare.");
+        }
+      }, err => {
+        this.data = err;
+        if (this.data.status == 401) {
+          alert("Sessione scaduta. Rieffettua il Login.");
+          this.router.navigate(['']);
+        }
+      });
   }
 
   //Verifica se il token JWT è presente nella cache locale del browser. Se il token non esiste 
   //viene reindirizzato alla home, altrimenti torna true indicando che l'utente è autenticato.
-  isAuthenticated() : boolean {
+  isAuthenticated(): boolean {
     const token = localStorage.getItem('accessToken');
 
-    if(!token){
+    if (!token) {
       this.router.navigate(['']);
       return false;
     }
     return true;
+  }
+
+  resetData() {
+    this.data = null;
   }
 
 }

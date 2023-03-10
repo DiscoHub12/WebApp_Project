@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/components/authentication/services/auth.service';
 import { Employee } from 'src/app/Models/employee';
 import { User } from 'src/app/Models/user';
@@ -47,8 +48,9 @@ export class AccountComponent implements OnInit {
   constructor(
     private httpClient: HttpClient,
     private userService: UserService,
-    private formBuilder: FormBuilder, 
-    private authService : AuthService,
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
   ) { }
 
 
@@ -91,18 +93,26 @@ export class AccountComponent implements OnInit {
           this.data = response;
           if (this.data.status == 200) {
             alert("Password aggiornata con successo.");
-            this.closeUpdatePassword();
-          } else if (this.data.status == 404) {
-            alert("Password errata.");
-            this.closeUpdatePassword();
+          } else {
+            alert("Password errata. Riprovare");
           }
         }, err => {
-          alert("Something went wrong");
-          this.closeUpdatePassword();
+          this.data = err;
+          if (this.data.status == 403) {
+            alert("Token scaduto");
+            this.authService.refreshTokenEmployee();
+          } else if (this.data.status == 401) {
+            alert("Sessione scaduta. Rieffettua il Login.");
+            this.closeUpdatePassword();
+            this.router.navigate(['']);
+          }
         });
+    } else {
+      alert("Le password non corrispondono. Riprova.");
+      return;
     }
+    this.closeUpdatePassword();
   }
-
 
   //-----USER METHODS-----
 
@@ -113,43 +123,29 @@ export class AccountComponent implements OnInit {
   updateEmail() {
     const newEmail = this.form.value.email;
     const token = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
-
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization': 'Bearer ' + token
       })
     };
-
-    
     if (this.userType instanceof User) {
       this.httpClient.post(`${environment.baseUrl}/user/updateEmail/${this.userType.id}`, { email: newEmail }, httpOptions).subscribe(response => {
         this.data = response;
         if (this.data.status == 200) {
           this.userType.setEmail(newEmail);
           alert("Email aggiornata con successo.");
-          this.closeUpdateEmail();
         } else {
-          alert("Email non aggiornata");
-          this.closeUpdateEmail();
+          alert("Errore. Email non aggiornata. Riprova.");
         }
       }, err => {
-        this.data = err; 
-        if(this.data.status == 403){
+        this.data = err;
+        if (this.data.status == 403) {
           alert("Token scaduto");
-          console.log(localStorage.getItem('refreshToken'));
-          this.httpClient.post(`${environment.baseUrl}/user/refreshToken`, {refreshToken : refreshToken}).subscribe(
-            response => {
-              this.data = response; 
-              console.log("Sono dentro");
-              if(this.data.status == 200){
-                this.authService.saveToken(this.data.accessToken, this.data.refreshToken);
-                alert("Token aggiornato.");
-              }
-            }
-          )
-        }else if(this.data.status == 401){
-          alert("Sessione scaduta."); 
+          this.authService.refreshTokenUser();
+        } else if (this.data.status == 401) {
+          alert("Sessione scaduta. Rieffettua il Login.");
+          this.closeUpdateEmail();
+          this.router.navigate(['']);
         }
       });
     }
@@ -164,29 +160,41 @@ export class AccountComponent implements OnInit {
     if (this.form.value.password === this.form.value.confirmPassword) {
       const newPassword = this.form.value.confirmPassword;
       const oldPassword = this.form.value.oldPassword;
-      this.httpClient.post(`${environment.baseUrl}/user/updatePassword/${this.userType.id}`, { oldPassword: oldPassword, newPassword: newPassword }).subscribe(response => {
+      const token = localStorage.getItem('accessToken');
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Authorization': 'Bearer ' + token
+        })
+      };
+      this.httpClient.post(`${environment.baseUrl}/user/updatePassword/${this.userType.id}`, { oldPassword: oldPassword, newPassword: newPassword }, httpOptions).subscribe(response => {
         this.data = response;
         if (this.data.status == 200) {
           alert("Password aggiornata con successo");
-          this.closeUpdatePassword();
         } else {
-          alert(this.data.message);
-          this.closeUpdatePassword();
+          alert("Password non aggiornata. Errore. Riprova.");
         }
       }, err => {
         this.data = err;
-        alert(this.data.message);
-        this.closeUpdatePassword();
+        if (this.data.status == 403) {
+          alert("Token scaduto");
+          this.authService.refreshTokenUser();
+        } else if (this.data.status == 401) {
+          alert("Sessione scaduta. Rieffettua il Login.");
+          this.closeUpdateEmail();
+          this.router.navigate(['']);
+        } else if(this.data.status == 404){
+          alert("Password errata. Riprova.");
+        }
       });
     } else {
-      alert("Le password non corrispondono.");
-      this.closeUpdatePassword();
+      alert("Le password non corrispondono. Riprova.");
     }
     this.closeUpdatePassword();
   }
 
 
   //----GENERIC METHODS-----
+
 
   closeUpdatePassword() {
     this.showFormUpdatePassword = false;
@@ -202,7 +210,7 @@ export class AccountComponent implements OnInit {
   }
 
 
-  annulla() {
+  undo() {
     this.showFormUpdateEmail = false;
     this.showFormUpdatePassword = false;
     this.resetForm();
