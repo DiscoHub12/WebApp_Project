@@ -28,7 +28,7 @@ function getAccessTokenUser(user) {
  * @param {*} the user to returns the refresh JWT Token.  
  */
 function getRegfreshTokenUser(user) {
-    return jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
+    return jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '2h' });
 }
 
 /**
@@ -36,7 +36,7 @@ function getRegfreshTokenUser(user) {
  * @param {*}  the employee to returns the JWT.
  */
 function getAccessTokenEmployee(employee) {
-    return jwt.sign({ id: employee.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
+    return jwt.sign({ id: employee.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' });
 }
 
 /**
@@ -44,7 +44,7 @@ function getAccessTokenEmployee(employee) {
  * @param {*} the employee to returns the refresh JWT token.
  */
 function getRegfreshTokenEmployee(employee) {
-    return jwt.sign({ id: employee.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
+    return jwt.sign({ id: employee.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '2h' });
 }
 
 /**
