@@ -179,9 +179,8 @@ exports.findAllUser = async (req, res) => {
     }
 }
 
-
-exports.findAllUserReedem = async (req, res) => {
-    const redeemedUsers = await User.findAll({
+/**
+ const redeemedUsers = await User.findAll({
         attributes: ['id', 'nome', 'cognome'],
         include: [{
             model: Gifts,
@@ -200,6 +199,42 @@ exports.findAllUserReedem = async (req, res) => {
         res.status(404).send({
             status: 404,
             message: "User not found",
+        })
+    }
+ */
+exports.findAllUserReedem = async (req, res) => {
+    const cognome = req.body.cognome;
+    
+
+    if (!cognome) {
+        return res.status(400).send({
+            status: 400,
+            message: "Content can't be empty",
+        });
+    }
+
+    const user = await User.findOne({where: {cognome: cognome}});
+
+    if (!user || user == null) {
+        return res.status(404).send({
+            status: 404,
+            message: "User not found",
+        });
+    }
+
+    const userGifts = await user.getGifts();
+
+    if (userGifts) {
+        const dati = {nome : user.nome, cognome: user.cognome};
+        res.status(200).send({
+            status: 200,
+            data: userGifts,
+            datiUtente : dati
+        });
+    } else if (userGifts == null) {
+        res.status(202).send({
+            status: 202,
+            message: "User don't have any Gifts.",
         })
     }
 }

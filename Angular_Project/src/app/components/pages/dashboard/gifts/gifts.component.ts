@@ -48,10 +48,10 @@ export class GiftsComponent implements OnInit {
   showUsers = false;
 
   //Variable associated with all registered Users who have redeemed at least 1 Reward
-  allUsers: any;
+  userFind: any;
 
   //Boolean variables to indicate if the User has been found.
-  userFind: Boolean | undefined;
+  isUserFind: Boolean | undefined;
 
   //Variable to which all the Rewards redeemed by the searched user are associated.
   userFindGift: any;
@@ -98,12 +98,11 @@ export class GiftsComponent implements OnInit {
     if (this.userType instanceof Employee) {
       this.isEmployee = true;
       this.getAllGifts();
-      this.getAllUsers();
     } else if (this.userType instanceof User) {
       this.isEmployee = false;
       this.getAllGifts();
-      this.getAllGiftsUser();
-      this.getCardUser();
+      this.getMyGifts();
+      this.getMyCard();
     }
   }
 
@@ -148,33 +147,6 @@ export class GiftsComponent implements OnInit {
           }
         });
     }
-  }
-
-  /**
-   * This method allows you to contact the Backend to 
-   * fetch all Users who have redeemed at least one Reward.
-   */
-  getAllUsers() {
-    const token = localStorage.getItem('accessToken');
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + token
-      })
-    };
-    this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUserReedem`, httpOptions).subscribe(
-      response => {
-        this.data = response;
-        if (this.data.status == 200) {
-          this.allUsers = this.data.data;
-        }
-      }, err => {
-        this.data = err;
-        if (this.data.status == 404) {
-          return;
-        }
-      });
-    this.resetData();
-    this.resetForm();
   }
 
   /**
@@ -251,7 +223,6 @@ export class GiftsComponent implements OnInit {
     this.resetData();
     this.resetForm();
     this.getAllGifts();
-    this.getAllUsers();
   }
 
   /**
@@ -260,24 +231,46 @@ export class GiftsComponent implements OnInit {
    */
   searchUsers() {
     const cognome = this.form.value.cognome;
-    for (let user of this.allUsers) {
-      if (cognome == user.cognome) {
-        this.userFindGift = user;
-        this.userFind = true;
-        return;
-      }
-    }
-    this.userFind = false;
-  }
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
 
-  /**
-   * This method allows you to close and reset the corresponding 
-   * values reguarding the User's search form.
-   */
+    this.httpClient.post<any>(`${environment.baseUrl}/gifts/findAllReedemByUser`, {cognome: cognome}, httpOptions).subscribe(
+      response => {
+        this.data = response; 
+        if(this.data.status == 200){
+          this.userFindGift = this.data.data; 
+          this.userFind = this.data.datiUtente; 
+          this.isUserFind = true; 
+          console.log("User find : " + this.userFindGift + "\nDati utente : " + this.userFind);
+          this.resetData();
+          this.resetForm();
+        }else if(this.data.status == 202){
+          this.isUserFind = true; 
+          this.userFind = this.data.datiUtente;
+          this.userFindGift = null;
+        }
+      }, err => {
+        this.data = err; 
+        if(this.data.status == 202){
+          this.isUserFind = true; 
+          this.userFind = this.data.datiUtente;
+          this.userFindGift = null;
+        }else if(this.data.status == 404){
+          alert("Cliente non trovato."); 
+          this.resetData();
+          this.resetForm();
+        }
+      }); 
+  }
   closeSearchUsers() {
     this.showUsers = false;
     this.userFindGift = null;
-    this.userFind = false;
+    this.userFind = null;
+    this.isUserFind = false; 
     this.resetData();
     this.resetForm();
   }
@@ -298,7 +291,7 @@ export class GiftsComponent implements OnInit {
    * This method allows you to take all the redeemed 
    * rewards of a given Client.
    */
-  getAllGiftsUser() {
+  getMyGifts() {
     const token = localStorage.getItem('accessToken');
     const httpOptions = {
       headers: new HttpHeaders({
@@ -325,8 +318,8 @@ export class GiftsComponent implements OnInit {
    * This method allows you to take the user's Card 
    * if you have one, to show the points.
    */
-  getCardUser() {
-    if(this.userType){
+  getMyCard() {
+    if (this.userType) {
       const token = localStorage.getItem('accessToken');
       const httpOptions = {
         headers: new HttpHeaders({
@@ -378,8 +371,8 @@ export class GiftsComponent implements OnInit {
                 alert("Premio riscattato con successo. Ricarica la pagina per vederlo.");
                 console.log("Card : " + this.myCard.id + "Punti : " + gifts.punti);
                 this.removePoints(this.myCard.codice, gifts.punti, httpOptions);
-                this.getAllGiftsUser();
-                this.getCardUser();
+                this.getMyGifts();
+                this.getMyCard();
                 this.resetData();
                 this.resetForm();
               }
