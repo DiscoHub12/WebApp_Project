@@ -2,36 +2,33 @@ import { Time } from "@angular/common";
 
 export class Booking {
     id: Number;
-    idUtente: Number;
+    nome: String;
+    cognome: String;
     dataPrenotazione: Date;
     oraInizio: Time;
     oraFine: Time;
     trattamento: String;
     completata: Number;
-    owner : {
-        nome : String,
-        cognome : String
-    }
 
 
     constructor(
         id: Number,
-        idUtente: Number,
+        nome: String,
+        cognome: String,
         dataPrenotazione: Date,
-        oraInizio : Time,
+        oraInizio: Time,
         oraFine: Time,
-        trattamento : String,
-        completata : Number,
-        owner : any
+        trattamento: String,
+        completata: Number,
     ) {
         this.id = id;
-        this.idUtente = idUtente;
+        this.nome = nome;
+        this.cognome = cognome;
         this.dataPrenotazione = dataPrenotazione;
         this.oraInizio = oraInizio;
         this.oraFine = oraFine;
         this.completata = completata;
         this.trattamento = trattamento;
-        this.owner = owner;
     }
 
     setCompletata(completata: Number): void {
@@ -46,10 +43,6 @@ export class Booking {
         return this.id;
     }
 
-    getIdUtente(): Number {
-        return this.idUtente;
-    }
-
     getDataPrenotazione(): Date {
         return this.dataPrenotazione;
     }
@@ -58,7 +51,7 @@ export class Booking {
         this.dataPrenotazione = dataPrenotazione;
     }
 
-    getTrattamento(){
+    getTrattamento() {
         return this.trattamento;
     }
 
