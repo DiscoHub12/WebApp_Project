@@ -4,13 +4,14 @@ const User = require("../models/user");
 
 
 exports.create = (req, res) => {
-    const idUtente = req.body.idUtente;
+    const nome = req.body.nome;
+    const cognome = req.body.cognome;
     const nomeTrattamento = req.body.nomeTrattamento;
     const descrizione = req.body.descrizione;
     const data = req.body.data;
 
 
-    if (!idUtente) {
+    if (!nome || !cognome) {
         res.status(400).send({
             status: 400,
             message: "Content can't be empty!"
@@ -19,11 +20,12 @@ exports.create = (req, res) => {
     }
 
     User.findOne({
-        where: { id: idUtente }
+        where: { nome: nome, cognome: cognome }
     }).then(user => {
         if (user) {
             const treatment = {
-                idUtente: idUtente,
+                nome: nome,
+                cognome: cognome,
                 nomeTrattamento: nomeTrattamento,
                 descrizione: descrizione,
                 data: data
@@ -52,11 +54,7 @@ exports.create = (req, res) => {
 
 exports.findAll = (req, res) => {
     Treatment.findAll({
-        include: [{
-            model: User,
-            as: 'owner',
-            attributes: ['id', 'nome', 'cognome']
-        }]
+        where: {}
     }).then(data => {
         if (data) {
             res.status(200).send({
@@ -79,15 +77,16 @@ exports.findAll = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-    const idUser = req.params.id;
+    const nome = req.query.nome;
+    const cognome = req.query.cognome;
 
-    if (!idUser) {
+    if (!nome || !cognome) {
         res.status(400).send({
             status: 400,
             message: "Content can't be empty!"
         });
     }
-    Treatment.findAll({ where: { idUtente: idUser } })
+    Treatment.findAll({ where: { nome: nome, cognome: cognome } })
         .then(data => {
             if (data) {
                 res.status(200).send({
@@ -147,35 +146,35 @@ exports.find = (req, res) => {
 
 exports.delete = (req, res) => {
     const id = req.params.id;
-  
+
     if (!id) {
-      res.status(400).send({
-        status: 400,
-        message: "Content can't be empty!",
-      })
+        res.status(400).send({
+            status: 400,
+            message: "Content can't be empty!",
+        })
     }
-  
+
     Treatment.destroy({
-      where: { id: id }
+        where: { id: id }
     }).then(num => {
-      if (num == 1) {
-        res.status(200).send({
-          status: 200,
-          message: "Treatment was deleted successfully"
-        });
-      } else {
-        res.status(404).send({
-          status: 404,
-          message: `Cannot delete Treatment with id=${id}. Maybe Treatment was not found!`
-        });
-      }
+        if (num == 1) {
+            res.status(200).send({
+                status: 200,
+                message: "Treatment was deleted successfully"
+            });
+        } else {
+            res.status(404).send({
+                status: 404,
+                message: `Cannot delete Treatment with id=${id}. Maybe Treatment was not found!`
+            });
+        }
     }).catch(err => {
-      res.status(500).send({
-        status: 500,
-        message: " Could not delete Treatment with id : " + id
-      });
+        res.status(500).send({
+            status: 500,
+            message: " Could not delete Treatment with id : " + id
+        });
     });
-  };
+};
 
 
 

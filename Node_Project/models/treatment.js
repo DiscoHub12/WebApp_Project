@@ -1,6 +1,5 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./user');
 
 class Treatment extends Model { }
 
@@ -12,8 +11,12 @@ Treatment.init({
         primaryKey: true,
         allowNull: false
     },
-    idUtente: {
-        type: DataTypes.INTEGER(4),
+    nome: {
+        type: DataTypes.CHAR(80),
+        allowNull: false,
+    },
+    cognome: {
+        type: DataTypes.CHAR(80),
         allowNull: false,
     },
     nomeTrattamento: {
@@ -34,7 +37,6 @@ Treatment.init({
     modelName: 'Treatment',
 });
 
-Treatment.belongsTo(User, { foreignKey: 'idUtente', as : 'owner'});
 
 
 module.exports = Treatment;
