@@ -75,6 +75,7 @@
   display: flex;
   justify-content: center;
   text-align: center;
+  overflow: auto;
 }
 
 
@@ -90,4 +91,10 @@
 
 .formSearchTreatmentUser {
   margin-top: 20px;
+}
+
+.div{
+  overflow: auto;
+  justify-content: center;
+  text-align: center;
 }

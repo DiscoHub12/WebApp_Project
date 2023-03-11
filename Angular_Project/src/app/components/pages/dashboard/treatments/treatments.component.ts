@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Employee } from 'src/app/Models/employee';
@@ -19,7 +19,7 @@ export class TreatmentsComponent implements OnInit {
 
 
   //This is the variable for associated the User access account. (User or Employee).
-  userType : User | Employee | undefined;
+  userType: User | Employee | undefined;
 
   //This is the variable, that indicates if the User is User or Employee, for determinate the div page. 
   isVisible = false;
@@ -72,7 +72,7 @@ export class TreatmentsComponent implements OnInit {
     if (this.userType instanceof Employee) {
       this.isVisible = true;
       this.getAllTreatments();
-    } else if (this.userType instanceof User){
+    } else if (this.userType instanceof User) {
       this.isVisible = false;
       this.getTreatmentUser();
     }
@@ -87,7 +87,7 @@ export class TreatmentsComponent implements OnInit {
       nomeTrattamento: ['', Validators.required],
       descrizione: ['', Validators.required],
       data: ['', Validators.required],
-    
+
     });
   }
 
@@ -101,14 +101,14 @@ export class TreatmentsComponent implements OnInit {
     this.data = null;
   }
 
-  indietro () {
+  indietro() {
     this.searchedTreatment = false;
     this.treatmentCercato = [];
     this.resetUtente();
     this.ngOnInit();
   }
 
-  resetUtente(){
+  resetUtente() {
     this.idUtenteCercato = 0;
   }
 
@@ -118,14 +118,22 @@ export class TreatmentsComponent implements OnInit {
 
   //This method returns all treatments
   getAllTreatments() {
-    this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAll`).subscribe(response => {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAll`, httpOptions).subscribe(response => {
       this.data = response;
       if (this.data.status === 200) {
         this.treatments = this.data.data;
         console.log(this.treatments);
       }
-      else {
-        alert("Error");
+      else if (this.data.status === 404) {
+        alert("Errore nella ricerca dei trattamenti.");
+      } else {
+        alert("Errore.");
       }
     }, err => {
       alert("Something went wrong");
@@ -135,28 +143,38 @@ export class TreatmentsComponent implements OnInit {
 
   //This method add a new treatment 
   addTreatment() {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
     const name = this.form.value.nomeTrattamento;
     const description = this.form.value.descrizione;
     let date: any;
     let dataDaControllare = new Date(this.form.value.data);
     let dataCorrente = new Date();
 
-    if(dataDaControllare.getTime() > dataCorrente.getTime())
-     {
+    if (dataDaControllare.getTime() > dataCorrente.getTime()) {
       this.resetForm();
       alert("Data incorrect");
     } else date = this.form.value.data;
-    
-    this.httpClient.post<any>(`${environment.baseUrl}/treatment/create`, {
-      idUtente : this.idUtenteCercato,
+
+    this.httpClient.put(`${environment.baseUrl}/treatment/create`, {
+      idUtente: this.idUtenteCercato,
       nomeTrattamento: name,
       descrizione: description,
       data: date
-    }).subscribe(
+    }, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 201) {
-          alert("Trattamento aggiunto con successo");
+          alert("Trattamento aggiunto con successo. Uscire e rientrare.");
+          this.showFormAddTreatment = false;
+        } else if (this.data.status == 404) {
+          alert("Utente non trovato riprovare.");
+        } else {
+          alert("Errore nella creazione del trattamento.");
         }
       });
     this.resetData();
@@ -182,39 +200,75 @@ export class TreatmentsComponent implements OnInit {
     }
     this.resetForm();
   }
-  
+
+
+  delete(trattamento: Treatments) {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.delete(`${environment.baseUrl}/treatment/delete/${trattamento.id}`, httpOptions).subscribe(response => {
+      this.data = response;
+      if (this.data.status === 200) {
+        alert("Trattamento rimosso con successo.");
+        const index = this.treatmentCercato.indexOf(trattamento);
+        this.treatmentCercato.splice(index);
+        const index1 = this.treatments.indexOf(trattamento);
+        this.treatments.splice(index1);
+      } else if (this.data.status === 404) {
+        alert("Trattamento non trovato riprovare.");
+      } else {
+        alert("Errore nella rimozione.");
+      }
+    }, err => {
+      alert("Something went wrong.");
+    });
+    this.resetData();
+  }
+
 
 
   //-----USER METHODS----------
 
   //This method returns all treatments of a user
   getTreatmentUser() {
-    if(this.userType){
-    this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAllUser/${this.userType.id}`).subscribe(
-      response => {
-        this.data = response;
-        if (this.data.status === 200) {
-          this.treatmentsUser = this.data.data;
-          console.log(this.treatmentsUser);
-          this.resetData();
-        }else {
-          alert("Trattamenti utente non trovati.");
-        }
-      }, err => {
-        alert("Something went wrong");
-      });
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    if (this.userType) {
+      this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAllUser/${this.userType.id}`, httpOptions).subscribe(
+        response => {
+          this.data = response;
+          if (this.data.status === 200) {
+            this.treatmentsUser = this.data.data;
+            console.log(this.treatmentsUser);
+            this.resetData();
+          } else if (this.data.status == 404) {
+            alert("Utente non trovato riprovare.");
+          } else {
+            alert("Errore.");
+          }
+        }, err => {
+          alert("Something went wrong");
+        });
     }
   }
 
 
-  searchTreatments(){
+  searchTreatments() {
     const nomeTrattamento = this.form.value.nome;
     let trattamentoTrovato = false;
-    for(let treatment of this.treatmentsUser){
-      if(treatment.nomeTrattamento == nomeTrattamento){
+    for (let treatment of this.treatmentsUser) {
+      if (treatment.nomeTrattamento == nomeTrattamento) {
         this.searchedTreatmentUser.push(treatment);
         this.searchedTreatment = true;
         trattamentoTrovato = true;
+        this.showFormSearchTreatmentUser = false;
       }
     }
     if (!trattamentoTrovato) {
@@ -226,6 +280,7 @@ export class TreatmentsComponent implements OnInit {
   //This method close the Search Treatment.
   closeSearchedTreatmentsUser() {
     this.searchedTreatment = false;
+    this.showFormSearchTreatmentUser = false;
     this.searchedTreatmentUser = [];
   }
 }
