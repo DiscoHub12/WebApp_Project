@@ -16,37 +16,30 @@ exports.create = async (req, res) => {
         });
         return;
     }
-
-    const nome = req.body.nameEmployee;
-    const codice = req.body.code;
     const password = req.body.passwordEmployee + secret;
-    const restrizioni = req.body.restrizioni;
-    console.log("Employee : " + nome + " Codice : " + codice + " Password : " + password);
-
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log("Salt : " + salt + " Hashed Password : " + hashedPassword);
-
-
-    console.log("Employee : " + nome + " Codice : " + codice + " Salt : " + salt + " Password : " + hashedPassword);
-
     const employee = {
-        nome: nome,
-        codice: codice,
+        nome: req.body.nameEmployee,
+        codice: req.body.code,
         salt: salt,
         password: hashedPassword,
-        restrizioni: restrizioni
+        restrizioni: req.body.restrizioni
     };
+    console.log("Employee : " + req.body.nameEmployee + " Codice : " + req.body.code + " Salt : " + salt + " Password : " + hashedPassword + "Restrizioni : " + req.body.restrizioni);
 
-    Employee.create(employee).then(data => {
-        return res.status(201).send({
-            status: 201,
-            message: `Employee created with ${restrizioni} restrictions`
-        });
-    }).catch(err => {
-        return res.status(500).send({
-            message: err.message || "Some error occurred while creating the new Employee Account."
-        });
+    Employee.create(employee).then(result => {
+        if (result) {
+            return res.status(201).send({
+                status: 201,
+                message: `Employee created with ${req.body.restrizioni} restrictions`
+            });
+        }
+    }).catch(error => {
+        res.status(500).send({
+            status: 500,
+            message: error.message || "Some error occurred while creating the new Employee Account."
+        })
     });
 }
 

@@ -30,7 +30,7 @@ module.exports = app => {
     /**
      * This route allows you to create a new Reward.
      */
-    router.post('/create', gifts.create);
+    router.post('/create', authenticate.authenticateTokenEmployee, gifts.create);
 
     /**
      * This route allows you to update a data of a specific Reward, 
@@ -42,7 +42,7 @@ module.exports = app => {
      * This route allows you to delete a specific Reward, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post('/delete/:id', gifts.delete);
+    router.post('/delete/:id', authenticate.authenticateTokenEmployee, gifts.delete);
 
     /**
      * This route allows you to get data of a specific Reward, 
@@ -53,25 +53,27 @@ module.exports = app => {
     /**
      * This route allows you to get all created Rewards.
      */
-    router.get('/findAll', gifts.findAll);
+    router.get('/findAllGiftsEmployee', authenticate.authenticateTokenEmployee, gifts.findAll);
+
+    router.get('/findAllGiftsUser', authenticate.authenticateTokenUser, gifts.findAll);
 
     /**
      * This route allows you to gett all User retreived Rewards, 
      * passing the corresponding and unique id as parameters.
      */
-    router.get('/findAllUser/:id', gifts.findAllUser);
+    router.get('/findAllUser/:id', authenticate.authenticateTokenUser, gifts.findAllUser);
 
     /**
      * This route allows you to take all Users who have reedemed
      * and are in the process of least one Reward.
      */
-    router.get(`/findAllUserReedem`, gifts.findAllUserReedem);
+    router.get(`/findAllUserReedem`, authenticate.authenticateTokenEmployee, gifts.findAllUserReedem);
 
     /**
      * This route allows you to add a specific Reward for a 
      * specific User.
      */
-    router.post('/addReward', gifts.addReward);
+    router.post('/addReward', authenticate.authenticateTokenUser, gifts.addReward);
 
     /**
      * This route allows you to remove a specific Reward for a 

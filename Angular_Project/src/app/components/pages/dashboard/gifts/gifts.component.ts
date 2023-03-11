@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Card } from 'src/app/Models/card';
@@ -51,7 +51,7 @@ export class GiftsComponent implements OnInit {
   allUsers: any;
 
   //Boolean variables to indicate if the User has been found.
-  userFind: any;
+  userFind: Boolean | undefined;
 
   //Variable to which all the Rewards redeemed by the searched user are associated.
   userFindGift: any;
@@ -115,18 +115,39 @@ export class GiftsComponent implements OnInit {
    * all previously created Rewards.
    */
   getAllGifts() {
-    this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAll`).subscribe(
-      response => {
-        this.data = response;
-        if (this.data.status == 200) {
-          this.allGifts = this.data.data;
-          console.log("Tutti i Premi : " + this.allGifts);
-        } else console.log("error");
-      }, err => {
-        alert("Something went wrong");
-      });
-    this.resetData();
-    this.resetForm();
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    if (this.isEmployee) {
+      this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllGiftsEmployee`, httpOptions).subscribe(
+        response => {
+          this.data = response;
+          if (this.data.status == 200) {
+            this.allGifts = this.data.data;
+          }
+        }, err => {
+          this.data = err;
+          if (this.data.status == 500) {
+            alert("Something went wrong. Please try again");
+          }
+        });
+    } else {
+      this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllGiftsUser`, httpOptions).subscribe(
+        response => {
+          this.data = response;
+          if (this.data.status == 200) {
+            this.allGifts = this.data.data;
+          }
+        }, err => {
+          this.data = err;
+          if (this.data.status == 500) {
+            alert("Something went wrong. Please try again");
+          }
+        });
+    }
   }
 
   /**
@@ -134,14 +155,23 @@ export class GiftsComponent implements OnInit {
    * fetch all Users who have redeemed at least one Reward.
    */
   getAllUsers() {
-    this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUserReedem`).subscribe(
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUserReedem`, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 200) {
           this.allUsers = this.data.data;
         }
       }, err => {
-        alert("Something went wrong");
+        this.data = err;
+        if (this.data.status == 404) {
+          return;
+        }
       });
     this.resetData();
     this.resetForm();
@@ -152,10 +182,15 @@ export class GiftsComponent implements OnInit {
    * a new Reward.
    */
   createGifts() {
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
     const nomePremio = this.form.value.nome;
     const punti = this.form.value.punti;
-
-    this.httpClient.post(`${environment.baseUrl}/gifts/create`, { nome: nomePremio, punti: punti }).subscribe(
+    this.httpClient.post(`${environment.baseUrl}/gifts/create`, { nome: nomePremio, punti: punti }, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 201) {
@@ -163,18 +198,23 @@ export class GiftsComponent implements OnInit {
           this.closeCreationGifts();
         }
       }, err => {
-        console.log("Error");
+        this.data = err;
+        if (this.data.status == 400) {
+          alert("Campi vuoti. Operazione non valida. Riprova.");
+          return;
+        } else if (this.data.status == 500) {
+          alert("Something went wrong. Please try again");
+          return;
+        }
       });
-    this.closeCreationGifts();
-
   }
 
   closeCreationGifts() {
-    this.addNewGift = false;
-    this.showAllGifts = true;
-    this.getAllGifts();
     this.resetData();
     this.resetForm();
+    this.getAllGifts();
+    this.addNewGift = false;
+    this.showAllGifts = true;
   }
 
   /**
@@ -182,7 +222,13 @@ export class GiftsComponent implements OnInit {
    * a particupar Reward.
    */
   removeGifts(gifts: Gift) {
-    this.httpClient.post<any>(`${environment.baseUrl}/gifts/delete/${gifts.id}`, {}).subscribe(
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.post<any>(`${environment.baseUrl}/gifts/delete/${gifts.id}`, {}, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 200) {
@@ -190,15 +236,22 @@ export class GiftsComponent implements OnInit {
           this.closeRemoveGifts();
         }
       }, err => {
-        alert("Error");
+        this.data = err;
+        if (this.data.status == 404) {
+          alert("Errore nella rimozione. Riprovare.");
+          this.closeRemoveGifts();
+        } else if (this.data.status == 500) {
+          alert("Something went wrong. Please try again");
+          this.closeRemoveGifts();
+        }
       });
-    this.closeRemoveGifts();
   }
 
   closeRemoveGifts() {
     this.resetData();
     this.resetForm();
-    this.getAllGiftsUser();
+    this.getAllGifts();
+    this.getAllUsers();
   }
 
   /**
@@ -246,17 +299,26 @@ export class GiftsComponent implements OnInit {
    * rewards of a given Client.
    */
   getAllGiftsUser() {
-    this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUser/${this.userType?.getId()}`).subscribe(
+    const token = localStorage.getItem('accessToken');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + token
+      })
+    };
+    this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUser/${this.userType?.getId()}`, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 200 || this.data.status == 202) {
           this.allMyGifts = this.data.data;
+          this.resetData();
+          this.resetForm();
         }
       }, err => {
-        console.log("Something went wrong");
+        this.data = err;
+        if (this.data.status == 404) {
+          alert("Errore. Riprovare.");
+        }
       });
-    this.resetData();
-    this.resetForm();
   }
 
   /**
@@ -264,16 +326,29 @@ export class GiftsComponent implements OnInit {
    * if you have one, to show the points.
    */
   getCardUser() {
-    this.httpClient.get<any>(`${environment.baseUrl}/card/findCardUser/${this.userType?.getId()}`).subscribe(
-      response => {
-        this.data = response;
-        if (this.data.status == 200) {
-          this.myCard = this.data.data;
-          this.hasCard = true;
-        }
-      }, err => {
-        console.log("Something went wrong");
-      });
+    if(this.userType){
+      const token = localStorage.getItem('accessToken');
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Authorization': 'Bearer ' + token
+        })
+      };
+      this.httpClient.get<any>(`${environment.baseUrl}/card/findCardUser/${this.userType.getId()}`, httpOptions).subscribe(
+        response => {
+          this.data = response;
+          if (this.data.status == 200) {
+            this.myCard = this.data.data;
+            this.hasCard = true;
+          }
+        }, err => {
+          this.data = err;
+          if (this.data.status == 404) {
+            this.hasCard = false;
+          } else if (this.data.status == 500) {
+            alert("Something went wrong. Please try again");
+          }
+        });
+    }
     this.resetData();
     this.resetForm();
   }
@@ -290,14 +365,23 @@ export class GiftsComponent implements OnInit {
           this.resetData();
           this.resetForm();
         } else {
-          this.httpClient.post<any>(`${environment.baseUrl}/gifts/addReward`, { idUser: this.userType?.getId(), idGift: gifts.id }).subscribe(
+          const token = localStorage.getItem('accessToken');
+          const httpOptions = {
+            headers: new HttpHeaders({
+              'Authorization': 'Bearer ' + token
+            })
+          };
+          this.httpClient.post<any>(`${environment.baseUrl}/gifts/addReward`, { idUser: this.userType?.getId(), idGift: gifts.id }, httpOptions).subscribe(
             response => {
               this.data = response;
               if (this.data.status == 200) {
                 alert("Premio riscattato con successo. Ricarica la pagina per vederlo.");
                 console.log("Card : " + this.myCard.id + "Punti : " + gifts.punti);
-                this.removePoints(this.myCard.id, gifts.punti);
-                alert(`${gifts.punti} punti rimossi.`);
+                this.removePoints(this.myCard.codice, gifts.punti, httpOptions);
+                this.getAllGiftsUser();
+                this.getCardUser();
+                this.resetData();
+                this.resetForm();
               }
             }, err => {
               this.data = err;
@@ -313,8 +397,6 @@ export class GiftsComponent implements OnInit {
             }
           );
         }
-        this.resetData();
-        this.resetForm();
       }
     }
   }
@@ -329,16 +411,23 @@ export class GiftsComponent implements OnInit {
    * @param idCard the Card id of the Customer.
    * @param numberPoints the number of points to be removed.
    */
-  removePoints(idCard: Number, numberPoints: Number) {
-    this.httpClient.post<any>(`${environment.baseUrl}/card/removePoints/${idCard}`, { punti: numberPoints }).subscribe(
+  removePoints(codice: Number, numberPoints: Number, httpOptions: any) {
+    const token = localStorage.getItem('accessToken');
+    this.httpClient.post<any>(`${environment.baseUrl}/card/removePoints`, { codice: codice, punti: numberPoints }, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 200) {
+          alert(`${numberPoints} punti rimossi.`);
           this.resetData();
           this.resetForm();
         }
       }, err => {
-        alert("Something went wrong");
+        this.data = err;
+        if (this.data.status == 500) {
+          alert("Something went wrong. Please try again");
+          this.resetData();
+          this.resetForm();
+        }
       }
     );
   }
