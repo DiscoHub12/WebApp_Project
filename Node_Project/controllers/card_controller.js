@@ -26,8 +26,8 @@ exports.create = (req, res) => {
                 where: { idUtente: user.id },
             }).then(result => {
                 if (result != null) {
-                    res.status(400).send({
-                        status: 400,
+                    res.status(402).send({
+                        status: 402,
                         message: "Card already exists!"
                     })
                 } else {
@@ -188,7 +188,7 @@ exports.findAll = (req, res) => {
 
 exports.addPoints = async (req, res) => {
     const codice = req.body.codice;
-    const punti = req.body.punti;
+    const punti = parseInt(req.body.punti);
 
     if (!codice || !punti) {
         res.status(400).send({
@@ -200,7 +200,7 @@ exports.addPoints = async (req, res) => {
     const card = await Card.findOne({ where: { codice: codice } });
 
     if (card) {
-        const puntiAttuali = card.punti; 
+        const puntiAttuali = parseInt(card.punti); 
         const updated = puntiAttuali + punti; 
         console.log(updated);
         card.set({ punti: updated });
@@ -239,31 +239,33 @@ exports.addPointsAll = async (req, res) => {
 
 
 exports.removePoints = async (req, res) => {
-    const id = req.params.id;
-    const punti = req.body.punti;
+    const codice = req.body.codice;
+    const punti = parseInt(req.body.punti);
 
-    if (!id || !punti) {
+    if (!codice || !punti) {
         res.status(400).send({
             status: 400,
-            message: "Id can't be empty!"
+            message: "Content can't be empty!"
         });
     }
 
-    const card = await Card.findOne({ where: { id: id } });
+    const card = await Card.findOne({ where: { codice: codice } });
 
     if (card) {
-        let puntiCard = card.punti;
-        let puntiTotals = puntiCard - punti;
-        card.punti = puntiTotals;
-
+        const puntiAttuali = parseInt(card.punti); 
+        const updated = puntiAttuali - punti; 
+        console.log(updated);
+        card.set({ punti: updated });
         await card.save();
+
         res.status(200).send({
             status: 200,
             message: "Points removed."
         });
     } else {
         res.status(500).send({
-            message: "Some error occurred while removing Points."
+            status: 500,
+            message: "Some error occurred while retrieving card."
         });
     }
 }

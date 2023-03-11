@@ -26,7 +26,7 @@ exports.create = (req, res) => {
         })
     }).catch(err => {
         res.status(500).send({
-            status: 401,
+            status: 500,
             message: `Error creating gifts`,
         });
     });
