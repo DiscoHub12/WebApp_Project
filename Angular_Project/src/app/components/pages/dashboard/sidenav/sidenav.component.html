@@ -4,7 +4,7 @@
     <mat-icon class="icon">account_circle</mat-icon>
     <span class="mat-list-item-content">Account</span>
   </a>
-  <a mat-list-item (click)="changeRoute('/employees')" *ngIf="isEmployee">
+  <a mat-list-item (click)="changeRoute('/employees')" *ngIf="isEmployee && userType.restrizioni == 0">
     <mat-icon class="icon">person_add</mat-icon>
     <span class="mat-list-item-content">Account Dipendenti</span>
   </a>

@@ -84,7 +84,7 @@ export class EmployeesComponent implements OnInit {
       nome: ['', Validators.required],
       codice: ['', Validators.required],
       password: ['', Validators.required],
-      restrizioni: ['', Validators.required],
+      restrizioni: ['',Validators.required],
     });
   }
 
@@ -109,14 +109,12 @@ export class EmployeesComponent implements OnInit {
         }
       }, err => {
         this.data = err;
-        if (this.data.status == 403) {
-          console.log("Token scaduto.");
-          this.authService.refreshTokenEmployee();
-          this.getAllEmployeeAccounts();
+        if (this.data.status == 404) {
+          alert("Account dipendenti non trovati. Riprova.");
           this.resetFormAndData();
-        } else if (this.data.status == 401) {
-          alert("Sessione scaduta. Rieffettua il Login.");
-          this.router.navigate(['']);
+        } else if (this.data.status == 500) {
+          alert("Something went wrong. Please try again later.");
+          this.resetFormAndData();
         }
       });
     this.resetFormAndData();
@@ -136,10 +134,7 @@ export class EmployeesComponent implements OnInit {
     const nome = this.form.value.nome;
     const codice = this.form.value.codice;
     const password = this.form.value.password;
-    let restrizioni;
-    if (this.form.value.restrizioni == true) {
-      restrizioni = 0;
-    } else restrizioni = 1;
+    const restrizioni = this.form.value.restrizioni; 
     this.httpClient.post(`${environment.baseUrl}/employee/registration`, {
       nameEmployee: nome,
       code: codice,
@@ -148,33 +143,28 @@ export class EmployeesComponent implements OnInit {
     }, httpOptions).subscribe(
       response => {
         this.data = response;
+        console.log("Dati nuovo Utente : " + "\nNome : " + nome + "\nCodice : " + codice + "\nPassword : " + password + "\nRestrizioni : " + restrizioni);
         if (this.data.status == 201) {
           alert("Registrazione avvenuta con successo.");
-          this.closeCreateAccount();
-        } else {
-          alert("Registrazione non riuscita.");
           this.closeCreateAccount();
         }
       }, err => {
         this.data = err;
-        if (this.data.status == 403) {
-          console.log("Token scaduto.");
-          this.authService.refreshTokenEmployee();
-          alert("Riprova."); 
+        if (this.data.status == 400) {
+          alert("Campi vuoti, operazione non valida. Riprova.");
+          return;
+        } else if (this.data.status == 500) {
+          alert("Something went wrong. Please try again later.");
           this.closeCreateAccount();
-        } else if (this.data.status == 401) {
-          alert("Sessione scaduta. Rieffettua il Login.");
-          this.router.navigate(['']);
         }
-      }
-    );
-    this.closeCreateAccount();
+      });
   }
 
   closeCreateAccount() {
     this.resetFormAndData();
     this.getAllEmployeeAccounts();
     this.showFormCreateAccount = false;
+
   }
 
   /**
@@ -188,25 +178,21 @@ export class EmployeesComponent implements OnInit {
         'Authorization': 'Bearer ' + token
       })
     };
-    this.httpClient.post(`${environment.baseUrl}/employee/delete/${id}`, {}, httpOptions).subscribe(
+    this.httpClient.delete(`${environment.baseUrl}/employee/delete/${id}`, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 200) {
           alert("Account Rimosso con successo.");
           this.closeRemoveAccount();
-        } else {
-          alert("Error.");
-          this.closeRemoveAccount();
         }
       }, err => {
         this.data = err;
-        if (this.data.status == 403) {
-          console.log("Token scaduto.");
-          this.authService.refreshTokenEmployee();
-          this.removeAccountEmployee(id);
-        } else if (this.data.status == 401) {
-          alert("Sessione scaduta. Rieffettua il Login.");
-          this.router.navigate(['']);
+        if (this.data.status == 404) {
+          alert("Account non trovato. Riprova.");
+          this.closeRemoveAccount();
+        } else if (this.data.status == 500) {
+          alert("Something went wrong. Please try again later.");
+          this.closeRemoveAccount();
         }
       });
   }

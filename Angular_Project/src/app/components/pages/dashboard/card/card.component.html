@@ -5,21 +5,23 @@
             <div class="page-content-data-inner">
 
                 <!-----EMPLOYEE DIV------>
-                <div class="div-employee" *ngIf="isEmployee">
-                    <h2>HELLO NOME</h2>
+                <div class="div-employee" *ngIf="isEmployee && userType">
+                    <h2>CIAO {{userType.nome}}.</h2>
                     <h3>In questa sezione, potrai vedere le Card dei tuoi Clienti e gestirle <br>
                         quindi creare una nuova Card, aggiungere punti e molto altro.</h3>
                     <h2>Elenco le possibili operazioni</h2>
                     <!------OPERATION DIV BUTTON------->
                     <div class="button-container">
-                        <button mat-raised-button class="btn-class"
-                            (click)="showFormAddCard = !showFormAddCard">Crea
+                        <button mat-raised-button class="btn-class" (click)="showFormAddCard = !showFormAddCard">Crea
                             Tessera</button>
                         <button mat-raised-button class="btn-class"
                             (click)="showFormSearchCard = !showFormSearchCard">Cerca
                             Tessera</button>
                         <button mat-raised-button class="btn-class"
                             (click)="showFormAddPoints = !showFormAddPoints">Aggiungi
+                            Punti</button>
+                        <button mat-raised-button class="btn-class"
+                            (click)="showFormRemovePoints = !showFormRemovePoints">Rimuovi
                             Punti</button>
                     </div>
 
@@ -28,8 +30,12 @@
                     <!---MAT ACCORDITION FOR ALL CARDS-->
 
                     <mat-accordion class="mat-according"
-                        *ngIf="!showFormAddCard && !showFormAddPoints && !showFormSearchCard">
-                        <h3>ECCO LA LISTA DELLE TESSERE DEI TUOI CLIENTI</h3>
+                        *ngIf="!showFormAddCard && !showFormAddPoints && !showFormSearchCard && !cardCercata &&!showFormRemovePoints">
+
+                        <h3 *ngIf="allCards.length == 0" style="margin-top: 15px;">NESSUN CLIENTE POSSIEDE LA TESSERA.
+                        </h3>
+                        <h3 *ngIf="allCards.length != 0" style="margin-top: 15px">ECCO LA LISTA DELLE TESSERE DEI TUOI
+                            CLIENTI</h3>
                         <mat-expansion-panel hideToggle class="mat-expansion-panel" *ngFor="let card of allCards">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
@@ -40,7 +46,8 @@
                                 </mat-panel-description>
                             </mat-expansion-panel-header>
                             <p>{{card.owner.nome}} {{card.owner.cognome}}</p>
-                            <button mat-button style="background-color: red;" (click)="removeCard(card.id)">Rimuovi Card</button>
+                            <button mat-button style="background-color: red;" (click)="removeCard(card.id)">Rimuovi
+                                Card</button>
                         </mat-expansion-panel>
                     </mat-accordion>
 
@@ -98,20 +105,26 @@
                     </form>
 
                     <!----MAT ACCORDITION FOR ONE CARD SEARCHED-->
-                    <mat-accordion class="mat-accordingSearch" *ngIf="searchedCard && cardCercata">
-                        <mat-expansion-panel hideToggle class="mat-expansion-panel">
-                            <mat-expansion-panel-header>
-                                <mat-panel-title>
-                                    Tessera : {{cardCercata.codice}}
-                                </mat-panel-title>
-                                <mat-panel-description>
-                                    Points : {{cardCercata.punti}}
-                                </mat-panel-description>
-                            </mat-expansion-panel-header>
-                            <p>{{cardCercata.owner.nome}} {{cardCercata.owner.cognome}}</p>
-                            <button mat-button (click)="removeCard(cardCercata.id)">Rimuovi Card</button>
-                        </mat-expansion-panel>
-                    </mat-accordion>
+                    <div class="mat-accordingSearch" *ngIf="searchedCard && cardCercata">
+                        <h3 style="margin-top: 10px;">CARD TROVATA CON SUCCESSO.</h3>
+                        <mat-accordion class="mat-accordingSearch">
+                            <mat-expansion-panel hideToggle class="mat-expansion-panel">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Tessera : {{cardCercata.codice}}
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                        Points : {{cardCercata.punti}}
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+                                <p>{{cardCercata.owner.nome}} {{cardCercata.owner.cognome}}</p>
+                                <button mat-button (click)="removeCard(cardCercata.id)"
+                                    style="background-color: red;">Rimuovi Card</button>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                        <button mat-button (click)="closeSearchedCard()">Annulla</button>
+                    </div>
+
 
                     <!-------FORM FOR ADD POINT INTO CARD------>
                     <form class="formAddPoints" *ngIf="showFormAddPoints" [formGroup]="form">
@@ -131,7 +144,31 @@
                             </mat-card-content>
                             <mat-card-actions>
                                 <button mat-button (click)="addPointsCard()">Aggiungi Punti</button>
-                                <button mat-button (click)="addPointsAll()">Aggiungi punti a Tutti</button>
+                                <button mat-button (click)="addPointsAll()" style="margin-left: 20px;">Aggiungi punti a
+                                    Tutti</button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </form>
+
+                    <form class="formAddPoints" *ngIf="showFormRemovePoints" [formGroup]="form">
+                        <mat-card>
+                            <mat-card-header>
+                                <mat-card-title style="text-align: center;">RIMUOVI PUNTI</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    <input matInput placeholder="Codice" formControlName="codice">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    <input matInput placeholder="Punti" formControlName="punti">
+                                </mat-form-field>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <button mat-button (click)="removePointsCard()">Rimuovi Punti</button>
+                                <button mat-button (click)="removePointsAll()" style="margin-left: 20px;">Rimuovi Punti
+                                    a Tutti</button>
                             </mat-card-actions>
                         </mat-card>
                     </form>

@@ -61,10 +61,10 @@
                                 formControlName="restrizioni">
                                 <mat-radio-button
                                     style="margin-left: 3px; background-color: white; border-bottom-style: 20%;"
-                                    [checked]="form.value.restrizioni === true">Accesso
+                                    value="0">Accesso
                                     Completo</mat-radio-button>
                                 <mat-radio-button style="margin-left: 3px; background-color: white; border-bottom: 50%;"
-                                    [checked]="form.value.restrizioni === false">Accesso
+                                    value="1">Accesso
                                     Ristretto</mat-radio-button>
                             </mat-radio-group>
                             <mat-card-actions>
@@ -83,7 +83,8 @@
                             </mat-form-field>
                         </form>
 
-                        <button mat-raised-button (click)="searchAccount()" class="buttonSearch">Cerca Dipendente</button>
+                        <button mat-raised-button (click)="searchAccount()" class="buttonSearch">Cerca
+                            Dipendente</button>
                     </div>
 
                     <!-------DIV PER UTENTE TROVATO------>

@@ -89,7 +89,6 @@ export class AccountComponent implements OnInit {
       const newPassword = this.form.value.confirmPassword;
       const oldPassword = this.form.value.oldPassword;
       const token = localStorage.getItem('accessToken');
-      console.log("Metodo update con access : " + token);
       const httpOptions = {
         headers: new HttpHeaders({
           'Authorization': 'Bearer ' + token
@@ -101,8 +100,17 @@ export class AccountComponent implements OnInit {
           if (this.data.status == 200) {
             alert("Password aggiornata con successo.");
             this.closeUpdatePassword();
-          } else {
-            alert("Password errata. Riprovare");
+          }
+        }, err => {
+          this.data = err;
+          if (this.data.status == 400) {
+            alert("I campi sono vuoti. Riprova.");
+          } else if (this.data.status == 404) {
+            alert("Password errata. Riprovare.");
+            this.closeUpdatePassword();
+          } else if (this.data.status == 500) {
+            alert("Something went wrong.");
+            this.closeUpdatePassword();
           }
         });
     } else {
@@ -132,8 +140,16 @@ export class AccountComponent implements OnInit {
         if (this.data.status == 200) {
           this.userType.setEmail(newEmail);
           alert("Email aggiornata con successo.");
-        } else {
-          alert("Errore. Email non aggiornata. Riprova.");
+          this.closeUpdateEmail();
+        }
+      }, err => {
+        this.data = err;
+        if (this.data.status == 400) {
+          alert("I campi sono vuoti. Operazione non valida.");
+          this.closeUpdateEmail();
+        } else if (this.data.status == 404) {
+          alert("Something went wrong.");
+          this.closeUpdateEmail();
         }
       });
     }
@@ -157,8 +173,18 @@ export class AccountComponent implements OnInit {
         this.data = response;
         if (this.data.status == 200) {
           alert("Password aggiornata con successo");
-        } else {
-          alert("Password non aggiornata. Errore. Riprova.");
+        }
+      }, err => {
+        this.data = err;
+        if (this.data.status == 400) {
+          alert("I campi sono vuoti. Operazione non valida.");
+          this.closeUpdatePassword();
+        } else if (this.data.status == 404) {
+          alert("Password errata. Riprovare.");
+          this.closeUpdatePassword();
+        } else if (this.data.status == 500) {
+          alert("Something went wrong.");
+          this.closeUpdatePassword();
         }
       });
     } else {
@@ -169,7 +195,6 @@ export class AccountComponent implements OnInit {
 
 
   //----GENERIC METHODS-----
-
 
   closeUpdatePassword() {
     this.showFormUpdatePassword = false;
