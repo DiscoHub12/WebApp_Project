@@ -51,10 +51,13 @@ module.exports = app => {
     router.get('/find/:id', gifts.find);
 
     /**
-     * This route allows you to get all created Rewards.
+     * This route allows you to get all created Rewards, called by a Employee logged.
      */
     router.get('/findAllGiftsEmployee', authenticate.authenticateTokenEmployee, gifts.findAll);
 
+    /**
+     * This route allows you to get all created Rewards, called by a User logged.
+     */
     router.get('/findAllGiftsUser', authenticate.authenticateTokenUser, gifts.findAll);
 
     /**
@@ -67,7 +70,7 @@ module.exports = app => {
      * This route allows you to take all Users who have reedemed
      * and are in the process of least one Reward.
      */
-    router.get(`/findAllUserReedem`, authenticate.authenticateTokenEmployee, gifts.findAllUserReedem);
+    router.post(`/findAllReedemByUser`, authenticate.authenticateTokenEmployee, gifts.findAllUserReedem);
 
     /**
      * This route allows you to add a specific Reward for a 
