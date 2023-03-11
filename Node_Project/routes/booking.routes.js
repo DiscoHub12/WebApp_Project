@@ -64,7 +64,7 @@ module.exports = app => {
      * This route allows you to get all Bookings for a specific
      * User, passing the corresponding and unique id as parameters.
      */
-    router.get("/findAllUser/:id", authenticate.authenticateTokenUser, booking.findOne);
+    router.get("/findAllUser", authenticate.authenticateTokenUser, booking.findOne);
 
     /**
      * This route allows you to get all Bookings that have

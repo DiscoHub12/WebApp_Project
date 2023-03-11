@@ -43,7 +43,12 @@ export class TreatmentsComponent implements OnInit {
 
   showFormSearchTreatment = false;
 
-  idUtenteCercato!: Number;
+  nullTreatments = false;
+
+  nomeUtenteCercato = null;
+
+  cognomeUtenteCercato = null;
+
 
 
 
@@ -103,14 +108,12 @@ export class TreatmentsComponent implements OnInit {
 
   indietro() {
     this.searchedTreatment = false;
+    this.cognomeUtenteCercato = null;
+    this.nomeUtenteCercato = null;
     this.treatmentCercato = [];
-    this.resetUtente();
     this.ngOnInit();
   }
 
-  resetUtente() {
-    this.idUtenteCercato = 0;
-  }
 
 
 
@@ -149,6 +152,8 @@ export class TreatmentsComponent implements OnInit {
         'Authorization': 'Bearer ' + token
       })
     };
+    const nome = this.nomeUtenteCercato;
+    const cognome = this.cognomeUtenteCercato;
     const name = this.form.value.nomeTrattamento;
     const description = this.form.value.descrizione;
     let date: any;
@@ -161,7 +166,8 @@ export class TreatmentsComponent implements OnInit {
     } else date = this.form.value.data;
 
     this.httpClient.put(`${environment.baseUrl}/treatment/create`, {
-      idUtente: this.idUtenteCercato,
+      nome: nome,
+      cognome: cognome,
       nomeTrattamento: name,
       descrizione: description,
       data: date
@@ -187,16 +193,25 @@ export class TreatmentsComponent implements OnInit {
     const nome = this.form.value.nome;
     const cognome = this.form.value.cognome;
     let trattamentoTrovato = false;
-    for (let treatment of this.treatments) {
-      if (treatment.owner.nome == nome && treatment.owner.cognome == cognome) {
-        this.idUtenteCercato = treatment.idUtente;
-        this.treatmentCercato.push(treatment);
-        this.searchedTreatment = true;
-        trattamentoTrovato = true;
+    if (this.treatments.length === 0) {
+      alert("Non ci sono trattamenti.");
+      trattamentoTrovato = true;
+    } else {
+      for (let treatment of this.treatments) {
+        if (treatment.nome == nome && treatment.cognome == cognome) {
+          this.treatmentCercato.push(treatment);
+          if (this.treatmentCercato == null) {
+            this.nullTreatments = true;
+          }
+          this.nomeUtenteCercato = nome;
+          this.cognomeUtenteCercato = cognome;
+          this.searchedTreatment = true;
+          trattamentoTrovato = true;
+        }
       }
     }
     if (!trattamentoTrovato) {
-      alert("Nome o cognome errati, reinserirli");
+      alert("Utente non trovato o non registrato");
     }
     this.resetForm();
   }
@@ -240,8 +255,8 @@ export class TreatmentsComponent implements OnInit {
         'Authorization': 'Bearer ' + token
       })
     };
-    if (this.userType) {
-      this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAllUser/${this.userType.id}`, httpOptions).subscribe(
+    if (this.userType instanceof User) {
+      this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAllUser?nome=${this.userType.nome}&cognome=${this.userType.cognome}`,  httpOptions).subscribe(
         response => {
           this.data = response;
           if (this.data.status === 200) {

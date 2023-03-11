@@ -12,7 +12,7 @@
 
 
                     <div class="button-container" *ngIf="!open">
-                        <button mat-raised-button class="btn-class" (click)="open = !open">Vedi
+                        <button mat-raised-button class="btn-class" (click)="showCalendar()">Vedi
                             Calendario</button>
                         <br>
                         <button mat-raised-button class="btn-class" (click)="openList = !openList">Vedi le tue
@@ -138,7 +138,7 @@
                                     </mat-card-subtitle>
                                 </mat-expansion-panel-header>
                                 <mat-panel-description>
-                                    Cliente: {{ booking.owner.nome}} {{booking.owner.cognome}}
+                                    Cliente: {{ booking.nome}} {{booking.cognome}}
                                 </mat-panel-description>
                                 <button mat-raised-button class="btn-class" (click)="removeBookingEmp(booking)">Cancella
                                 </button>
@@ -164,7 +164,7 @@
                                 *ngFor="let booking of searchedBookingsUser">
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        Cliente: {{booking.owner.nome}} {{booking.owner.cognome}}
+                                        Cliente: {{booking.nome}} {{booking.cognome}}
                                     </mat-panel-title>
                                     <mat-card-subtitle>
                                         Trattamento : {{booking.trattamento}}

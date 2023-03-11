@@ -1,6 +1,5 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./user');
 
 class Booking extends Model { }
 
@@ -12,9 +11,13 @@ Booking.init({
         primaryKey: true,
         allowNull: false
     },
-    idUtente: {
-        type: DataTypes.INTEGER(4),
-        allowNull: false
+    nome: {
+        type: DataTypes.CHAR(80),
+        allowNull: false,
+    },
+    cognome: {
+        type: DataTypes.CHAR(80),
+        allowNull: false,
     },
     dataPrenotazione: {
         type: DataTypes.DATE,
@@ -41,7 +44,6 @@ Booking.init({
     modelName: 'Booking'
 });
 
-Booking.belongsTo(User, {foreignKey : 'idUtente', as : 'owner'})
 
 module.exports = Booking;
 

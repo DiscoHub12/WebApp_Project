@@ -30,7 +30,7 @@ module.exports = app => {
     /**
      * This route allows you to create a new Treatment.
      */
-    router.put("/create", authenticate.authenticateTokenUser, treatment.create);
+    router.put("/create", authenticate.authenticateTokenEmployee, treatment.create);
 
     /**
      * This route allows you to get a specific Treatment, 
@@ -47,7 +47,7 @@ module.exports = app => {
      * This route allows you to get all Treatments for a 
      * specific User, passing the corresponding and unique id as parameters.
      */
-    router.get("/findAllUser/:id", authenticate.authenticateTokenUser, treatment.findOne);
+    router.get("/findAllUser", authenticate.authenticateTokenUser, treatment.findOne);
 
     /**
      * This route allows you to delete a specific Treatment, 

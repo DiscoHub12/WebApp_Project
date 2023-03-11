@@ -22,38 +22,26 @@ exports.create = (req, res) => {
     return;
   }
 
-  User.findOne({
-    where: { nome: nome, 
-    cognome: cognome }
-  }).then(user => {
-    if (user) {
-      const booking = {
-        idUtente: user.id,
-        dataPrenotazione: dataPrenotazione,
-        oraInizio: oraInizio,
-        oraFine: oraFine,
-        trattamento : trattamento,
-        completata: completata
-      }
-      Booking.create(booking).then(data => {
-        res.status(201).send({
-          status: 201,
-          message: "Booking created successfully."
-        });
-      }).catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while creating the new Bookings."
-        })
-      })
-    }
-    else {
-      res.status(404).send({
-        status: 404,
-        message: `Cannot find User.`
-      });
-    }
-  });
+  const booking = {
+    nome: nome,
+    cognome: cognome,
+    dataPrenotazione: dataPrenotazione,
+    oraInizio: oraInizio,
+    oraFine: oraFine,
+    trattamento: trattamento,
+    completata: completata
+  }
+  Booking.create(booking).then(data => {
+    res.status(201).send({
+      status: 201,
+      message: "Booking created successfully."
+    });
+  }).catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while creating the new Bookings."
+    })
+  })
 }
 
 
@@ -144,11 +132,7 @@ exports.update = async (req, res) => {
 
 exports.findAll = (req, res) => {
   Booking.findAll({
-    include: [{
-      model: User,
-      as: 'owner',
-      attributes: ['id', 'nome', 'cognome']
-    }]
+    where : {}
   }).then(data => {
     if (data) {
       res.status(200).send({
@@ -172,16 +156,17 @@ exports.findAll = (req, res) => {
 
 
 exports.findOne = (req, res) => {
-  const idUser = req.params.id;
+  const nome = req.query.nome;
+    const cognome = req.query.cognome;
 
-  if (!idUser) {
+  if (!nome || !cognome) {
     res.status(400).send({
       status: 400,
       message: "Content can't be empty!",
     })
   }
 
-  Booking.findAll({ where: { idUtente: idUser } })
+  Booking.findAll({ where: { nome: nome, cognome: cognome } })
     .then(data => {
       if (data) {
         res.status(200).send({

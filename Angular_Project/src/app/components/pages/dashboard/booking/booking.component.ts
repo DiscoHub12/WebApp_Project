@@ -111,11 +111,11 @@ export class BookingComponent {
     this.userType = this.authUser.getUser();
     if (this.userType instanceof Employee) {
       this.isVisible = true;
+      this.getAllBookings();
     } else if (this.userType instanceof User) {
       this.isVisible = false;
       this.getBookingUser();
     }
-    this.getAllBookings();
   }
 
   //This is the method for init the FormGroup. 
@@ -166,7 +166,7 @@ export class BookingComponent {
       const booking = this.bookings[i];
       const date = new Date(booking.dataPrenotazione).toISOString().replace(/T.*$/, '');
       if (this.userType instanceof User) {
-        if (booking.idUtente === this.userType?.getId()) {
+        if (booking.nome === this.userType?.nome && booking.cognome === this.userType?.cognome) {
           events.push({
             title: booking.trattamento,
             start: date + 'T' + booking.oraInizio,
@@ -234,7 +234,6 @@ export class BookingComponent {
           this.data = response;
           if (this.data.status == 200) {
             this.addTreatment(booking, descrizione);
-            booking.completata = 1;
           } else {
             alert("Prenotazione non aggiornata riprovare");
           }
@@ -261,11 +260,12 @@ export class BookingComponent {
         'Authorization': 'Bearer ' + token
       })
     };
-    this.httpClient.put(`${environment.baseUrl}/treatment/create`, { idUtente: booking.idUtente, nomeTrattamento: booking.trattamento, descrizione: descrizione, data: booking.dataPrenotazione }, httpOptions).subscribe(
+    this.httpClient.put(`${environment.baseUrl}/treatment/create`, { nome: booking.nome, cognome: booking.cognome, nomeTrattamento: booking.trattamento, descrizione: descrizione, data: booking.dataPrenotazione }, httpOptions).subscribe(
       response => {
         this.data = response;
         if (this.data.status == 201) {
           alert("Trattamento aggiunto con successo.");
+          booking.completata = 1;
         } else if (this.data.status == 404) {
           alert("Utente non trovato riprovare.");
         } else {
@@ -283,7 +283,7 @@ export class BookingComponent {
     const cognome = this.form.value.cognome;
     let clienteTrovato = false;
     for (let booking of this.bookings) {
-      if (booking.owner.nome === nome && booking.owner.cognome === cognome) {
+      if (booking.nome === nome && booking.cognome === cognome) {
         this.searchedBookingsUser.push(booking);
         this.searchedBooking = true;
         this.showFormSearchBookingUser = false;
@@ -338,8 +338,8 @@ export class BookingComponent {
         'Authorization': 'Bearer ' + token
       })
     };
-    if (this.userType) {
-      this.httpClient.get<any>(`${environment.baseUrl}/booking/findAllUser/${this.userType.id}`, httpOptions).subscribe(
+    if (this.userType instanceof User) {
+      this.httpClient.get<any>(`${environment.baseUrl}/booking/findAllUser?nome=${this.userType.nome}&cognome=${this.userType.cognome}`, httpOptions).subscribe(
         response => {
           this.data = response;
           if (this.data.status === 200) {
@@ -355,6 +355,12 @@ export class BookingComponent {
         });
     }
     this.resetData();
+  }
+
+
+  showCalendar() {
+    this.getAllBookings();
+    this.open = true;
   }
 
 
@@ -394,7 +400,6 @@ export class BookingComponent {
           const index = this.searchedBookingsUser.indexOf(booking);
           this.searchedBookingsUser.splice(index);
           this.getBookingUser();
-          this.getAllBookings();
         }
       } else if (this.data.status === 404) {
         alert("Prenotazione non trovata riprovare.");
@@ -426,7 +431,9 @@ export class BookingComponent {
 
   //This method close the Search Booking.
   closeSearchedBookingsUser() {
-    this.getBookingUser();
+    if(this.userType instanceof User){
+      this.getBookingUser();
+    }
     this.searchedBooking = false;
     this.searchedBookingsUser = [];
     this.showFormSearchBookingUser = false;
@@ -497,7 +504,6 @@ export class BookingComponent {
       if (this.data.status === 201) {
         alert("Prenotazione aggiunta con successo.");
         if (this.userType instanceof User) {
-          this.getAllBookings();
           this.getBookingUser();
         } else if (this.userType instanceof Employee) {
           this.getAllBookings();

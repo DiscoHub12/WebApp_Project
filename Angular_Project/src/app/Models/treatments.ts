@@ -1,37 +1,31 @@
+
 export class Treatments {
     id: Number;
-    idUtente: Number;
+    nome: String;
+    cognome: String;
     nomeTrattamento: String;
     descrizione: String;
     data: Date;
-    owner : {
-        nome: String, 
-        cognome:String,
-    }
 
 
     constructor(
         id: Number,
-        idUtente: Number,
+        nome: String,
+        cognome: String,
         nomeTrattamento: String,
         descrizione: String,
         data: Date,
-        owner : any
     ) {
         this.id = id;
-        this.idUtente = idUtente;
+        this.nome = nome;
+        this.cognome = cognome;
         this.nomeTrattamento = nomeTrattamento;
         this.descrizione = descrizione;
         this.data = data;
-        this.owner = owner; 
     }
 
     getId(): Number {
         return this.id;
-    }
-
-    getIdUtente(): Number {
-        return this.idUtente;
     }
 
 
