@@ -54,7 +54,7 @@ module.exports = app => {
      * This route allows you to remove a account about Employee, 
      * passing the corresponding and unique id as parameters.
      */
-    router.post("/delete/:id", authenticate.authenticateTokenEmployee, employee.delete);
+    router.delete("/delete/:id", authenticate.authenticateTokenEmployee, employee.delete);
 
     /**
      * This route allows you to update the data of a specific Employee, 

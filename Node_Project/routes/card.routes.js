@@ -55,13 +55,13 @@ module.exports = app => {
      * This route allows you to remove a specific number of points, 
      * into one specific Card.
      */
-    router.post("/removePoints/:id", card.removePoints);
+    router.post("/removePoints", authenticate.authenticateTokenUser || authenticate.authenticateTokenEmployee, card.removePoints);
 
     /**
      * This route allows you to remove a specific number of points, 
      * into all existing Card.
      */
-    router.post("/removePointsAll", card.removePointsAll);
+    router.post("/removePointsAll", authenticate.authenticateTokenEmployee, card.removePointsAll);
 
     /**
      * This route allows you to get a specific Card, 
