@@ -145,5 +145,37 @@ exports.find = (req, res) => {
         });
 }
 
+exports.delete = (req, res) => {
+    const id = req.params.id;
+  
+    if (!id) {
+      res.status(400).send({
+        status: 400,
+        message: "Content can't be empty!",
+      })
+    }
+  
+    Treatment.destroy({
+      where: { id: id }
+    }).then(num => {
+      if (num == 1) {
+        res.status(200).send({
+          status: 200,
+          message: "Treatment was deleted successfully"
+        });
+      } else {
+        res.status(404).send({
+          status: 404,
+          message: `Cannot delete Treatment with id=${id}. Maybe Treatment was not found!`
+        });
+      }
+    }).catch(err => {
+      res.status(500).send({
+        status: 500,
+        message: " Could not delete Treatment with id : " + id
+      });
+    });
+  };
+
 
 

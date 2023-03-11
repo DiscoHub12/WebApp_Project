@@ -36,18 +36,24 @@ module.exports = app => {
      * This route allows you to get a specific Treatment, 
      * passing the corresponding and unique id as parameters.
      */
-    router.get("/find/:id", treatment.find);
+    router.get("/find/:id", authenticate.authenticateTokenUser, treatment.find);
 
     /**
      * This route allows you to get all Treatments.
      */
-    router.get("/findAll", treatment.findAll);
+    router.get("/findAll", authenticate.authenticateTokenEmployee, treatment.findAll);
 
     /**
      * This route allows you to get all Treatments for a 
      * specific User, passing the corresponding and unique id as parameters.
      */
-    router.get("/findAllUser/:id", treatment.findOne);
+    router.get("/findAllUser/:id", authenticate.authenticateTokenUser, treatment.findOne);
+
+    /**
+     * This route allows you to delete a specific Treatment, 
+     * passing the corresponding and unique id as parameters.
+     */
+    router.delete("/delete/:id", authenticate.authenticateTokenEmployee, treatment.delete);
 
 
     
