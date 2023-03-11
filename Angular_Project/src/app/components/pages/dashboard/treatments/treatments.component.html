@@ -7,7 +7,7 @@
                 <!-----EMPLOYEE DIV------>
                 <div class="div-employee" *ngIf="isVisible">
 
-                    <!-------FORM FOR SEARCH CARD------>
+                    <!-------FORM FOR SEARCH TREATMENT------>
                     <form class="formSearchTreatment" *ngIf="!searchedTreatment" [formGroup]="form">
                         <mat-card>
                             <mat-card-header>
@@ -31,7 +31,8 @@
                     </form>
 
                     <div class="div" *ngIf="searchedTreatment">
-                        <h2>ECCO I TRATTAMENTI DEL CLIENTE CERCATO</h2>
+                        <h2 *ngIf="searchedTreatment">ECCO I TRATTAMENTI DEL CLIENTE CERCATO</h2>
+                        <h2 *ngIf="nullTreatments">L'UTENTE NON HA ANCORA NESSUN TRATTAMENTO</h2>
                         <mat-accordion class="mat-according">
                             <mat-expansion-panel hideToggle class="mat-expansion-panel"
                                 *ngFor="let treatment of treatmentCercato">
@@ -44,7 +45,7 @@
                                     </mat-panel-description>
                                 </mat-expansion-panel-header>
                                 <p>Descrizione : {{treatment.descrizione}}</p>
-                                <p> Cliente : {{treatment.owner.nome}} {{treatment.owner.cognome}}</p>
+                                <p> Cliente : {{treatment.nome}} {{treatment.cognome}}</p>
                                 <br>
                                 <button mat-raised-button class="btn-class" (click)="delete(treatment)">Cancella
                                 </button>
