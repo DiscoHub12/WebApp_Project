@@ -83,15 +83,15 @@
 
 
                     <!-----DIV PER L'UTENTE TROVATO-->
-                    <div class="searchedUsersOne" *ngIf="userFind && userFindGift">
-                        <h3 class="title">Elenco premi riscattati da : {{userFindGift.cognome}}</h3>
+                    <div class="searchedUsersOne" *ngIf="isUserFind && userFind">
+                        <h3 class="title">Elenco premi riscattati da : {{userFind.cognome}}</h3>
 
-                        <div class="card-containerOne">
-                            <mat-card class="example-card" *ngFor="let gift of userFindGift.Gifts">
+                        <div class="card-containerOne" *ngIf="userFindGift.lenght != 0">
+                            <mat-card class="example-card" *ngFor="let gift of userFindGift">
                                 <mat-card-header>
                                     <mat-card-title-group>
-                                        <mat-card-title>Id Regalo : {{gift.id}}</mat-card-title>
-                                        <mat-card-subtitle>Nome : {{gift.nome}}</mat-card-subtitle>
+                                        <mat-card-title>{{gift.nome}}</mat-card-title>
+                                        <mat-card-subtitle>Id Regalo : {{gift.id}}</mat-card-subtitle>
                                         <img mat-card-lg-image
                                             src="https://m.media-amazon.com/images/I/51L8UtJrboL._AC_SL1000_.jpg">
                                     </mat-card-title-group>
@@ -104,12 +104,20 @@
                             </mat-card>
                         </div>
 
+                        <div class="notSearchedUser" *ngIf="userFindGift.lenght <1 ">
+                            <h3>{{userFind.cognome}} non ha riscattato nessun Premio.</h3>
+                            <button mat-button (click)="closeSearchUsers()">Chiudi</button>
+                        </div>
+
                         <button mat-button (click)="closeSearchUsers()">Chiudi</button>
                     </div>
 
+
+
                     <!-----DIV PER L'UTENTE NON TROVATO-->
-                    <div class="notSearchedUser" *ngIf="!userFind">
+                    <div class="notSearchedUser" *ngIf="!isUserFind">
                         <h3>Utente non trovato.</h3>
+                        <button mat-button (click)="closeSearchUsers()">Chiudi</button>
                     </div>
                 </div>
             </div>
@@ -140,12 +148,12 @@
                 </div>
 
                 <!------DIV PER VEDERE TUTTI I PREMI-------->
-                <div class="allGiftsDiv" *ngIf="showAllGifts && allGifts">
+                <div class="allGiftsDiv" *ngIf="showAllGifts && allGifts && !showMyReward">
                     <mat-card class="example-card" *ngFor="let gift of allGifts">
                         <mat-card-header>
                             <mat-card-title-group>
-                                <mat-card-title>Id Regalo : {{gift.id}}</mat-card-title>
-                                <mat-card-subtitle>Nome : {{gift.nome}}</mat-card-subtitle>
+                                <mat-card-title>{{gift.nome}}</mat-card-title>
+                                <mat-card-subtitle>Id Regalo : {{gift.id}}</mat-card-subtitle>
                                 <img mat-card-lg-image
                                     src="https://m.media-amazon.com/images/I/51L8UtJrboL._AC_SL1000_.jpg">
                             </mat-card-title-group>
@@ -167,8 +175,8 @@
                     <mat-card class="example-card" *ngFor="let gift of allMyGifts">
                         <mat-card-header>
                             <mat-card-title-group>
-                                <mat-card-title>Id Regalo : {{gift.id}}</mat-card-title>
-                                <mat-card-subtitle>Nome : {{gift.nome}}</mat-card-subtitle>
+                                <mat-card-title>{{gift.nome}}</mat-card-title>
+                                <mat-card-subtitle>Id Regalo : {{gift.id}}</mat-card-subtitle>
                                 <img mat-card-lg-image
                                     src="https://m.media-amazon.com/images/I/51L8UtJrboL._AC_SL1000_.jpg">
                             </mat-card-title-group>
