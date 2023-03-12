@@ -6,7 +6,7 @@
 
                 <!-----EMPLOYEE DIV------>
                 <div class="div-employee" *ngIf="isEmployee && userType">
-                    <h2>CIAO {{userType.nome}}.</h2>
+                    <h2>CIAO {{userType.nome.toUpperCase()}}</h2>
                     <h3>In questa sezione, potrai vedere le Card dei tuoi Clienti e gestirle <br>
                         quindi creare una nuova Card, aggiungere punti e molto altro.</h3>
                     <h2>Elenco le possibili operazioni</h2>
@@ -182,7 +182,7 @@
                     <!-----DIV IF THE USER HAVE CARD-->
 
                     <div *ngIf="haveCard && cardUser && userType">
-                        <h3 style="font-size: 23px;">CIAO {{userType.nome}}</h3>
+                        <h3 style="font-size: 23px;">CIAO {{userType.nome.toUpperCase()}}</h3>
                         <h3 style="text-align: center; margin-top: 20px;">Ti ricordiamo che, più trattamenti farai, più
                             punti ottieni, per riscuotere premi.</h3>
                         <h3 style="font-size: 20px; margin-top: 20px;">INFORMAZIONI TESSERA</h3>

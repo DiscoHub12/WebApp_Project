@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Employee } from 'src/app/Models/employee';
@@ -256,7 +256,14 @@ export class TreatmentsComponent implements OnInit {
       })
     };
     if (this.userType instanceof User) {
-      this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAllUser?nome=${this.userType.nome}&cognome=${this.userType.cognome}`,  httpOptions).subscribe(
+      const params = new HttpParams()
+        .set('nome', this.userType.nome)
+        .set('cognome', this.userType.cognome);
+        const options = {
+          params: params,
+          headers: httpOptions.headers
+      };
+      this.httpClient.get<any>(`${environment.baseUrl}/treatment/findAllUser`,  options).subscribe(
         response => {
           this.data = response;
           if (this.data.status === 200) {

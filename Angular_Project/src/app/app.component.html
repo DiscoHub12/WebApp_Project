@@ -10,10 +10,9 @@
 <div id="container" *ngIf="showMenuBar">
     <app-header-home></app-header-home>
 </div>
-<body>
-    <router-outlet></router-outlet>
-    <div *ngIf="showMenuBar">
-        <app-footer></app-footer>
-    </div>
-</body>
+<router-outlet></router-outlet>
+<div *ngIf="showMenuBar">
+    <app-footer></app-footer>
+</div>
+
 </html>

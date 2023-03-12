@@ -2,11 +2,11 @@ import { Card } from "./card";
 
 export class User {
     id : Number;
-    nome : String;
-    cognome : String;
+    nome : string;
+    cognome : string;
     email : String;
 
-    constructor(id : Number, nome : String, cognome : String, email : String) {
+    constructor(id : Number, nome : string, cognome : string, email : String) {
         this.id = id;
         this.nome = nome;
         this.cognome = cognome;

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Booking } from 'src/app/Models/booking';
@@ -339,7 +339,14 @@ export class BookingComponent {
       })
     };
     if (this.userType instanceof User) {
-      this.httpClient.get<any>(`${environment.baseUrl}/booking/findAllUser?nome=${this.userType.nome}&cognome=${this.userType.cognome}`, httpOptions).subscribe(
+      const params = new HttpParams()
+        .set('nome', this.userType.nome)
+        .set('cognome', this.userType.cognome);
+        const options = {
+          params: params,
+          headers: httpOptions.headers
+      };
+      this.httpClient.get<any>(`${environment.baseUrl}/booking/findAllUser`, options).subscribe(
         response => {
           this.data = response;
           if (this.data.status === 200) {
@@ -431,7 +438,7 @@ export class BookingComponent {
 
   //This method close the Search Booking.
   closeSearchedBookingsUser() {
-    if(this.userType instanceof User){
+    if (this.userType instanceof User) {
       this.getBookingUser();
     }
     this.searchedBooking = false;
@@ -505,6 +512,7 @@ export class BookingComponent {
         alert("Prenotazione aggiunta con successo.");
         if (this.userType instanceof User) {
           this.getBookingUser();
+          this.getAllBookings();
         } else if (this.userType instanceof Employee) {
           this.getAllBookings();
         }
