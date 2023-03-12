@@ -157,7 +157,7 @@ exports.findAll = (req, res) => {
 
 exports.findOne = (req, res) => {
   const nome = req.query.nome;
-    const cognome = req.query.cognome;
+  const cognome = req.query.cognome;
 
   if (!nome || !cognome) {
     res.status(400).send({
@@ -177,7 +177,7 @@ exports.findOne = (req, res) => {
       } else {
         res.status(404).send({
           status: 404,
-          message: `Cannot find Booking with id=${id}.`
+          message: `Cannot find Booking with nome=${nome} and cognome=${cognome}.`
         });
       }
     }).catch(err => {
@@ -187,6 +187,7 @@ exports.findOne = (req, res) => {
       });
     });
 }
+
 
 
 exports.findFreeBooking = (req, res) => {
