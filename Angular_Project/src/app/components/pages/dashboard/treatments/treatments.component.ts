@@ -229,9 +229,9 @@ export class TreatmentsComponent implements OnInit {
       if (this.data.status === 200) {
         alert("Trattamento rimosso con successo.");
         const index = this.treatmentCercato.indexOf(trattamento);
-        this.treatmentCercato.splice(index);
+        this.treatmentCercato.splice(index, 1);
         const index1 = this.treatments.indexOf(trattamento);
-        this.treatments.splice(index1);
+        this.treatments.splice(index1, 1);
       } else if (this.data.status === 404) {
         alert("Trattamento non trovato riprovare.");
       } else {

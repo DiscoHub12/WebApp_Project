@@ -309,9 +309,9 @@ export class BookingComponent {
         alert("Prenotazione rimossa con successo.");
         if (this.userType instanceof Employee) {
           const index = this.bookingsToday.indexOf(booking);
-          this.bookingsToday.splice(index);
+          this.bookingsToday.splice(index, 1);
           const index1 = this.searchedBookingsUser.indexOf(booking);
-          this.searchedBookingsUser.splice(index1);
+          this.searchedBookingsUser.splice(index1, 1);
           this.getAllBookings();
         }
       } else if (this.data.status === 404) {
@@ -398,7 +398,7 @@ export class BookingComponent {
         alert("Prenotazione rimossa con successo.");
         if (this.userType instanceof User) {
           const index = this.searchedBookingsUser.indexOf(booking);
-          this.searchedBookingsUser.splice(index);
+          this.searchedBookingsUser.splice(index, 1);
           this.getBookingUser();
         }
       } else if (this.data.status === 404) {
