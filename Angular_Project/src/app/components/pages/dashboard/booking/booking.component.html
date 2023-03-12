@@ -12,10 +12,10 @@
 
 
                     <div class="button-container" *ngIf="!open">
-                        <button mat-raised-button class="btn-class" (click)="showCalendar()">Vedi
+                        <button mat-raised-button style="margin-top: 10px;" (click)="showCalendar()">Vedi
                             Calendario</button>
                         <br>
-                        <button mat-raised-button class="btn-class" (click)="openList = !openList">Vedi le tue
+                        <button mat-raised-button style="margin-top: 10px;" (click)="openList = !openList">Vedi le tue
                             prenotazioni
                         </button>
                     </div>
@@ -40,13 +40,14 @@
                                     <br>
                                     Ora Prenotazione: {{ booking.oraInizio}}
                                 </mat-panel-description>
-                                <button mat-raised-button class="btn-class" (click)="removeBookingUser(booking)">Cancella
+                                <button mat-raised-button class="btn-class"
+                                    (click)="removeBookingUser(booking)">Cancella
                                 </button>
                             </mat-expansion-panel>
                         </mat-accordion>
 
                         <!----MAT ACCORDITION FOR BOOKINGS SEARCHED-->
-                        <h3  *ngIf="searchedBooking">ECCO LE PRENOTAZIONI CERCATE</h3>
+                        <h3 *ngIf="searchedBooking">ECCO LE PRENOTAZIONI CERCATE</h3>
                         <mat-accordion class="mat-according" *ngIf="searchedBooking">
                             <mat-expansion-panel hideToggle class="mat-expansion-panel"
                                 *ngFor="let booking of searchedBookingsUser">
@@ -63,7 +64,8 @@
                                     <br>
                                     Ora Prenotazione: {{ booking.oraInizio}}
                                 </mat-panel-description>
-                                <button mat-raised-button class="btn-class" (click)="removeBookingUser(booking)">Cancella
+                                <button mat-raised-button class="btn-class"
+                                    (click)="removeBookingUser(booking)">Cancella
                                 </button>
                             </mat-expansion-panel>
                             <button mat-button (click)="closeSearchedBookingsUser()">Chiudi</button>
@@ -108,14 +110,14 @@
                     </h3>
 
                     <div *ngIf="!open">
-                        <button mat-raised-button class="btn-class" (click)="getAllBookingsToday()">Vedi le
+                        <button mat-raised-button style="margin-top: 10px;" (click)="getAllBookingsToday()">Vedi le
                             prenotazioni di oggi
                         </button>
                         <br>
-                        <button mat-raised-button class="btn-class" (click)="open = !open">Vedi Calendario
+                        <button mat-raised-button style="margin-top: 10px;" (click)="open = !open">Vedi Calendario
                         </button>
                         <br>
-                        <button mat-raised-button class="btn-class"
+                        <button mat-raised-button style="margin-top: 10px;"
                             (click)="showFormSearchBookingUser = !showFormSearchBookingUser">Cerca prenotazioni cliente
                         </button>
                     </div>
