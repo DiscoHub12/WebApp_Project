@@ -82,7 +82,7 @@ module.exports = app => {
      * This route allows you to remove a specific Reward for a 
      * specific User.
      */
-    router.post('/removeReward', gifts.removeReward);
+    router.post('/removeReward', authenticate.authenticateTokenEmployee, gifts.removeReward);
 
 
 
