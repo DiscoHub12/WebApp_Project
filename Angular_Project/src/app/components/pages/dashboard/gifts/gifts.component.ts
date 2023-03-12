@@ -101,8 +101,8 @@ export class GiftsComponent implements OnInit {
     } else if (this.userType instanceof User) {
       this.isEmployee = false;
       this.getAllGifts();
-      this.getMyGifts();
       this.getMyCard();
+      this.getMyGifts();
     }
   }
 
@@ -120,7 +120,7 @@ export class GiftsComponent implements OnInit {
         'Authorization': 'Bearer ' + token
       })
     };
-    if (this.isEmployee) {
+    if (this.userType instanceof Employee) {
       this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllGiftsEmployee`, httpOptions).subscribe(
         response => {
           this.data = response;
@@ -133,7 +133,7 @@ export class GiftsComponent implements OnInit {
             alert("Something went wrong. Please try again");
           }
         });
-    } else {
+    } else if (this.userType instanceof User) {
       this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllGiftsUser`, httpOptions).subscribe(
         response => {
           this.data = response;
@@ -219,6 +219,31 @@ export class GiftsComponent implements OnInit {
       });
   }
 
+  removeReward(idGift: Number, idUser: Number) {
+    if (this.userFind) {
+      const token = localStorage.getItem('accessToken');
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Authorization': 'Bearer ' + token
+        })
+      };
+      this.httpClient.post<any>(`${environment.baseUrl}/gifts/removeReward`, { idUser: idUser, idGift: idGift }, httpOptions).subscribe(
+        response => {
+          this.data = response;
+          if (this.data.status == 200) {
+            alert("Premio rimosso con successo.");
+            this.closeRemoveGifts();
+          }
+        }, err => {
+          this.data = err;
+          alert("Errore nella rimozione.");
+          this.closeCreationGifts();
+        }
+      );
+    }
+
+  }
+
   closeRemoveGifts() {
     this.resetData();
     this.resetForm();
@@ -238,39 +263,39 @@ export class GiftsComponent implements OnInit {
       })
     };
 
-    this.httpClient.post<any>(`${environment.baseUrl}/gifts/findAllReedemByUser`, {cognome: cognome}, httpOptions).subscribe(
+    this.httpClient.post<any>(`${environment.baseUrl}/gifts/findAllReedemByUser`, { cognome: cognome }, httpOptions).subscribe(
       response => {
-        this.data = response; 
-        if(this.data.status == 200){
-          this.userFindGift = this.data.data; 
-          this.userFind = this.data.datiUtente; 
-          this.isUserFind = true; 
+        this.data = response;
+        if (this.data.status == 200) {
+          this.userFindGift = this.data.data;
+          this.userFind = this.data.datiUtente;
+          this.isUserFind = true;
           console.log("User find : " + this.userFindGift + "\nDati utente : " + this.userFind);
           this.resetData();
           this.resetForm();
-        }else if(this.data.status == 202){
-          this.isUserFind = true; 
+        } else if (this.data.status == 202) {
+          this.isUserFind = true;
           this.userFind = this.data.datiUtente;
           this.userFindGift = null;
         }
       }, err => {
-        this.data = err; 
-        if(this.data.status == 202){
-          this.isUserFind = true; 
+        this.data = err;
+        if (this.data.status == 202) {
+          this.isUserFind = true;
           this.userFind = this.data.datiUtente;
           this.userFindGift = null;
-        }else if(this.data.status == 404){
-          alert("Cliente non trovato."); 
+        } else if (this.data.status == 404) {
+          alert("Cliente non trovato.");
           this.resetData();
           this.resetForm();
         }
-      }); 
+      });
   }
   closeSearchUsers() {
     this.showUsers = false;
     this.userFindGift = null;
     this.userFind = null;
-    this.isUserFind = false; 
+    this.isUserFind = false;
     this.resetData();
     this.resetForm();
   }
@@ -292,26 +317,29 @@ export class GiftsComponent implements OnInit {
    * rewards of a given Client.
    */
   getMyGifts() {
-    const token = localStorage.getItem('accessToken');
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + token
-      })
-    };
-    this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUser/${this.userType?.getId()}`, httpOptions).subscribe(
-      response => {
-        this.data = response;
-        if (this.data.status == 200 || this.data.status == 202) {
-          this.allMyGifts = this.data.data;
-          this.resetData();
-          this.resetForm();
-        }
-      }, err => {
-        this.data = err;
-        if (this.data.status == 404) {
-          alert("Errore. Riprovare.");
-        }
-      });
+    if (this.userType) {
+      const token = localStorage.getItem('accessToken');
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Authorization': 'Bearer ' + token
+        })
+      };
+      this.httpClient.get<any>(`${environment.baseUrl}/gifts/findAllUser/${this.userType.getId()}`, httpOptions).subscribe(
+        response => {
+          this.data = response;
+          if (this.data.status == 200) {
+            this.allMyGifts = this.data.data;
+            this.resetData();
+            this.resetForm();
+          }
+        }, err => {
+          this.data = err;
+          if (this.data.status == 404) {
+            alert("Errore. Riprovare.");
+          }
+        });
+    }
+
   }
 
   /**

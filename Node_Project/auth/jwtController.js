@@ -20,7 +20,7 @@ function containsToken(token) {
  * @param {*} the user to returns the JWT.
  */
 function getAccessTokenUser(user) {
-    return jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+    return jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20m' });
 }
 
 /**
@@ -36,7 +36,7 @@ function getRegfreshTokenUser(user) {
  * @param {*}  the employee to returns the JWT.
  */
 function getAccessTokenEmployee(employee) {
-    return jwt.sign({ id: employee.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+    return jwt.sign({ id: employee.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20m' });
 }
 
 /**

@@ -179,29 +179,7 @@ exports.findAllUser = async (req, res) => {
     }
 }
 
-/**
- const redeemedUsers = await User.findAll({
-        attributes: ['id', 'nome', 'cognome'],
-        include: [{
-            model: Gifts,
-            through: { // specifica la tabella di join
-                attributes: [] // indica di non selezionare le colonne di UserRewards
-            }
-        }]
-    });
 
-    if (redeemedUsers) {
-        res.status(200).send({
-            status: 200,
-            data: redeemedUsers,
-        })
-    } else {
-        res.status(404).send({
-            status: 404,
-            message: "User not found",
-        })
-    }
- */
 exports.findAllUserReedem = async (req, res) => {
     const cognome = req.body.cognome;
     
@@ -225,7 +203,7 @@ exports.findAllUserReedem = async (req, res) => {
     const userGifts = await user.getGifts();
 
     if (userGifts) {
-        const dati = {nome : user.nome, cognome: user.cognome};
+        const dati = {id : user.id, nome : user.nome, cognome: user.cognome};
         res.status(200).send({
             status: 200,
             data: userGifts,
@@ -269,10 +247,14 @@ exports.addReward = async (req, res) => {
 }
 
 exports.removeReward = async (req, res) => {
-    const user = await User.findByPk(req.body.idUser);
-    const reward = await Gifts.findByPk(req.body.idGift);
+    const idUser = req.body.idUser;
+    const idGift = req.body.idGift;
 
-    if (user && reward) {
+    console.log("Id Utente : " + idUser + "Id Gift : " + idGift);
+    const user = await User.findByPk(idUser);
+    const reward = await Gifts.findByPk(idGift);
+
+    if (user != null && reward != null) {
         const alreadyReedem = await user.hasGifts(reward);
 
         if (!alreadyReedem) {
@@ -281,7 +263,7 @@ exports.removeReward = async (req, res) => {
                 message: `The User don't have this reward`,
             });
         } else {
-            await user.removeGifts(reward);
+            user.removeGifts(reward);
             res.status(200).send({
                 status: 200,
                 message: `Reward removed successfully`,
